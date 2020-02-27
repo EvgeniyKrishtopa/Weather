@@ -1,17 +1,37 @@
 @import "~bootstrap/scss/bootstrap";
 
+.visible {
+  position: relative;
+  z-index: 1;
+}
+
 .wrapper {
   min-height: 100vh;
   background: url('./weather-bg.jpg') no-repeat center;
   background-size: cover;
   padding-top: 50px;
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0, .3);
+  }
 
   h1 {
+    @extend .visible;
+
     color: #fff;
     text-align: center;
   }
 
   .weather-form {
+   @extend .visible;
+
     label {
       font-size: 24px;
       color: #fff;
@@ -22,5 +42,23 @@
     .btn {
       margin-top: 30px;
     }
+  }
+}
+
+.weather-result {
+  @extend .visible;
+
+  color: #fff;
+  font-size: 24px;
+
+  h3 {
+    font-size: 34px;
+    margin-bottom: 50px;
+    text-transform: capitalize;
+  }
+
+  .wi {
+    padding-right: 15px;
+    font-size: 30px;
   }
 }

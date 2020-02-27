@@ -13,6 +13,7 @@ const Form = () => {
 
     if(country && city) {
       getWeather(country, city);
+      localStorage.setItem('city', JSON.stringify(city));
     }
 
     else {

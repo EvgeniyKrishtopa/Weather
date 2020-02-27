@@ -6,7 +6,7 @@ import { GET_WEATHER, CLEAR_WEATHER, SET_LOADING } from './types';
 const WeatherState = ({children}) => {
 
   const initialState = {
-    weather: {},
+    weather: null,
     loading: false
   }
 
