@@ -43,6 +43,13 @@
       margin-top: 30px;
     }
   }
+
+  .hidden {
+    color: red;
+    font-weight: 500;
+    opacity: 0;
+    margin-bottom: 0;
+  }
 }
 
 .weather-result {

@@ -27,6 +27,7 @@ const Info = () => {
   useEffect(() => {
     const currentWeather = JSON.parse(localStorage.getItem('weather'));
 
+    if(currentWeather) {
     const weatherDescription = currentWeather.weather[0].main;
 
     switch(weatherDescription) {
@@ -60,8 +61,9 @@ const Info = () => {
 
       default:
         break;
+      }
     }
-
+    
     setWeather(currentWeather);
   },[weather])
 

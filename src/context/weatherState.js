@@ -1,7 +1,7 @@
 import React, {useReducer} from 'react';
 import {WeatherContext} from './weatherContext';
 import weatherReducer from './weatherReducer';
-import { GET_WEATHER, CLEAR_WEATHER, SET_LOADING } from './types';
+import { GET_WEATHER, SET_LOADING } from './types';
 
 const WeatherState = ({children}) => {
 
@@ -30,13 +30,11 @@ const WeatherState = ({children}) => {
 
   }
 
-  const clearWeather = () => dispatch({type: CLEAR_WEATHER});
   const setLoading = () => dispatch({type: SET_LOADING});
-
   const {weather,loading} = state;
 
   return(
-    <WeatherContext.Provider value = {{getWeather,clearWeather,weather,loading}}>
+    <WeatherContext.Provider value = {{getWeather,weather,loading}}>
       {children}
     </WeatherContext.Provider>
   )
