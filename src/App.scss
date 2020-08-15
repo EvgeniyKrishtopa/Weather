@@ -1,61 +1,126 @@
 @import "~bootstrap/scss/bootstrap";
 
-.visible {
-  position: relative;
-  z-index: 1;
-}
+$white: #fff;
+$red: red;
+$black: #000;
+$black-100: #404040;
+$gray: #eee;
+$yellow: #ffd632;
 
 .wrapper {
   min-height: 100vh;
-  background: url('./weather-bg.jpg') no-repeat center;
-  background-size: cover;
-  padding-top: 50px;
+  padding-top: 30px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: relative;
+  background-image: linear-gradient(
+      45deg,
+      rgba(240, 230, 227, 0.5) 10%,
+      rgba(148, 170, 182, 0.8) 100%
+    ),
+    linear-gradient(-45deg, #494d71 0%, rgba(217, 230, 185, 0.5) 80%);
 
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0, .3);
   }
 
   h1 {
     @extend .visible;
 
-    color: #fff;
+    color: $white;
     text-align: center;
+    margin-bottom: 50px;
   }
 
   .weather-form {
-   @extend .visible;
+    @extend .visible;
 
-    label {
-      font-size: 24px;
-      color: #fff;
-      font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 9px 7px 40px -6px rgba($black, 0.25);
+    background-color: $gray;
+    overflow: hidden;
+    max-width: 480px;
+    padding: 110px 30px 20px;
+    height: 400px;
+    min-height: 300px;
+    border-radius: 5px;
+    position: relative;
+    margin: 0 auto;
+    text-align: center;
+
+    .current-date {
+      font-size: 22px;
+      color: $white;
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
+      background: $black-100;
+      padding: 20px;
+    }
+
+    .form-control {
+      transition: all 0.3s ease;
+      background: none;
+      border-width: 0 0 2px;
+      border-color: $black;
+      background-color: transparent;
+      border-radius: 0;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto 50px;
+      padding-left: 0;
+
+      &:focus,
+      &:active {
+        outline: none;
+        box-shadow: none;
+      }
+
+      &::placeholder {
+        color: $black;
+      }
     }
 
     .btn {
-      margin-top: 30px;
+      transition: background-color 0.3s ease-in-out;
+      max-width: 150px;
+      margin: 0 auto;
+      background-color: $black-100;
+      border-color: $black-100;
+
+      &:hover {
+        background-color: rgba($black-100, 0.7);
+      }
     }
   }
 
   .hidden {
-    color: red;
+    color: $red;
     font-weight: 500;
     opacity: 0;
     margin-bottom: 0;
+  }
+
+  .visible {
+    position: relative;
+    z-index: 1;
   }
 }
 
 .weather-result {
   @extend .visible;
 
-  color: #fff;
+  color: $white;
   font-size: 24px;
 
   h3 {
