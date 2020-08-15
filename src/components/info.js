@@ -4,6 +4,7 @@ import { WeatherContext } from "../context/weatherContext";
 
 const Info = () => {
   const { loading, weather } = useContext(WeatherContext);
+  debugger;
   const [currentWeather, setWeather] = useState(null);
 
   const weatherIcons = {
@@ -77,7 +78,7 @@ const Info = () => {
         <div>
           {currentWeather ? (
             <div>
-              <h3>City:&nbsp;{currentCity}</h3>
+              <h3>{currentCity}</h3>
               <p className="tepmeratureAverege">
                 Temperature:&nbsp;
                 {(currentWeather.main.temp - 273.15).toFixed(2)}&nbsp;C&deg;
