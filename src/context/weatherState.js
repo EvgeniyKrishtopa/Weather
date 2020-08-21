@@ -10,6 +10,7 @@ const WeatherState = ({ children }) => {
   };
 
   const [state, dispatch] = useReducer(weatherReducer, initialState);
+  const setLoading = () => dispatch({ type: SET_LOADING });
   const Api_Key = "4f1400dc97a7e72fa59e6c3a211b7d40";
 
   const getWeather = async (city, country) => {
@@ -26,7 +27,6 @@ const WeatherState = ({ children }) => {
     });
   };
 
-  const setLoading = () => dispatch({ type: SET_LOADING });
   const { weather, loading } = state;
 
   return (
