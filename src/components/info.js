@@ -2,73 +2,45 @@ import React, { useContext, useState, useEffect } from "react";
 import Loader from "./loader";
 import { WeatherContext } from "../context/weatherContext";
 
+const weatherIcons = {
+  Thunderstorm: "wi-thunderstorm",
+  Drizzle: "wi-sleet",
+  Rain: "wi-storm-showers",
+  Snow: "wi-snow",
+  Atmosphere: "wi-fog",
+  Clear: "wi-day-sunny",
+  Clouds: "wi-day-fog",
+};
+
+const baseIconClasses = ["wi", "wi-flip-vertical"];
+
 const Info = () => {
   const { loading, weather } = useContext(WeatherContext);
-  debugger;
   const [currentWeather, setWeather] = useState(null);
-
-  const weatherIcons = {
-    Thunderstorm: "wi-thunderstorm",
-    Drizzle: "wi-sleet",
-    Rain: "wi-storm-showers",
-    Snow: "wi-snow",
-    Atmosphere: "wi-fog",
-    Clear: "wi-day-sunny",
-    Clouds: "wi-day-fog",
-  };
-
-  const [currentIconClasses, setIcon] = useState(["wi", "wi-flip-vertical"]);
+  const [currentIconClasses, setIcon] = useState([]);
+  const [currentCity, setCurrentSity] = useState("");
 
   useEffect(() => {
     if (weather) {
       localStorage.setItem("weather", JSON.stringify(weather));
     }
+
+    const localWeather = JSON.parse(localStorage.getItem("weather"));
+    const city = JSON.parse(localStorage.getItem("city"));
+
+    if (!localWeather && !city) {
+      return;
+    }
+    setCurrentSity(city);
+    setWeather(localWeather);
   }, [weather]);
 
   useEffect(() => {
-    const currentWeather = JSON.parse(localStorage.getItem("weather"));
-
     if (currentWeather) {
       const weatherDescription = currentWeather.weather[0].main;
-
-      switch (weatherDescription) {
-        case "Thunderstorm":
-          setIcon([...currentIconClasses, weatherIcons.Thunderstorm]);
-          break;
-
-        case "Drizzle":
-          setIcon([...currentIconClasses, weatherIcons.Drizzle]);
-          break;
-
-        case "Rain":
-          setIcon([...currentIconClasses, weatherIcons.Rain]);
-          break;
-
-        case "Snow":
-          setIcon([...currentIconClasses, weatherIcons.Snow]);
-          break;
-
-        case "Atmosphere":
-          setIcon(...currentIconClasses, [weatherIcons.Atmosphere]);
-          break;
-
-        case "Clear":
-          setIcon([...currentIconClasses, weatherIcons.Clear]);
-          break;
-
-        case "Clouds":
-          setIcon([...currentIconClasses, weatherIcons.Clouds]);
-          break;
-
-        default:
-          break;
-      }
+      setIcon([weatherIcons[weatherDescription]]);
     }
-
-    setWeather(currentWeather);
-  }, [weather]);
-
-  const currentCity = JSON.parse(localStorage.getItem("city"));
+  }, [currentWeather]);
 
   return (
     <div className="weather-result">
@@ -84,7 +56,11 @@ const Info = () => {
                 {(currentWeather.main.temp - 273.15).toFixed(2)}&nbsp;C&deg;
               </p>
               <p className="weather-description">
-                <i className={currentIconClasses.join(" ")}></i>
+                <i
+                  className={baseIconClasses
+                    .concat(currentIconClasses)
+                    .join(" ")}
+                ></i>
                 {currentWeather.weather[0].main}
               </p>
               <p className="wind">
