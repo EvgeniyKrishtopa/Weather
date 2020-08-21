@@ -1,8 +1,9 @@
 import React, { useContext, useState, useRef } from "react";
-import { WeatherContext } from "../context/weatherContext";
+import { WeatherContext } from "../../context/weatherContext";
 import { currentDate } from "./currentDate";
 
 const Form = () => {
+  const notificationMessage = "Enter correct city and country please!";
   const refNotification = useRef();
   const { getWeather } = useContext(WeatherContext);
 
@@ -55,7 +56,7 @@ const Form = () => {
             onChange={(event) => setCity(event.target.value)}
           />
           <p className="hidden" ref={refNotification}>
-            Enter some data please!
+            {notificationMessage}
           </p>
         </div>
         <button type="submit" className="btn btn-primary">
