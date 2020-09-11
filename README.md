@@ -1,6 +1,7 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was created with react.js and Open Weather API.
+You can select necessary country and city and get current weather.
 
-Link http://EvgeniyKrishtopa.github.io/Weather
+Link: http://EvgeniyKrishtopa.github.io/Weather
 
 ## Available Scripts
 
