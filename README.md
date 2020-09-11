@@ -1,3 +1,5 @@
+## Get Current Weather
+
 This project was created with react.js and Open Weather API.
 You can select necessary country and city and get current weather.
 
