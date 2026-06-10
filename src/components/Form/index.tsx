@@ -1,27 +1,31 @@
-import React, { useContext, useState, useRef } from "react";
-import { WeatherContext } from "../../context/weatherContext";
+import React, { useState, useRef, type FormEvent } from "react";
+import { useWeatherContext } from "../../context/weatherContext";
 import { currentDate } from "./currentDate";
 
 const Form = () => {
   const notificationMessage = "Enter correct city and country please!";
-  const refNotification = useRef();
-  const { getWeather } = useContext(WeatherContext);
+  const refNotification = useRef<HTMLParagraphElement>(null);
+  const { getWeather } = useWeatherContext();
 
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
 
-  const formSubmit = (event) => {
+  const formSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    event.target.reset();
+    event.currentTarget.reset();
 
     if (country && city) {
       getWeather(country, city);
       localStorage.setItem("city", JSON.stringify(city));
       setCountry("");
       setCity("");
-      refNotification.current.style.opacity = "0";
+      if (refNotification.current) {
+        refNotification.current.style.opacity = "0";
+      }
     } else {
-      refNotification.current.style.opacity = "1";
+      if (refNotification.current) {
+        refNotification.current.style.opacity = "1";
+      }
       localStorage.clear();
     }
   };

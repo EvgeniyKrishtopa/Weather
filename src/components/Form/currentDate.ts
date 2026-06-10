@@ -1,4 +1,4 @@
-export function currentDate() {
+export function currentDate(): string {
   const monthNames = [
     "January",
     "February",

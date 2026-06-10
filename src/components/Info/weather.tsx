@@ -1,12 +1,19 @@
 import React from "react";
+import type { WeatherSuccess } from "../../types/weather";
 
 const baseIconClasses = ["wi", "wi-flip-vertical"];
+
+interface WeatherComponentProps {
+  currentCity: string;
+  currentWeather: WeatherSuccess;
+  currentIconClasses: string[];
+}
 
 export const WeatherComponent = ({
   currentCity,
   currentWeather,
   currentIconClasses,
-}) => {
+}: WeatherComponentProps) => {
   return (
     <>
       {currentWeather && currentCity && (

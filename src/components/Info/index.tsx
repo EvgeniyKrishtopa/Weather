@@ -1,10 +1,14 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Loader from "../Loader";
-import { WeatherContext } from "../../context/weatherContext";
+import { useWeatherContext } from "../../context/weatherContext";
 import { WeatherComponent } from "./weather";
 import { ErrorWeather } from "./errorWeather";
+import {
+  isWeatherSuccess,
+  type WeatherResponse,
+} from "../../types/weather";
 
-const weatherIcons = {
+const weatherIcons: Record<string, string> = {
   Thunderstorm: "wi-thunderstorm",
   Drizzle: "wi-sleet",
   Rain: "wi-storm-showers",
@@ -14,51 +18,54 @@ const weatherIcons = {
   Clouds: "wi-day-fog",
 };
 
-const getCityFromStorage = () => {
-  return JSON.parse(localStorage.getItem("city"));
+const getCityFromStorage = (): string => {
+  const city = localStorage.getItem("city");
+  return city ? (JSON.parse(city) as string) : "";
 };
 
-const getCurrentResponseStatus = (weather = {}) => {
-  return weather.cod === 200 ? true : false;
+const getWeatherFromStorage = (): WeatherResponse | null => {
+  const weather = localStorage.getItem("weather");
+  return weather ? (JSON.parse(weather) as WeatherResponse) : null;
 };
 
 const Info = () => {
-  const { loading, weather } = useContext(WeatherContext);
+  const { loading, weather } = useWeatherContext();
   const [responseStatus, setResponseStatus] = useState(false);
-  const [currentWeather, setWeather] = useState(null);
-  const [currentIconClasses, setIcon] = useState([]);
+  const [currentWeather, setWeather] = useState<WeatherResponse | null>(null);
+  const [currentIconClasses, setIcon] = useState<string[]>([]);
   const [currentCity, setCurrentSity] = useState("");
 
   useEffect(() => {
     if (weather) {
       localStorage.setItem("weather", JSON.stringify(weather));
 
-      if (getCurrentResponseStatus(weather)) {
+      if (isWeatherSuccess(weather)) {
         setCurrentSity(getCityFromStorage());
       }
-      setResponseStatus(getCurrentResponseStatus(weather));
+      setResponseStatus(isWeatherSuccess(weather));
       setWeather(weather);
     }
   }, [weather]);
 
   useEffect(() => {
-    const localWeather = JSON.parse(localStorage.getItem("weather"));
+    const localWeather = getWeatherFromStorage();
 
     if (!localWeather && !getCityFromStorage()) {
       return;
     }
     setCurrentSity(getCityFromStorage());
 
-    setResponseStatus(getCurrentResponseStatus(localWeather));
+    setResponseStatus(localWeather ? isWeatherSuccess(localWeather) : false);
     setWeather(localWeather);
   }, []);
 
   useEffect(() => {
     if (currentWeather) {
-      setResponseStatus(getCurrentResponseStatus(currentWeather));
-      if (getCurrentResponseStatus(currentWeather)) {
+      setResponseStatus(isWeatherSuccess(currentWeather));
+      if (isWeatherSuccess(currentWeather)) {
         const weatherDescription = currentWeather.weather[0].main;
-        setIcon([weatherIcons[weatherDescription]]);
+        const icon = weatherIcons[weatherDescription];
+        setIcon(icon ? [icon] : []);
       }
     }
   }, [currentWeather]);
@@ -70,14 +77,16 @@ const Info = () => {
       ) : (
         <>
           {currentWeather ? (
-            responseStatus ? (
+            responseStatus && isWeatherSuccess(currentWeather) ? (
               <WeatherComponent
                 currentCity={currentCity}
                 currentIconClasses={currentIconClasses}
                 currentWeather={currentWeather}
               />
             ) : (
-              <ErrorWeather currentWeather={currentWeather} />
+              !isWeatherSuccess(currentWeather) && (
+                <ErrorWeather currentWeather={currentWeather} />
+              )
             )
           ) : null}
         </>
