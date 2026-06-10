@@ -1,14 +1,14 @@
 import React from "react";
-import "./loader.scss";
+import { CircularProgress, Typography } from "@mui/material";
+import { LoaderCard, LoaderContent } from "./Loader.styles";
 
-const Loader = () => {
-  return (
-    <div
-      className="lds-dual-ring"
-      role="status"
-      aria-label="Loading weather"
-    />
-  );
-};
+const Loader = () => (
+  <LoaderCard elevation={8}>
+    <LoaderContent role="status">
+      <CircularProgress aria-label="Loading weather" />
+      <Typography color="text.secondary">Loading weather...</Typography>
+    </LoaderContent>
+  </LoaderCard>
+);
 
 export default Loader;

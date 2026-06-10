@@ -1,17 +1,22 @@
 import React from "react";
-import Weatherstate from "./context/weatherState";
-import Info from "./components/Info";
+import { Container } from "@mui/material";
 import Form from "./components/Form";
-import "./App.scss";
+import Info from "./components/Info";
+import WeatherState from "./context/weatherState";
+import { ContentStack, Page } from "./App.styles";
 
 function App() {
   return (
-    <Weatherstate>
-      <div className="wrapper">
-        <Form />
-        <Info />
-      </div>
-    </Weatherstate>
+    <WeatherState>
+      <Page>
+        <Container maxWidth="sm">
+          <ContentStack>
+            <Form />
+            <Info />
+          </ContentStack>
+        </Container>
+      </Page>
+    </WeatherState>
   );
 }
 
