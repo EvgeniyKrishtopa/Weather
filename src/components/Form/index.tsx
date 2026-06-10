@@ -1,33 +1,29 @@
-import React, { useState, useRef, type FormEvent } from "react";
+import React, { useState, type FormEvent } from "react";
 import { useWeatherContext } from "../../context/weatherContext";
 import { currentDate } from "./currentDate";
 
 const Form = () => {
   const notificationMessage = "Enter correct city and country please!";
-  const refNotification = useRef<HTMLParagraphElement>(null);
   const { getWeather } = useWeatherContext();
-
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
+  const [showValidationError, setShowValidationError] = useState(false);
 
-  const formSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const formSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    event.currentTarget.reset();
 
-    if (country && city) {
-      getWeather(country, city);
-      localStorage.setItem("city", JSON.stringify(city));
-      setCountry("");
-      setCity("");
-      if (refNotification.current) {
-        refNotification.current.style.opacity = "0";
-      }
-    } else {
-      if (refNotification.current) {
-        refNotification.current.style.opacity = "1";
-      }
-      localStorage.clear();
+    const normalizedCountry = country.trim();
+    const normalizedCity = city.trim();
+
+    if (!normalizedCountry || !normalizedCity) {
+      setShowValidationError(true);
+      return;
     }
+
+    setShowValidationError(false);
+    await getWeather(normalizedCity, normalizedCountry);
+    setCountry("");
+    setCity("");
   };
 
   return (
@@ -36,11 +32,14 @@ const Form = () => {
       <form
         className="weather-form"
         id="weatherForm"
-        action="#"
         onSubmit={formSubmit}
+        noValidate
       >
         <span className="current-date">{currentDate()}</span>
         <div className="form-group">
+          <label className="visually-hidden" htmlFor="inputCountry">
+            Country
+          </label>
           <input
             type="text"
             className="form-control"
@@ -51,6 +50,9 @@ const Form = () => {
           />
         </div>
         <div className="form-group">
+          <label className="visually-hidden" htmlFor="inputCity">
+            City
+          </label>
           <input
             type="text"
             className="form-control"
@@ -58,8 +60,15 @@ const Form = () => {
             id="inputCity"
             value={city}
             onChange={(event) => setCity(event.target.value)}
+            aria-describedby="weatherFormError"
           />
-          <p className="hidden" ref={refNotification}>
+          <p
+            className={`validation-message ${
+              showValidationError ? "visible" : ""
+            }`}
+            id="weatherFormError"
+            role="alert"
+          >
             {notificationMessage}
           </p>
         </div>

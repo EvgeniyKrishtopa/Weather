@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from "react";
-import Loader from "../Loader";
+import React from "react";
 import { useWeatherContext } from "../../context/weatherContext";
-import { WeatherComponent } from "./weather";
+import { isWeatherSuccess } from "../../types/weather";
+import Loader from "../Loader";
 import { ErrorWeather } from "./errorWeather";
-import {
-  isWeatherSuccess,
-  type WeatherResponse,
-} from "../../types/weather";
+import { WeatherComponent } from "./weather";
 
 const weatherIcons: Record<string, string> = {
   Thunderstorm: "wi-thunderstorm",
@@ -18,79 +15,39 @@ const weatherIcons: Record<string, string> = {
   Clouds: "wi-day-fog",
 };
 
-const getCityFromStorage = (): string => {
-  const city = localStorage.getItem("city");
-  return city ? (JSON.parse(city) as string) : "";
-};
-
-const getWeatherFromStorage = (): WeatherResponse | null => {
-  const weather = localStorage.getItem("weather");
-  return weather ? (JSON.parse(weather) as WeatherResponse) : null;
-};
-
 const Info = () => {
-  const { loading, weather } = useWeatherContext();
-  const [responseStatus, setResponseStatus] = useState(false);
-  const [currentWeather, setWeather] = useState<WeatherResponse | null>(null);
-  const [currentIconClasses, setIcon] = useState<string[]>([]);
-  const [currentCity, setCurrentSity] = useState("");
+  const { loading, weather, city } = useWeatherContext();
 
-  useEffect(() => {
-    if (weather) {
-      localStorage.setItem("weather", JSON.stringify(weather));
+  if (loading) {
+    return (
+      <div className="weather-result">
+        <Loader />
+      </div>
+    );
+  }
 
-      if (isWeatherSuccess(weather)) {
-        setCurrentSity(getCityFromStorage());
-      }
-      setResponseStatus(isWeatherSuccess(weather));
-      setWeather(weather);
-    }
-  }, [weather]);
+  if (!weather) {
+    return null;
+  }
 
-  useEffect(() => {
-    const localWeather = getWeatherFromStorage();
+  if (!isWeatherSuccess(weather)) {
+    return (
+      <div className="weather-result">
+        <ErrorWeather currentWeather={weather} />
+      </div>
+    );
+  }
 
-    if (!localWeather && !getCityFromStorage()) {
-      return;
-    }
-    setCurrentSity(getCityFromStorage());
-
-    setResponseStatus(localWeather ? isWeatherSuccess(localWeather) : false);
-    setWeather(localWeather);
-  }, []);
-
-  useEffect(() => {
-    if (currentWeather) {
-      setResponseStatus(isWeatherSuccess(currentWeather));
-      if (isWeatherSuccess(currentWeather)) {
-        const weatherDescription = currentWeather.weather[0].main;
-        const icon = weatherIcons[weatherDescription];
-        setIcon(icon ? [icon] : []);
-      }
-    }
-  }, [currentWeather]);
+  const weatherDescription = weather.weather[0]?.main ?? "";
+  const currentIconClass = weatherIcons[weatherDescription];
 
   return (
     <div className="weather-result">
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
-          {currentWeather ? (
-            responseStatus && isWeatherSuccess(currentWeather) ? (
-              <WeatherComponent
-                currentCity={currentCity}
-                currentIconClasses={currentIconClasses}
-                currentWeather={currentWeather}
-              />
-            ) : (
-              !isWeatherSuccess(currentWeather) && (
-                <ErrorWeather currentWeather={currentWeather} />
-              )
-            )
-          ) : null}
-        </>
-      )}
+      <WeatherComponent
+        currentCity={city}
+        currentIconClass={currentIconClass}
+        currentWeather={weather}
+      />
     </div>
   );
 };

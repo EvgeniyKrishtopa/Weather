@@ -6,35 +6,33 @@ const baseIconClasses = ["wi", "wi-flip-vertical"];
 interface WeatherComponentProps {
   currentCity: string;
   currentWeather: WeatherSuccess;
-  currentIconClasses: string[];
+  currentIconClass?: string;
 }
 
 export const WeatherComponent = ({
   currentCity,
   currentWeather,
-  currentIconClasses,
+  currentIconClass,
 }: WeatherComponentProps) => {
+  const weatherDescription = currentWeather.weather[0]?.main ?? "";
+  const iconClasses = currentIconClass
+    ? [...baseIconClasses, currentIconClass]
+    : baseIconClasses;
+
   return (
     <>
-      {currentWeather && currentCity && (
-        <>
-          <h3>{currentCity}</h3>
-          <p className="tepmeratureAverege">
-            Temperature:&nbsp;
-            {(currentWeather.main.temp - 273.15).toFixed(2)}&nbsp;C&deg;
-          </p>
-          <p className="weather-description">
-            <i
-              className={baseIconClasses.concat(currentIconClasses).join(" ")}
-            ></i>
-            {currentWeather.weather[0].main}
-          </p>
-          <p className="wind">
-            Wind speed:&nbsp;{currentWeather.wind.speed}km/h
-          </p>
-          <p className="wind">Humidity:&nbsp;{currentWeather.main.humidity}%</p>
-        </>
-      )}
+      <h3>{currentCity}</h3>
+      <p className="temperature-average">
+        Temperature:&nbsp;{currentWeather.main.temp.toFixed(1)}&nbsp;&deg;C
+      </p>
+      <p className="weather-description">
+        <i className={iconClasses.join(" ")} aria-hidden="true" />
+        {weatherDescription}
+      </p>
+      <p className="wind">
+        Wind speed:&nbsp;{currentWeather.wind.speed}&nbsp;m/s
+      </p>
+      <p className="wind">Humidity:&nbsp;{currentWeather.main.humidity}%</p>
     </>
   );
 };

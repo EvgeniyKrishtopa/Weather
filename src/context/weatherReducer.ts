@@ -1,28 +1,29 @@
-import { GET_WEATHER, SET_LOADING } from "./types";
 import type { WeatherResponse } from "../types/weather";
 
 export interface WeatherStateValue {
   weather: WeatherResponse | null;
+  city: string;
   loading: boolean;
 }
 
-type WeatherAction =
-  | { type: typeof GET_WEATHER; payload: WeatherResponse }
-  | { type: typeof SET_LOADING };
+export type WeatherAction =
+  | { type: "requestStarted" }
+  | { type: "requestCompleted"; payload: WeatherResponse; city: string };
 
 const weatherReducer = (
   state: WeatherStateValue,
   action: WeatherAction
 ): WeatherStateValue => {
   switch (action.type) {
-    case GET_WEATHER:
+    case "requestStarted":
+      return { ...state, loading: true };
+    case "requestCompleted":
       return {
         ...state,
         weather: action.payload,
+        city: action.city,
         loading: false,
       };
-    case SET_LOADING:
-      return { ...state, loading: true };
     default:
       return state;
   }

@@ -6,5 +6,9 @@ interface ErrorWeatherProps {
 }
 
 export const ErrorWeather = ({ currentWeather }: ErrorWeatherProps) => {
-  return <p className="notification-request">{`${currentWeather.message}!`}</p>;
+  return (
+    <p className="notification-request" role="alert">
+      {currentWeather.message}
+    </p>
+  );
 };

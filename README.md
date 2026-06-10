@@ -17,6 +17,12 @@ Install dependencies:
 npm install
 ```
 
+Create a local environment file and add an OpenWeather API key:
+
+```sh
+cp .env.example .env.local
+```
+
 Start the Vite development server:
 
 ```sh

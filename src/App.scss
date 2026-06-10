@@ -102,11 +102,15 @@ $yellow: #ffd632;
     }
   }
 
-  .hidden {
+  .validation-message {
     color: $red;
     font-weight: 500;
-    opacity: 0;
+    visibility: hidden;
     margin-bottom: 0;
+
+    &.visible {
+      visibility: visible;
+    }
   }
 
   .visible {

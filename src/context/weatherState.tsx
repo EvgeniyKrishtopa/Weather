@@ -1,41 +1,55 @@
 import React, { useReducer, type ReactNode } from "react";
+import { fetchWeather } from "../api/weatherApi";
+import { isWeatherSuccess } from "../types/weather";
+import {
+  loadStoredWeather,
+  saveStoredWeather,
+} from "../utils/weatherStorage";
 import { WeatherContext } from "./weatherContext";
 import weatherReducer, { type WeatherStateValue } from "./weatherReducer";
-import { GET_WEATHER, SET_LOADING } from "./types";
-import type { WeatherResponse } from "../types/weather";
 
 interface WeatherStateProps {
   children: ReactNode;
 }
 
-const WeatherState = ({ children }: WeatherStateProps) => {
-  const initialState: WeatherStateValue = {
-    weather: null,
+const createInitialState = (): WeatherStateValue => {
+  const storedWeather = loadStoredWeather();
+
+  return {
+    weather: storedWeather?.weather ?? null,
+    city: storedWeather?.city ?? "",
     loading: false,
   };
+};
 
-  const [state, dispatch] = useReducer(weatherReducer, initialState);
-  const setLoading = () => dispatch({ type: SET_LOADING });
-  const Api_Key = "4f1400dc97a7e72fa59e6c3a211b7d40";
+const WeatherState = ({ children }: WeatherStateProps) => {
+  const [state, dispatch] = useReducer(
+    weatherReducer,
+    undefined,
+    createInitialState
+  );
 
   const getWeather = async (city: string, country: string): Promise<void> => {
-    setLoading();
+    dispatch({ type: "requestStarted" });
 
-    const api_call = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${Api_Key}`
-    );
+    const response = await fetchWeather(city, country);
+    const resolvedCity = isWeatherSuccess(response) ? response.name : city;
 
-    const response = (await api_call.json()) as WeatherResponse;
+    if (isWeatherSuccess(response)) {
+      saveStoredWeather({ city: resolvedCity, weather: response });
+    }
+
     dispatch({
-      type: GET_WEATHER,
+      type: "requestCompleted",
       payload: response,
+      city: resolvedCity,
     });
   };
 
-  const { weather, loading } = state;
+  const { weather, city, loading } = state;
 
   return (
-    <WeatherContext.Provider value={{ getWeather, weather, loading }}>
+    <WeatherContext.Provider value={{ getWeather, weather, city, loading }}>
       {children}
     </WeatherContext.Provider>
   );

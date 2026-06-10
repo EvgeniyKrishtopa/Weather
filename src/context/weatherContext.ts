@@ -4,6 +4,7 @@ import type { WeatherResponse } from "../types/weather";
 interface WeatherContextValue {
   getWeather: (city: string, country: string) => Promise<void>;
   weather: WeatherResponse | null;
+  city: string;
   loading: boolean;
 }
 
