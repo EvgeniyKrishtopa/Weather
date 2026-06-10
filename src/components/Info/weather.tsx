@@ -52,6 +52,7 @@ export const WeatherComponent = ({
   return (
     <WeatherCard
       elevation={12}
+      role="region"
       aria-label={`Current weather in ${currentCity}`}
     >
       <WeatherContent>
