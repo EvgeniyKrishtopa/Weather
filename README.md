@@ -17,6 +17,14 @@ Install dependencies:
 npm install
 ```
 
+`npm install` also configures the Husky pre-commit hook. Every commit runs
+ESLint, the TypeScript compiler check, and the test suite. Run the same checks
+manually with:
+
+```sh
+npm run validate
+```
+
 Create a local environment file and add an OpenWeather API key:
 
 ```sh
