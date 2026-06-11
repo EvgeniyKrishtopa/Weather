@@ -25,6 +25,10 @@ manually with:
 npm run validate
 ```
 
+Pull requests run the same checks in GitHub Actions. CI also rejects deprecated
+dependencies, audits high and critical dependency vulnerabilities, and runs
+CodeQL security analysis for JavaScript and TypeScript.
+
 Create a local environment file and add an OpenWeather API key:
 
 ```sh
