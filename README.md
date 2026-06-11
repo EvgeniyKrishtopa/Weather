@@ -29,6 +29,16 @@ Pull requests run the same checks in GitHub Actions. CI also rejects deprecated
 dependencies, audits high and critical dependency vulnerabilities, and runs
 CodeQL security analysis for JavaScript and TypeScript.
 
+## GitHub Pages Deployment
+
+In the repository settings, set **Pages → Build and deployment → Source** to
+**GitHub Actions**. Add an Actions repository secret named
+`VITE_OPENWEATHER_API_KEY`.
+
+Every push to `master` builds the application with that secret and deploys the
+`dist` directory to GitHub Pages. The workflow can also be started manually
+from the Actions tab.
+
 Create a local environment file and add an OpenWeather API key:
 
 ```sh
