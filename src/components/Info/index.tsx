@@ -8,6 +8,7 @@ import ThunderstormRoundedIcon from "@mui/icons-material/ThunderstormRounded";
 import WaterDropRoundedIcon from "@mui/icons-material/WaterDropRounded";
 import WbSunnyRoundedIcon from "@mui/icons-material/WbSunnyRounded";
 import type { SvgIconComponent } from "@mui/icons-material";
+import { observer } from "mobx-react-lite";
 import { useWeatherContext } from "../../context/weatherContext";
 import { isWeatherSuccess } from "../../types/weather";
 import Loader from "../Loader";
@@ -24,7 +25,7 @@ const weatherIcons: Record<string, SvgIconComponent> = {
   Clouds: CloudRoundedIcon,
 };
 
-const Info = () => {
+const Info = observer(() => {
   const { loading, weather, city } = useWeatherContext();
 
   if (loading) {
@@ -49,6 +50,6 @@ const Info = () => {
       WeatherIcon={WeatherIcon}
     />
   );
-};
+});
 
 export default Info;

@@ -1,7 +1,9 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { runInAction } from "mobx";
+import { describe, expect, it } from "vitest";
 import { WeatherContext } from "../../context/weatherContext";
+import { WeatherStore } from "../../store/weatherStore";
 import type { WeatherSuccess } from "../../types/weather";
 import Info from ".";
 
@@ -18,17 +20,21 @@ const unknownWeather: WeatherSuccess = {
   },
 };
 
+const createStore = (weather: WeatherSuccess): WeatherStore => {
+  const store = new WeatherStore();
+
+  runInAction(() => {
+    store.weather = weather;
+    store.city = "Kyiv";
+  });
+
+  return store;
+};
+
 describe("weather information", () => {
   it("uses a fallback icon for unknown weather conditions", () => {
     render(
-      <WeatherContext.Provider
-        value={{
-          getWeather: vi.fn(),
-          weather: unknownWeather,
-          city: "Kyiv",
-          loading: false,
-        }}
-      >
+      <WeatherContext.Provider value={createStore(unknownWeather)}>
         <Info />
       </WeatherContext.Provider>,
     );
@@ -40,12 +46,7 @@ describe("weather information", () => {
   it("uses fallback text when no weather description is available", () => {
     render(
       <WeatherContext.Provider
-        value={{
-          getWeather: vi.fn(),
-          weather: { ...unknownWeather, weather: [] },
-          city: "Kyiv",
-          loading: false,
-        }}
+        value={createStore({ ...unknownWeather, weather: [] })}
       >
         <Info />
       </WeatherContext.Provider>,
