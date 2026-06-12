@@ -1,4 +1,3 @@
-import React from "react";
 import { Alert, AlertTitle, Paper } from "@mui/material";
 import type { WeatherError } from "../../types/weather";
 

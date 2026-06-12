@@ -3,6 +3,9 @@
 This project was created with React and the OpenWeather API.
 Select a country and city to get the current weather.
 
+Country names, ISO2 codes, and city options are loaded from the public
+[CountriesNow API](https://countriesnow.space/).
+
 ## Link
 
 https://EvgeniyKrishtopa.github.io/Weather

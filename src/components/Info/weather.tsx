@@ -58,9 +58,7 @@ export const WeatherComponent = ({
       <WeatherContent>
         <WeatherHeader>
           <Box>
-            <WeatherEyebrow variant="overline">
-              Current weather
-            </WeatherEyebrow>
+            <WeatherEyebrow variant="overline">Current weather</WeatherEyebrow>
             <Typography component="h2" variant="h3">
               {currentCity}
             </Typography>
@@ -71,9 +69,7 @@ export const WeatherComponent = ({
           </WeatherIconContainer>
         </WeatherHeader>
 
-        <Temperature>
-          {currentWeather.main.temp.toFixed(1)}&deg;C
-        </Temperature>
+        <Temperature>{currentWeather.main.temp.toFixed(1)}&deg;C</Temperature>
 
         <WeatherDivider />
 

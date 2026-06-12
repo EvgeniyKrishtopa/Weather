@@ -38,7 +38,7 @@ describe("fetchWeather", () => {
       "fetch",
       vi.fn().mockResolvedValue({
         json: vi.fn().mockResolvedValue({ cod: 200 }),
-      })
+      }),
     );
 
     await expect(fetchWeather("Kyiv", "UA")).resolves.toEqual({

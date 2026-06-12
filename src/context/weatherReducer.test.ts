@@ -27,8 +27,8 @@ describe("weatherReducer", () => {
           type: "requestCompleted",
           payload: weatherFixture,
           city: "Kyiv",
-        }
-      )
+        },
+      ),
     ).toEqual({
       weather: weatherFixture,
       city: "Kyiv",

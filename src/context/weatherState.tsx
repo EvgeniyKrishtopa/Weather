@@ -1,10 +1,7 @@
 import React, { useReducer, type ReactNode } from "react";
 import { fetchWeather } from "../api/weatherApi";
 import { isWeatherSuccess } from "../types/weather";
-import {
-  loadStoredWeather,
-  saveStoredWeather,
-} from "../utils/weatherStorage";
+import { loadStoredWeather, saveStoredWeather } from "../utils/weatherStorage";
 import { WeatherContext } from "./weatherContext";
 import weatherReducer, { type WeatherStateValue } from "./weatherReducer";
 
@@ -26,7 +23,7 @@ const WeatherState = ({ children }: WeatherStateProps) => {
   const [state, dispatch] = useReducer(
     weatherReducer,
     undefined,
-    createInitialState
+    createInitialState,
   );
 
   const getWeather = async (city: string, country: string): Promise<void> => {

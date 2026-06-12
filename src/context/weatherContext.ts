@@ -9,7 +9,7 @@ interface WeatherContextValue {
 }
 
 export const WeatherContext = createContext<WeatherContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export const useWeatherContext = (): WeatherContextValue => {
