@@ -18,7 +18,7 @@ beforeEach(() => {
     { name: "United States", iso2: "US" },
   ]);
   vi.mocked(fetchCities).mockImplementation(async (countryName) =>
-    countryName === "Ukraine" ? ["Kyiv", "Lviv"] : ["Chicago", "New York"]
+    countryName === "Ukraine" ? ["Kyiv", "Lviv"] : ["Chicago", "New York"],
   );
 });
 
@@ -51,11 +51,11 @@ describe("App", () => {
     render(<App />);
 
     expect(
-      await screen.findByRole("combobox", { name: "Country" })
+      await screen.findByRole("combobox", { name: "Country" }),
     ).toHaveTextContent("United States");
     expect(fetchCities).toHaveBeenCalledWith(
       "United States",
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
 
     const citySelect = screen.getByRole("combobox", { name: "City" });
@@ -67,17 +67,17 @@ describe("App", () => {
     expect(
       await screen.findByRole("region", {
         name: "Current weather in Chicago",
-      })
+      }),
     ).toBeVisible();
     const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
     expect(requestUrl.searchParams.get("q")).toBe("Chicago,US");
     expect(screen.getByText("3.8 m/s")).toBeVisible();
     expect(screen.getByText("62%")).toBeVisible();
     expect(screen.getByRole("combobox", { name: "Country" })).toHaveTextContent(
-      "United States"
+      "United States",
     );
     expect(screen.getByRole("combobox", { name: "City" })).toHaveValue(
-      "Chicago"
+      "Chicago",
     );
   });
 
@@ -97,7 +97,7 @@ describe("App", () => {
 
     expect(fetchCities).toHaveBeenLastCalledWith(
       "Ukraine",
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
 
     const citySelect = await screen.findByRole("combobox", { name: "City" });
@@ -112,7 +112,7 @@ describe("App", () => {
 
   it("displays location loading errors", async () => {
     vi.mocked(fetchCountries).mockRejectedValue(
-      new Error("Unable to load countries.")
+      new Error("Unable to load countries."),
     );
 
     render(<App />);
@@ -123,7 +123,7 @@ describe("App", () => {
 
   it("displays city loading errors", async () => {
     vi.mocked(fetchCities).mockRejectedValue(
-      new Error("Unable to load cities.")
+      new Error("Unable to load cities."),
     );
 
     render(<App />);
@@ -135,13 +135,13 @@ describe("App", () => {
   it("restores cached weather on initial render", () => {
     localStorage.setItem(
       "weather-app:last-weather",
-      JSON.stringify({ city: "Kyiv", weather: weatherFixture })
+      JSON.stringify({ city: "Kyiv", weather: weatherFixture }),
     );
 
     render(<App />);
 
     expect(
-      screen.getByRole("region", { name: "Current weather in Kyiv" })
+      screen.getByRole("region", { name: "Current weather in Kyiv" }),
     ).toBeVisible();
   });
 });

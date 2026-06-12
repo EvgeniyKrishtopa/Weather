@@ -21,7 +21,7 @@ export interface WeatherError {
 export type WeatherResponse = WeatherSuccess | WeatherError;
 
 export const isWeatherSuccess = (
-  weather: WeatherResponse
+  weather: WeatherResponse,
 ): weather is WeatherSuccess => weather.cod === 200;
 
 export const isWeatherResponse = (value: unknown): value is WeatherResponse => {
@@ -48,7 +48,7 @@ export const isWeatherResponse = (value: unknown): value is WeatherResponse => {
           !!condition &&
           typeof condition === "object" &&
           "main" in condition &&
-          typeof condition.main === "string"
+          typeof condition.main === "string",
       ) &&
       !!wind &&
       typeof wind.speed === "number"

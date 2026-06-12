@@ -37,7 +37,7 @@ describe("weatherStorage", () => {
     });
 
     expect(() =>
-      saveStoredWeather({ city: "Kyiv", weather: weatherFixture })
+      saveStoredWeather({ city: "Kyiv", weather: weatherFixture }),
     ).not.toThrow();
   });
 });

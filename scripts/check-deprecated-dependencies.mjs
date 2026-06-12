@@ -6,9 +6,13 @@ if (!npmCli) {
   throw new Error("Run this check through npm.");
 }
 
-const output = execFileSync(process.execPath, [npmCli, "query", "[deprecated]"], {
-  encoding: "utf8",
-});
+const output = execFileSync(
+  process.execPath,
+  [npmCli, "query", "[deprecated]"],
+  {
+    encoding: "utf8",
+  },
+);
 const dependencies = JSON.parse(output);
 
 if (dependencies.length === 0) {
@@ -24,7 +28,7 @@ const deprecatedDependencies = [
         package: `${dependency.name}@${dependency.version}`,
         reason: dependency.deprecated,
       },
-    ])
+    ]),
   ).values(),
 ];
 

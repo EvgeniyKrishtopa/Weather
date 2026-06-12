@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-  type FormEvent,
-} from "react";
+import React, { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   Alert,
   Autocomplete,
@@ -48,7 +43,7 @@ const Form = () => {
 
   const selectedCountry = useMemo(
     () => countries.find((country) => country.iso2 === countryIso),
-    [countries, countryIso]
+    [countries, countryIso],
   );
 
   useEffect(() => {
@@ -63,7 +58,9 @@ const Form = () => {
       } catch (error) {
         if (!controller.signal.aborted) {
           setLocationError(
-            error instanceof Error ? error.message : "Unable to load countries."
+            error instanceof Error
+              ? error.message
+              : "Unable to load countries.",
           );
         }
       } finally {
@@ -96,7 +93,7 @@ const Form = () => {
       } catch (error) {
         if (!controller.signal.aborted) {
           setLocationError(
-            error instanceof Error ? error.message : "Unable to load cities."
+            error instanceof Error ? error.message : "Unable to load cities.",
           );
         }
       } finally {

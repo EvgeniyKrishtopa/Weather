@@ -13,7 +13,7 @@ const createError = (message: string): WeatherError => ({
 
 export const fetchWeather = async (
   city: string,
-  country: string
+  country: string,
 ): Promise<WeatherResponse> => {
   const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
 

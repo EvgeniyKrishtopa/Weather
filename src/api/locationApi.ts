@@ -1,9 +1,7 @@
 import type { CountryOption } from "../types/location";
 
-const COUNTRIES_API_URL =
-  "https://countriesnow.space/api/v0.1/countries/iso";
-const CITIES_API_URL =
-  "https://countriesnow.space/api/v0.1/countries/cities";
+const COUNTRIES_API_URL = "https://countriesnow.space/api/v0.1/countries/iso";
+const CITIES_API_URL = "https://countriesnow.space/api/v0.1/countries/cities";
 
 interface CountriesNowResponse {
   error: boolean;
@@ -17,7 +15,7 @@ interface CountriesNowCountry {
 }
 
 const isCountriesNowResponse = (
-  value: unknown
+  value: unknown,
 ): value is CountriesNowResponse =>
   !!value &&
   typeof value === "object" &&
@@ -27,9 +25,7 @@ const isCountriesNowResponse = (
   typeof value.msg === "string" &&
   "data" in value;
 
-const isCountriesNowCountry = (
-  value: unknown
-): value is CountriesNowCountry =>
+const isCountriesNowCountry = (value: unknown): value is CountriesNowCountry =>
   !!value &&
   typeof value === "object" &&
   "name" in value &&
@@ -42,7 +38,7 @@ const compareNames = (first: string, second: string): number =>
   first.localeCompare(second, "en");
 
 export const fetchCountries = async (
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<CountryOption[]> => {
   const response = await fetch(COUNTRIES_API_URL, { signal });
   const body: unknown = await response.json();
@@ -64,7 +60,7 @@ export const fetchCountries = async (
 
 export const fetchCities = async (
   countryName: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<string[]> => {
   const response = await fetch(CITIES_API_URL, {
     method: "POST",

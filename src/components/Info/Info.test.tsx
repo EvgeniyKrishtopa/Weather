@@ -30,7 +30,7 @@ describe("weather information", () => {
         }}
       >
         <Info />
-      </WeatherContext.Provider>
+      </WeatherContext.Provider>,
     );
 
     expect(screen.getAllByTestId("AirRoundedIcon")).toHaveLength(2);
@@ -48,7 +48,7 @@ describe("weather information", () => {
         }}
       >
         <Info />
-      </WeatherContext.Provider>
+      </WeatherContext.Provider>,
     );
 
     expect(screen.getByText("Current")).toBeVisible();

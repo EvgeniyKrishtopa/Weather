@@ -12,7 +12,7 @@ export type WeatherAction =
 
 const weatherReducer = (
   state: WeatherStateValue,
-  action: WeatherAction
+  action: WeatherAction,
 ): WeatherStateValue => {
   switch (action.type) {
     case "requestStarted":
