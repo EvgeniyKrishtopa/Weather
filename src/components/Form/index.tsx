@@ -14,6 +14,7 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import { observer } from "mobx-react-lite";
 import { fetchCities, fetchCountries } from "../../api/locationApi";
 import { useWeatherContext } from "../../context/weatherContext";
 import type { CountryOption } from "../../types/location";
@@ -30,7 +31,7 @@ import {
 const DEFAULT_COUNTRY_ISO = "US";
 const filterCityOptions = createFilterOptions<string>({ limit: 100 });
 
-const Form = () => {
+const Form = observer(() => {
   const { getWeather, loading } = useWeatherContext();
   const [countries, setCountries] = useState<CountryOption[]>([]);
   const [countryIso, setCountryIso] = useState(DEFAULT_COUNTRY_ISO);
@@ -206,6 +207,6 @@ const Form = () => {
       </FormContent>
     </FormCard>
   );
-};
+});
 
 export default Form;
