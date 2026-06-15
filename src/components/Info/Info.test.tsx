@@ -43,6 +43,31 @@ describe("weather information", () => {
     expect(screen.getByText("Volcanic ash")).toBeVisible();
   });
 
+  it("uses the API city and consistently formatted measurements", () => {
+    const store = createStore({
+      ...unknownWeather,
+      name: "Kyiv City",
+      main: { temp: 10, humidity: 50 },
+      wind: { speed: 2 },
+    });
+
+    render(
+      <WeatherContext.Provider value={store}>
+        <Info />
+      </WeatherContext.Provider>,
+    );
+
+    expect(
+      screen.getByRole("region", {
+        name: "Current weather in Kyiv City",
+      }),
+    ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Kyiv City" })).toBeVisible();
+    expect(screen.getByText("10.0")).toBeVisible();
+    expect(screen.getByText("2.0 m/s")).toBeVisible();
+    expect(screen.getByText("50%")).toBeVisible();
+  });
+
   it("uses fallback text when no weather description is available", () => {
     render(
       <WeatherContext.Provider

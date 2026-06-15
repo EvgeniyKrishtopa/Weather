@@ -10,7 +10,6 @@ import WbSunnyRoundedIcon from "@mui/icons-material/WbSunnyRounded";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { observer } from "mobx-react-lite";
 import { useWeatherContext } from "../../context/weatherContext";
-import { isWeatherSuccess } from "../../types/weather";
 import Loader from "../Loader";
 import { ErrorWeather } from "./errorWeather";
 import { WeatherComponent } from "./weather";
@@ -26,29 +25,25 @@ const weatherIcons: Record<string, SvgIconComponent> = {
 };
 
 const Info = observer(() => {
-  const { loading, weather, city } = useWeatherContext();
+  const { error, loading, weather } = useWeatherContext();
 
   if (loading) {
     return <Loader />;
+  }
+
+  if (error) {
+    return <ErrorWeather currentWeather={error} />;
   }
 
   if (!weather) {
     return null;
   }
 
-  if (!isWeatherSuccess(weather)) {
-    return <ErrorWeather currentWeather={weather} />;
-  }
-
   const weatherDescription = weather.weather[0]?.main ?? "";
   const WeatherIcon = weatherIcons[weatherDescription] ?? AirRoundedIcon;
 
   return (
-    <WeatherComponent
-      currentCity={city}
-      currentWeather={weather}
-      WeatherIcon={WeatherIcon}
-    />
+    <WeatherComponent currentWeather={weather} WeatherIcon={WeatherIcon} />
   );
 });
 
