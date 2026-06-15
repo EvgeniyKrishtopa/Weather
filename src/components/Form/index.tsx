@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useState, type FormEvent } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import {
   Alert,
   Autocomplete,
@@ -28,19 +34,19 @@ import {
   FormHeader,
 } from "./Form.styles";
 
-const DEFAULT_COUNTRY_ISO = "US";
 const filterCityOptions = createFilterOptions<string>({ limit: 100 });
 
 const Form = observer(() => {
-  const { getWeather, loading } = useWeatherContext();
+  const weatherStore = useWeatherContext();
+  const { city, countryIso, getWeather, loading, setCity, setCountryIso } =
+    weatherStore;
   const [countries, setCountries] = useState<CountryOption[]>([]);
-  const [countryIso, setCountryIso] = useState(DEFAULT_COUNTRY_ISO);
   const [cities, setCities] = useState<string[]>([]);
-  const [city, setCity] = useState<string | null>(null);
   const [countriesLoading, setCountriesLoading] = useState(true);
   const [citiesLoading, setCitiesLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
   const [showValidationError, setShowValidationError] = useState(false);
+  const pendingCountryRequest = useRef<string | null>(null);
 
   const selectedCountry = useMemo(
     () => countries.find((country) => country.iso2 === countryIso),
@@ -87,12 +93,39 @@ const Form = observer(() => {
       setCitiesLoading(true);
       setLocationError("");
       setCities([]);
-      setCity(null);
 
       try {
-        setCities(await fetchCities(selectedCountry.name, controller.signal));
+        const loadedCities = await fetchCities(
+          selectedCountry.name,
+          controller.signal,
+        );
+
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setCities(loadedCities);
+
+        if (pendingCountryRequest.current !== selectedCountry.iso2) {
+          return;
+        }
+
+        pendingCountryRequest.current = null;
+
+        const currentCity = weatherStore.city;
+
+        if (!currentCity) {
+          return;
+        }
+
+        if (loadedCities.includes(currentCity)) {
+          void weatherStore.getWeather(currentCity, selectedCountry.iso2);
+        } else {
+          weatherStore.setCity(null);
+        }
       } catch (error) {
         if (!controller.signal.aborted) {
+          pendingCountryRequest.current = null;
           setLocationError(
             error instanceof Error ? error.message : "Unable to load cities.",
           );
@@ -107,11 +140,32 @@ const Form = observer(() => {
     void loadCities();
 
     return () => controller.abort();
-  }, [selectedCountry]);
+  }, [selectedCountry, weatherStore]);
 
   const handleCountryChange = (event: SelectChangeEvent) => {
-    setCountryIso(event.target.value);
+    const nextCountryIso = event.target.value;
+
+    if (nextCountryIso === countryIso) {
+      return;
+    }
+
+    pendingCountryRequest.current = city ? nextCountryIso : null;
+    setCountryIso(nextCountryIso);
     setShowValidationError(false);
+  };
+
+  const handleCityChange = (value: string | null) => {
+    const changed = setCity(value);
+
+    if (!changed) {
+      return;
+    }
+
+    setShowValidationError(false);
+
+    if (value && selectedCountry) {
+      void getWeather(value, selectedCountry.iso2);
+    }
   };
 
   const formSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -164,10 +218,7 @@ const Form = observer(() => {
               options={cities}
               filterOptions={filterCityOptions}
               value={city}
-              onChange={(_, value) => {
-                setCity(value);
-                setShowValidationError(false);
-              }}
+              onChange={(_, value) => handleCityChange(value)}
               loading={citiesLoading}
               loadingText="Loading cities..."
               noOptionsText="No cities found"

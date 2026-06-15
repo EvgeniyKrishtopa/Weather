@@ -14,6 +14,7 @@ const createError = (message: string): WeatherError => ({
 export const fetchWeather = async (
   city: string,
   country: string,
+  signal?: AbortSignal,
 ): Promise<WeatherResponse> => {
   const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
@@ -28,7 +29,9 @@ export const fetchWeather = async (
   });
 
   try {
-    const response = await fetch(`${WEATHER_API_URL}?${searchParams}`);
+    const response = await fetch(`${WEATHER_API_URL}?${searchParams}`, {
+      signal,
+    });
     const data: unknown = await response.json();
 
     if (!isWeatherResponse(data)) {
@@ -36,7 +39,11 @@ export const fetchWeather = async (
     }
 
     return data;
-  } catch {
+  } catch (error) {
+    if (signal?.aborted) {
+      throw error;
+    }
+
     return createError("Unable to connect to the weather service");
   }
 };
