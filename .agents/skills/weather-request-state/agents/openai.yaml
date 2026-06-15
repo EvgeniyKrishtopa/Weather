@@ -1,0 +1,4 @@
+interface:
+  display_name: "Weather Request State"
+  short_description: "Change MobX weather request behavior safely"
+  default_prompt: "Use $weather-request-state to update the Weather app request and selection behavior."

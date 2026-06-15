@@ -36,6 +36,9 @@ jobs:
       - name: Run local quality checks
         run: npm run validate
 
+      - name: Enforce unit test coverage
+        run: npm run test:coverage
+
       - name: Reject deprecated dependencies
         run: npm run dependencies:deprecated
 

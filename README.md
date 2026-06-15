@@ -28,9 +28,10 @@ manually with:
 npm run validate
 ```
 
-Pull requests run the same checks in GitHub Actions. CI also rejects deprecated
-dependencies, audits high and critical dependency vulnerabilities, and runs
-CodeQL security analysis for JavaScript and TypeScript.
+Pull requests run the same checks in GitHub Actions. CI also requires at least
+90% unit test coverage for statements, branches, functions, and lines, rejects
+deprecated dependencies, audits high and critical dependency vulnerabilities,
+and runs CodeQL security analysis for JavaScript and TypeScript.
 
 ## GitHub Pages Deployment
 
