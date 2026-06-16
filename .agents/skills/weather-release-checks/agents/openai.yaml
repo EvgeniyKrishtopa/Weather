@@ -1,0 +1,4 @@
+interface:
+  display_name: "Weather Release Checks"
+  short_description: "Validate Weather changes before publishing"
+  default_prompt: "Use $weather-release-checks to validate and prepare these Weather app changes for publishing."
