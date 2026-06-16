@@ -1,87 +1,128 @@
-import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Box, Paper, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { themeAlpha, themeColors } from "../../theme";
 
 export const WeatherCard = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
+  padding: theme.spacing(2),
   color: themeColors.white,
   background: `linear-gradient(135deg, ${themeAlpha.weatherStart}, ${themeAlpha.weatherEnd})`,
   [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
+    padding: theme.spacing(2.5),
   },
 }));
 
 export const WeatherContent = styled(Stack)(({ theme }) => ({
-  gap: theme.spacing(3),
+  gap: theme.spacing(1.5),
 }));
 
-export const WeatherHeader = styled(Stack)(({ theme }) => ({
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: theme.spacing(2),
-}));
+export const WeatherHeader = styled(Box)({});
 
 export const WeatherEyebrow = styled(Typography)({
+  fontSize: "0.7rem",
   opacity: 0.8,
 });
 
-export const WeatherDescription = styled(Typography)({
-  opacity: 0.88,
-});
+export const ConditionSummary = styled(Stack)(({ theme }) => ({
+  flexDirection: "row",
+  alignItems: "flex-end",
+  justifyContent: "space-between",
+  gap: theme.spacing(1.5),
+}));
 
-export const WeatherIconContainer = styled(Box)(({ theme }) => ({
-  "& .MuiSvgIcon-root": {
-    fontSize: 64,
-    [theme.breakpoints.up("sm")]: {
-      fontSize: 80,
-    },
-  },
+export const WeatherDescription = styled(Typography)(({ theme }) => ({
+  marginTop: theme.spacing(0.25),
+  fontSize: "0.875rem",
+  fontWeight: 600,
+  opacity: 0.88,
 }));
 
 export const Temperature = styled("p")(({ theme }) => ({
-  ...theme.typography.h2,
+  ...theme.typography.h3,
   margin: 0,
   fontWeight: 700,
+  lineHeight: 1,
   letterSpacing: "-0.04em",
 }));
 
-export const WeatherDivider = styled(Divider)({
-  borderColor: themeAlpha.whiteDivider,
-});
+export const TemperatureUnit = styled("span")(({ theme }) => ({
+  marginLeft: theme.spacing(0.5),
+  fontSize: "0.45em",
+  fontWeight: 600,
+  letterSpacing: 0,
+  verticalAlign: "top",
+}));
 
-export const Metrics = styled(Stack)(({ theme }) => ({
-  flexDirection: "column",
-  justifyContent: "space-between",
-  gap: theme.spacing(3),
-  color: themeColors.white,
-  [theme.breakpoints.up("sm")]: {
-    flexDirection: "row",
+export const WeatherIconContainer = styled(Box)(({ theme }) => ({
+  width: 56,
+  height: 56,
+  flexShrink: 0,
+  display: "grid",
+  placeItems: "center",
+  borderRadius: "50%",
+  backgroundColor: themeAlpha.whiteSurface,
+  "& .MuiSvgIcon-root": {
+    fontSize: 36,
+    [theme.breakpoints.up("sm")]: {
+      fontSize: 42,
+    },
   },
+  [theme.breakpoints.up("sm")]: {
+    width: 64,
+    height: 64,
+  },
+}));
+
+export const Metrics = styled("dl")(({ theme }) => ({
+  display: "grid",
+  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+  gap: theme.spacing(1),
+  margin: 0,
+  color: themeColors.white,
 }));
 
 export const MetricRow = styled(Stack)(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
-  gap: theme.spacing(1.5),
+  minWidth: 0,
+  gap: theme.spacing(0.75),
+  padding: theme.spacing(0.75),
+  border: `1px solid ${themeAlpha.whiteDivider}`,
+  borderRadius: theme.spacing(1.5),
+  backgroundColor: themeAlpha.whiteSurface,
+  [theme.breakpoints.up("sm")]: {
+    gap: theme.spacing(1),
+    padding: theme.spacing(1),
+  },
 }));
 
 export const MetricIcon = styled(Box)(({ theme }) => ({
-  width: 40,
-  height: 40,
+  width: 30,
+  height: 30,
+  flexShrink: 0,
   display: "grid",
   placeItems: "center",
   borderRadius: theme.spacing(1),
   color: themeColors.white,
   backgroundColor: themeAlpha.whiteSurface,
+  "& .MuiSvgIcon-root": {
+    fontSize: 17,
+  },
+  [theme.breakpoints.up("sm")]: {
+    width: 34,
+    height: 34,
+  },
 }));
 
-export const MetricLabel = styled(Typography)({
+export const MetricLabel = styled("dt")(({ theme }) => ({
+  ...theme.typography.caption,
   color: "inherit",
   opacity: 0.8,
-});
+}));
 
-export const MetricValue = styled(Typography)({
+export const MetricValue = styled("dd")(({ theme }) => ({
+  ...theme.typography.body2,
+  margin: 0,
   color: "inherit",
   fontWeight: 700,
-});
+  whiteSpace: "nowrap",
+}));

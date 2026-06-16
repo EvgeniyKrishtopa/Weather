@@ -19,7 +19,7 @@ describe("location API", () => {
             { name: "United States", Iso2: "US", Iso3: "USA" },
           ],
         }),
-      })
+      }),
     );
 
     await expect(fetchCountries()).resolves.toEqual([
@@ -48,7 +48,7 @@ describe("location API", () => {
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({ country: "United States" }),
-      })
+      }),
     );
   });
 
@@ -62,12 +62,10 @@ describe("location API", () => {
           msg: "countries",
           data: [{ name: "United States", Iso2: "USA" }],
         }),
-      })
+      }),
     );
 
-    await expect(fetchCountries()).rejects.toThrow(
-      "Unable to load countries."
-    );
+    await expect(fetchCountries()).rejects.toThrow("Unable to load countries.");
   });
 
   it("rejects failed city responses", async () => {
@@ -80,11 +78,11 @@ describe("location API", () => {
           msg: "failed",
           data: null,
         }),
-      })
+      }),
     );
 
     await expect(fetchCities("United States")).rejects.toThrow(
-      "Unable to load cities."
+      "Unable to load cities.",
     );
   });
 });

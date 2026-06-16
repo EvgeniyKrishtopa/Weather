@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { loadStoredWeather, saveStoredWeather } from "./weatherStorage";
+import {
+  clearStoredWeather,
+  loadStoredWeather,
+  saveStoredWeather,
+} from "./weatherStorage";
 import { weatherFixture } from "../test/weatherFixture";
 
 const storageKey = "weather-app:last-weather";
@@ -37,7 +41,15 @@ describe("weatherStorage", () => {
     });
 
     expect(() =>
-      saveStoredWeather({ city: "Kyiv", weather: weatherFixture })
+      saveStoredWeather({ city: "Kyiv", weather: weatherFixture }),
     ).not.toThrow();
+  });
+
+  it("clears cached weather", () => {
+    saveStoredWeather({ city: "Kyiv", weather: weatherFixture });
+
+    clearStoredWeather();
+
+    expect(loadStoredWeather()).toBeNull();
   });
 });

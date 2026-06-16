@@ -56,3 +56,11 @@ export const saveStoredWeather = (weather: StoredWeather): void => {
     // Caching is optional; weather requests should still complete without it.
   }
 };
+
+export const clearStoredWeather = (): void => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Cache cleanup is optional and must not block user interaction.
+  }
+};

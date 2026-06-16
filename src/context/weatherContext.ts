@@ -1,18 +1,11 @@
 import { createContext, useContext } from "react";
-import type { WeatherResponse } from "../types/weather";
+import type { WeatherStore } from "../store/weatherStore";
 
-interface WeatherContextValue {
-  getWeather: (city: string, country: string) => Promise<void>;
-  weather: WeatherResponse | null;
-  city: string;
-  loading: boolean;
-}
-
-export const WeatherContext = createContext<WeatherContextValue | undefined>(
-  undefined
+export const WeatherContext = createContext<WeatherStore | undefined>(
+  undefined,
 );
 
-export const useWeatherContext = (): WeatherContextValue => {
+export const useWeatherContext = (): WeatherStore => {
   const context = useContext(WeatherContext);
 
   if (!context) {
