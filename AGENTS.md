@@ -114,7 +114,11 @@
 
 ## Commands
 
-- `npm run dev` - start the Vite development server.
+- `npm run dev` - start the Vite development server and open the app in the
+  default system browser at `/Weather/`.
+- `npm start` - start the Vite development server and open the app in the
+  default system browser at `/Weather/`.
+- `npm run stop` - stop the Vite development server running on port `5173`.
 - `npm run build` - create the production build.
 - `npm run format` - format supported files with Prettier.
 - `npm run format:check` - verify formatting without changing files.
