@@ -5,6 +5,7 @@ import {
   loadStoredLocation,
   saveStoredLocation,
 } from "../utils/locationStorage";
+import { getDefaultCountryIso } from "../utils/localeCountry";
 import {
   clearStoredWeather,
   loadStoredWeather,
@@ -27,10 +28,15 @@ vi.mock("../utils/locationStorage", () => ({
   saveStoredLocation: vi.fn(),
 }));
 
+vi.mock("../utils/localeCountry", () => ({
+  getDefaultCountryIso: vi.fn(),
+}));
+
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(loadStoredWeather).mockReturnValue(null);
   vi.mocked(loadStoredLocation).mockReturnValue(null);
+  vi.mocked(getDefaultCountryIso).mockReturnValue("US");
 });
 
 describe("WeatherStore", () => {
@@ -48,6 +54,7 @@ describe("WeatherStore", () => {
   });
 
   it("restores and updates the selected location", () => {
+    vi.mocked(getDefaultCountryIso).mockReturnValue("CA");
     vi.mocked(loadStoredLocation).mockReturnValue({
       city: "Lviv",
       countryIso: "UA",
@@ -63,6 +70,90 @@ describe("WeatherStore", () => {
       city: "Kyiv",
       countryIso: "UA",
     });
+  });
+
+  it("defaults to the timezone country when no stored country exists", () => {
+    vi.mocked(getDefaultCountryIso).mockReturnValue("UA");
+
+    const store = new WeatherStore();
+
+    expect(store.countryIso).toBe("UA");
+    expect(saveStoredLocation).not.toHaveBeenCalled();
+  });
+
+  it("applies a geolocation country while the selection is still automatic", () => {
+    vi.mocked(getDefaultCountryIso).mockReturnValue("US");
+    const store = new WeatherStore();
+
+    expect(store.applyDetectedCountryIso("UA")).toBe(true);
+
+    expect(store.countryIso).toBe("UA");
+    expect(store.city).toBeNull();
+    expect(clearStoredWeather).toHaveBeenCalled();
+    expect(saveStoredLocation).not.toHaveBeenCalled();
+  });
+
+  it("does not apply a geolocation country over a stored location", () => {
+    vi.mocked(loadStoredLocation).mockReturnValue({
+      city: "Lviv",
+      countryIso: "UA",
+    });
+    const store = new WeatherStore();
+
+    expect(store.applyDetectedCountryIso("CA")).toBe(false);
+
+    expect(store.countryIso).toBe("UA");
+    expect(store.city).toBe("Lviv");
+    expect(clearStoredWeather).not.toHaveBeenCalled();
+  });
+
+  it("does not apply a late geolocation country after user selection", () => {
+    const store = new WeatherStore();
+
+    store.setCountryIso("UA");
+    vi.clearAllMocks();
+
+    expect(store.applyDetectedCountryIso("CA")).toBe(false);
+    expect(store.countryIso).toBe("UA");
+    expect(clearStoredWeather).not.toHaveBeenCalled();
+  });
+
+  it("does not apply a late geolocation country after a weather request", async () => {
+    vi.mocked(fetchWeather).mockResolvedValue(weatherFixture);
+    const store = new WeatherStore();
+
+    await store.getWeather("Chicago", "US");
+    vi.clearAllMocks();
+
+    expect(store.applyDetectedCountryIso("UA")).toBe(false);
+    expect(store.countryIso).toBe("US");
+    expect(store.city).toBe("Chicago");
+    expect(clearStoredWeather).not.toHaveBeenCalled();
+  });
+
+  it("clears stale restored weather and city when geolocation changes country", () => {
+    vi.mocked(loadStoredWeather).mockReturnValue({
+      city: "Chicago",
+      weather: { ...weatherFixture, name: "Chicago" },
+    });
+    const store = new WeatherStore();
+
+    expect(store.applyDetectedCountryIso("UA")).toBe(true);
+
+    expect(store.countryIso).toBe("UA");
+    expect(store.city).toBeNull();
+    expect(store.weather).toBeNull();
+    expect(clearStoredWeather).toHaveBeenCalled();
+  });
+
+  it("falls back to United States when detected country is not available", () => {
+    vi.mocked(getDefaultCountryIso).mockReturnValue("GB");
+    const store = new WeatherStore();
+
+    expect(store.reconcileDetectedCountryOptions(["UA", "US"])).toBe(true);
+
+    expect(store.countryIso).toBe("US");
+    expect(saveStoredLocation).not.toHaveBeenCalled();
   });
 
   it("retains the city while a new country is validated", () => {
