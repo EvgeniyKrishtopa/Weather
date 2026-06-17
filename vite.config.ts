@@ -4,6 +4,9 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   base: "/Weather/",
   plugins: [react()],
+  server: {
+    open: "/Weather/",
+  },
   test: {
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",

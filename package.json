@@ -18,6 +18,7 @@
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "start": "vite",
+    "stop": "node scripts/stop-dev-server.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
