@@ -81,7 +81,10 @@ function terminalConsoleBridgePlugin(): Plugin {
 
 export default defineConfig({
   base: "/Weather/",
-  plugins: [react(), terminalConsoleBridgePlugin()],
+  plugins: [react()],
+  server: {
+    open: "/Weather/",
+  },
   test: {
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
