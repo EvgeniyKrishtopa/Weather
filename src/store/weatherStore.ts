@@ -14,6 +14,7 @@ import {
   loadStoredWeather,
   saveStoredWeather,
 } from "../utils/weatherStorage";
+import { getDefaultCountryIso } from "../utils/localeCountry";
 
 const DEFAULT_COUNTRY_ISO = "US";
 
@@ -23,6 +24,7 @@ export class WeatherStore {
   city: string | null;
   countryIso: string;
   loading = false;
+  private countryAutoDetected: boolean;
   private activeRequest: AbortController | null = null;
   private requestId = 0;
 
@@ -32,16 +34,26 @@ export class WeatherStore {
 
     this.weather = storedWeather?.weather ?? null;
     this.city = storedLocation?.city ?? storedWeather?.city ?? null;
-    this.countryIso = storedLocation?.countryIso ?? DEFAULT_COUNTRY_ISO;
+    this.countryIso =
+      storedLocation?.countryIso ?? getDefaultCountryIso(DEFAULT_COUNTRY_ISO);
+    this.countryAutoDetected = !storedLocation;
 
-    makeAutoObservable<this, "activeRequest" | "requestId">(
+    makeAutoObservable<
+      this,
+      "activeRequest" | "requestId" | "countryAutoDetected"
+    >(
       this,
       {
         activeRequest: false,
         requestId: false,
+        countryAutoDetected: false,
       },
       { autoBind: true },
     );
+  }
+
+  get canApplyDetectedCountryIso(): boolean {
+    return this.countryAutoDetected;
   }
 
   setCity(city: string | null): boolean {
@@ -49,6 +61,7 @@ export class WeatherStore {
       return false;
     }
 
+    this.countryAutoDetected = false;
     this.invalidateWeather();
     this.city = city;
     this.saveLocation();
@@ -61,6 +74,7 @@ export class WeatherStore {
       return false;
     }
 
+    this.countryAutoDetected = false;
     this.invalidateWeather();
     this.countryIso = countryIso;
     this.saveLocation();
@@ -69,6 +83,7 @@ export class WeatherStore {
   }
 
   async getWeather(city: string, country: string): Promise<void> {
+    this.countryAutoDetected = false;
     this.city = city;
     this.countryIso = country;
     this.saveLocation();
@@ -112,6 +127,30 @@ export class WeatherStore {
         });
       }
     }
+  }
+
+  applyDetectedCountryIso(countryIso: string): boolean {
+    if (!this.countryAutoDetected || countryIso === this.countryIso) {
+      return false;
+    }
+
+    this.invalidateWeather();
+    this.city = null;
+    this.countryIso = countryIso;
+
+    return true;
+  }
+
+  reconcileDetectedCountryOptions(countryIsoOptions: string[]): boolean {
+    if (
+      !this.countryAutoDetected ||
+      countryIsoOptions.includes(this.countryIso) ||
+      !countryIsoOptions.includes(DEFAULT_COUNTRY_ISO)
+    ) {
+      return false;
+    }
+
+    return this.applyDetectedCountryIso(DEFAULT_COUNTRY_ISO);
   }
 
   private invalidateWeather(): void {

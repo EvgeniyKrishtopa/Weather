@@ -52,6 +52,10 @@ const Form = observer(() => {
     () => countries.find((country) => country.iso2 === countryIso),
     [countries, countryIso],
   );
+  const countryIsoOptions = useMemo(
+    () => countries.map((country) => country.iso2),
+    [countries],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -61,7 +65,13 @@ const Form = observer(() => {
       setLocationError("");
 
       try {
-        setCountries(await fetchCountries(controller.signal));
+        const loadedCountries = await fetchCountries(controller.signal);
+
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setCountries(loadedCountries);
       } catch (error) {
         if (!controller.signal.aborted) {
           setLocationError(
@@ -80,7 +90,15 @@ const Form = observer(() => {
     void loadCountries();
 
     return () => controller.abort();
-  }, []);
+  }, [weatherStore]);
+
+  useEffect(() => {
+    if (countryIsoOptions.length === 0) {
+      return;
+    }
+
+    weatherStore.reconcileDetectedCountryOptions(countryIsoOptions);
+  }, [countryIso, countryIsoOptions, weatherStore]);
 
   useEffect(() => {
     if (!selectedCountry) {

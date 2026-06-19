@@ -3,23 +3,52 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
+import { fetchCountryIsoByCoordinates } from "./api/geocodingApi";
 import { fetchCities, fetchCountries } from "./api/locationApi";
 import { weatherFixture } from "./test/weatherFixture";
+import { getCurrentCoordinates } from "./utils/geolocation";
 
 vi.mock("./api/locationApi", () => ({
   fetchCountries: vi.fn(),
   fetchCities: vi.fn(),
 }));
 
+vi.mock("./api/geocodingApi", () => ({
+  fetchCountryIsoByCoordinates: vi.fn(),
+}));
+
+vi.mock("./utils/geolocation", () => ({
+  getCurrentCoordinates: vi.fn(),
+}));
+
+const stubTimeZone = (timeZone?: string) => {
+  vi.spyOn(Intl.DateTimeFormat.prototype, "resolvedOptions").mockReturnValue({
+    calendar: "gregory",
+    locale: "en-US",
+    numberingSystem: "latn",
+    timeZone,
+  } as Intl.ResolvedDateTimeFormatOptions);
+};
+
 beforeEach(() => {
   vi.stubEnv("VITE_OPENWEATHER_API_KEY", "test-key");
+  stubTimeZone();
+  vi.mocked(getCurrentCoordinates).mockResolvedValue(null);
+  vi.mocked(fetchCountryIsoByCoordinates).mockResolvedValue(null);
   vi.mocked(fetchCountries).mockResolvedValue([
+    { name: "Canada", iso2: "CA" },
     { name: "Ukraine", iso2: "UA" },
     { name: "United States", iso2: "US" },
   ]);
-  vi.mocked(fetchCities).mockImplementation(async (countryName) =>
-    countryName === "Ukraine" ? ["Kyiv", "Lviv"] : ["Chicago", "New York"],
-  );
+  vi.mocked(fetchCities).mockImplementation(async (countryName) => {
+    if (countryName === "Canada") {
+      return ["Toronto"];
+    }
+
+    return countryName === "Ukraine"
+      ? ["Kyiv", "Lviv"]
+      : ["Chicago", "New York"];
+  });
 });
 
 afterEach(() => {
@@ -39,7 +68,44 @@ describe("App", () => {
     expect(screen.getByText("Choose a city.")).toBeVisible();
   });
 
-  it("defaults to United States and requests weather with its ISO", async () => {
+  it("defaults to the timezone country and requests weather with its ISO", async () => {
+    stubTimeZone("Europe/Kyiv");
+    vi.spyOn(window.navigator, "language", "get").mockReturnValue("ru-RU");
+    vi.spyOn(window.navigator, "languages", "get").mockReturnValue(["ru-RU"]);
+    const user = userEvent.setup();
+    const fetchMock = vi.fn().mockResolvedValue({
+      json: vi.fn().mockResolvedValue({
+        ...weatherFixture,
+        name: "Kyiv",
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    expect(
+      await screen.findByRole("combobox", { name: "Country" }),
+    ).toHaveTextContent("Ukraine");
+    expect(fetchCities).toHaveBeenCalledWith(
+      "Ukraine",
+      expect.any(AbortSignal),
+    );
+
+    const citySelect = screen.getByRole("combobox", { name: "City" });
+    await waitFor(() => expect(citySelect).toBeEnabled());
+    await user.type(citySelect, "Kyiv");
+    await user.click(await screen.findByRole("option", { name: "Kyiv" }));
+
+    expect(
+      await screen.findByRole("region", {
+        name: "Current weather in Kyiv",
+      }),
+    ).toBeVisible();
+    const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
+    expect(requestUrl.searchParams.get("q")).toBe("Kyiv,UA");
+  });
+
+  it("falls back to United States and requests weather with its ISO", async () => {
+    stubTimeZone("Unknown/Nowhere");
     const user = userEvent.setup();
     const fetchMock = vi.fn().mockResolvedValue({
       json: vi.fn().mockResolvedValue({
@@ -77,6 +143,49 @@ describe("App", () => {
     );
     expect(screen.getByRole("combobox", { name: "City" })).toHaveValue(
       "Chicago",
+    );
+  });
+
+  it("updates the default country when geolocation reverse lookup succeeds", async () => {
+    stubTimeZone("America/New_York");
+    vi.mocked(getCurrentCoordinates).mockResolvedValue({
+      latitude: 43.65,
+      longitude: -79.38,
+    });
+    vi.mocked(fetchCountryIsoByCoordinates).mockResolvedValue("CA");
+
+    render(<App />);
+
+    expect(
+      await screen.findByRole("combobox", { name: "Country" }),
+    ).toHaveTextContent("Canada");
+    expect(fetchCountryIsoByCoordinates).toHaveBeenCalledWith(
+      43.65,
+      -79.38,
+      expect.any(AbortSignal),
+    );
+    expect(fetchCities).toHaveBeenCalledWith("Canada", expect.any(AbortSignal));
+  });
+
+  it("falls back to United States when geolocation returns an unavailable country", async () => {
+    stubTimeZone("America/New_York");
+    vi.mocked(fetchCountries).mockResolvedValue([
+      { name: "Ukraine", iso2: "UA" },
+      { name: "United States", iso2: "US" },
+    ]);
+    vi.mocked(getCurrentCoordinates).mockResolvedValue({
+      latitude: 43.65,
+      longitude: -79.38,
+    });
+    vi.mocked(fetchCountryIsoByCoordinates).mockResolvedValue("CA");
+
+    render(<App />);
+
+    await waitFor(() =>
+      expect(fetchCountryIsoByCoordinates).toHaveBeenCalled(),
+    );
+    expect(screen.getByRole("combobox", { name: "Country" })).toHaveTextContent(
+      "United States",
     );
   });
 
