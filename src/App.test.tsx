@@ -5,6 +5,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 import { fetchCountryIsoByCoordinates } from "./api/geocodingApi";
 import { fetchCities, fetchCountries } from "./api/locationApi";
+import {
+  LAST_WEATHER_STORAGE_KEY,
+  OPENWEATHER_API_KEY_ENV,
+  SELECTED_LOCATION_STORAGE_KEY,
+} from "./constants";
 import { weatherFixture } from "./test/weatherFixture";
 import { getCurrentCoordinates } from "./utils/geolocation";
 
@@ -31,7 +36,7 @@ const stubTimeZone = (timeZone?: string) => {
 };
 
 beforeEach(() => {
-  vi.stubEnv("VITE_OPENWEATHER_API_KEY", "test-key");
+  vi.stubEnv(OPENWEATHER_API_KEY_ENV, "test-key");
   stubTimeZone();
   vi.mocked(getCurrentCoordinates).mockResolvedValue(null);
   vi.mocked(fetchCountryIsoByCoordinates).mockResolvedValue(null);
@@ -266,7 +271,7 @@ describe("App", () => {
 
   it("restores cached weather on initial render", () => {
     localStorage.setItem(
-      "weather-app:last-weather",
+      LAST_WEATHER_STORAGE_KEY,
       JSON.stringify({ city: "Kyiv", weather: weatherFixture }),
     );
 
@@ -279,7 +284,7 @@ describe("App", () => {
 
   it("restores the selected city and country after reload", async () => {
     localStorage.setItem(
-      "weather-app:selected-location",
+      SELECTED_LOCATION_STORAGE_KEY,
       JSON.stringify({ city: "Kyiv", countryIso: "UA" }),
     );
 
@@ -303,11 +308,11 @@ describe("App", () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
     localStorage.setItem(
-      "weather-app:selected-location",
+      SELECTED_LOCATION_STORAGE_KEY,
       JSON.stringify({ city: "Chicago", countryIso: "US" }),
     );
     localStorage.setItem(
-      "weather-app:last-weather",
+      LAST_WEATHER_STORAGE_KEY,
       JSON.stringify({
         city: "Chicago",
         weather: { ...weatherFixture, name: "Chicago" },
@@ -345,11 +350,11 @@ describe("App", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
     localStorage.setItem(
-      "weather-app:selected-location",
+      SELECTED_LOCATION_STORAGE_KEY,
       JSON.stringify({ city: "Springfield", countryIso: "US" }),
     );
     localStorage.setItem(
-      "weather-app:last-weather",
+      LAST_WEATHER_STORAGE_KEY,
       JSON.stringify({
         city: "Springfield",
         weather: { ...weatherFixture, name: "Springfield" },
@@ -378,11 +383,11 @@ describe("App", () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
     localStorage.setItem(
-      "weather-app:selected-location",
+      SELECTED_LOCATION_STORAGE_KEY,
       JSON.stringify({ city: "Chicago", countryIso: "US" }),
     );
     localStorage.setItem(
-      "weather-app:last-weather",
+      LAST_WEATHER_STORAGE_KEY,
       JSON.stringify({
         city: "Chicago",
         weather: { ...weatherFixture, name: "Chicago" },

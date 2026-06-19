@@ -2,15 +2,11 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Plugin } from "vite";
+import { CONSOLE_LEVEL_VALUES, DEFAULT_CONSOLE_LEVEL } from "./src/constants";
+import type { ConsoleLevel } from "./src/types/console";
+import { APP_BASE_PATH, TERMINAL_CONSOLE_BRIDGE_URL } from "./src/urls";
 
-type ConsoleLevel = "log" | "info" | "warn" | "error" | "debug";
-const validConsoleLevels = new Set<ConsoleLevel>([
-  "log",
-  "info",
-  "warn",
-  "error",
-  "debug",
-]);
+const validConsoleLevels = new Set<ConsoleLevel>(CONSOLE_LEVEL_VALUES);
 
 function terminalConsoleBridgePlugin(): Plugin {
   return {
@@ -18,7 +14,7 @@ function terminalConsoleBridgePlugin(): Plugin {
     apply: "serve",
     configureServer(server) {
       server.middlewares.use(
-        "/__terminal-console",
+        TERMINAL_CONSOLE_BRIDGE_URL,
         (req: IncomingMessage, res: ServerResponse, next: () => void) => {
           if (req.method !== "POST") {
             next();
@@ -45,7 +41,7 @@ function terminalConsoleBridgePlugin(): Plugin {
               const level =
                 payload.level && validConsoleLevels.has(payload.level)
                   ? payload.level
-                  : "log";
+                  : DEFAULT_CONSOLE_LEVEL;
               const prefixParts = [
                 "[browser]",
                 payload.timestamp ?? new Date().toISOString(),
@@ -80,10 +76,10 @@ function terminalConsoleBridgePlugin(): Plugin {
 }
 
 export default defineConfig({
-  base: "/Weather/",
-  plugins: [react()],
+  base: APP_BASE_PATH,
+  plugins: [react(), terminalConsoleBridgePlugin()],
   server: {
-    open: "/Weather/",
+    open: APP_BASE_PATH,
   },
   test: {
     environment: "jsdom",
