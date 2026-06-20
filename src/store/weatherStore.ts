@@ -1,22 +1,34 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { fetchWeather } from "../api/weatherApi";
+import {
+  defaultCountryService,
+  type DefaultCountryService,
+} from "../services/defaultCountryService";
+import {
+  weatherPersistenceService,
+  type WeatherPersistenceService,
+} from "../services/weatherPersistenceService";
+import {
+  weatherRequestService,
+  type WeatherRequestService,
+} from "../services/weatherRequestService";
 import {
   isWeatherSuccess,
   type WeatherError,
   type WeatherSuccess,
 } from "../types/weather";
-import {
-  loadStoredLocation,
-  saveStoredLocation,
-} from "../utils/locationStorage";
-import {
-  clearStoredWeather,
-  loadStoredWeather,
-  saveStoredWeather,
-} from "../utils/weatherStorage";
-import { getDefaultCountryIso } from "../utils/localeCountry";
+import { DEFAULT_COUNTRY_ISO } from "../constants";
 
-const DEFAULT_COUNTRY_ISO = "US";
+export interface WeatherStoreServices {
+  defaultCountryService: DefaultCountryService;
+  persistenceService: WeatherPersistenceService;
+  requestService: WeatherRequestService;
+}
+
+const defaultWeatherStoreServices: WeatherStoreServices = {
+  defaultCountryService,
+  persistenceService: weatherPersistenceService,
+  requestService: weatherRequestService,
+};
 
 export class WeatherStore {
   weather: WeatherSuccess | null;
@@ -27,26 +39,32 @@ export class WeatherStore {
   private countryAutoDetected: boolean;
   private activeRequest: AbortController | null = null;
   private requestId = 0;
+  private readonly services: WeatherStoreServices;
 
-  constructor() {
-    const storedWeather = loadStoredWeather();
-    const storedLocation = loadStoredLocation();
+  constructor(services = defaultWeatherStoreServices) {
+    this.services = services;
+
+    const storedWeather = this.services.persistenceService.loadStoredWeather();
+    const storedLocation =
+      this.services.persistenceService.loadStoredLocation();
 
     this.weather = storedWeather?.weather ?? null;
     this.city = storedLocation?.city ?? storedWeather?.city ?? null;
     this.countryIso =
-      storedLocation?.countryIso ?? getDefaultCountryIso(DEFAULT_COUNTRY_ISO);
+      storedLocation?.countryIso ??
+      this.services.defaultCountryService.getDefaultCountryIso();
     this.countryAutoDetected = !storedLocation;
 
     makeAutoObservable<
       this,
-      "activeRequest" | "requestId" | "countryAutoDetected"
+      "activeRequest" | "requestId" | "countryAutoDetected" | "services"
     >(
       this,
       {
         activeRequest: false,
         requestId: false,
         countryAutoDetected: false,
+        services: false,
       },
       { autoBind: true },
     );
@@ -95,10 +113,14 @@ export class WeatherStore {
     this.weather = null;
     this.error = null;
     this.loading = true;
-    clearStoredWeather();
+    this.services.persistenceService.clearStoredWeather();
 
     try {
-      const response = await fetchWeather(city, country, controller.signal);
+      const response = await this.services.requestService.fetchWeather(
+        city,
+        country,
+        controller.signal,
+      );
 
       if (
         controller.signal.aborted ||
@@ -112,7 +134,10 @@ export class WeatherStore {
       runInAction(() => {
         if (isWeatherSuccess(response)) {
           this.weather = response;
-          saveStoredWeather({ city, weather: response });
+          this.services.persistenceService.saveStoredWeather({
+            city,
+            weather: response,
+          });
         } else {
           this.error = response;
         }
@@ -159,7 +184,7 @@ export class WeatherStore {
     this.weather = null;
     this.error = null;
     this.loading = false;
-    clearStoredWeather();
+    this.services.persistenceService.clearStoredWeather();
   }
 
   private cancelActiveRequest(): void {
@@ -168,7 +193,7 @@ export class WeatherStore {
   }
 
   private saveLocation(): void {
-    saveStoredLocation({
+    this.services.persistenceService.saveStoredLocation({
       city: this.city,
       countryIso: this.countryIso,
     });
