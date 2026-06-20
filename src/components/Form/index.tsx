@@ -1,146 +1,26 @@
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type FormEvent,
-} from "react";
-import {
-  Alert,
-  Autocomplete,
-  Button,
-  Chip,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-  createFilterOptions,
-  type SelectChangeEvent,
-} from "@mui/material";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import React, { useState, type FormEvent } from "react";
+import { type SelectChangeEvent } from "@mui/material";
 import { observer } from "mobx-react-lite";
-import { fetchCities, fetchCountries } from "../../api/locationApi";
 import { useWeatherContext } from "../../context/weatherContext";
-import type { CountryOption } from "../../types/location";
-import { currentDate } from "./currentDate";
-import {
-  FormCard,
-  FormContent,
-  FormDescription,
-  FormElement,
-  FormFields,
-  FormHeader,
-} from "./Form.styles";
-
-const filterCityOptions = createFilterOptions<string>({ limit: 100 });
+import { FormElement } from "./FormElement";
+import { FormHeader } from "./FormHeader";
+import { FormCard, FormContent } from "./Form.styles";
+import { useLocationOptions } from "./useLocationOptions";
 
 const Form = observer(() => {
   const weatherStore = useWeatherContext();
   const { city, countryIso, getWeather, loading, setCity, setCountryIso } =
     weatherStore;
-  const [countries, setCountries] = useState<CountryOption[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
-  const [countriesLoading, setCountriesLoading] = useState(true);
-  const [citiesLoading, setCitiesLoading] = useState(false);
-  const [locationError, setLocationError] = useState("");
   const [showValidationError, setShowValidationError] = useState(false);
-  const pendingCountryRequest = useRef<string | null>(null);
-
-  const selectedCountry = useMemo(
-    () => countries.find((country) => country.iso2 === countryIso),
-    [countries, countryIso],
-  );
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const loadCountries = async () => {
-      setCountriesLoading(true);
-      setLocationError("");
-
-      try {
-        setCountries(await fetchCountries(controller.signal));
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          setLocationError(
-            error instanceof Error
-              ? error.message
-              : "Unable to load countries.",
-          );
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setCountriesLoading(false);
-        }
-      }
-    };
-
-    void loadCountries();
-
-    return () => controller.abort();
-  }, []);
-
-  useEffect(() => {
-    if (!selectedCountry) {
-      return;
-    }
-
-    const controller = new AbortController();
-
-    const loadCities = async () => {
-      setCitiesLoading(true);
-      setLocationError("");
-      setCities([]);
-
-      try {
-        const loadedCities = await fetchCities(
-          selectedCountry.name,
-          controller.signal,
-        );
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setCities(loadedCities);
-
-        if (pendingCountryRequest.current !== selectedCountry.iso2) {
-          return;
-        }
-
-        pendingCountryRequest.current = null;
-
-        const currentCity = weatherStore.city;
-
-        if (!currentCity) {
-          return;
-        }
-
-        if (loadedCities.includes(currentCity)) {
-          void weatherStore.getWeather(currentCity, selectedCountry.iso2);
-        } else {
-          weatherStore.setCity(null);
-        }
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          pendingCountryRequest.current = null;
-          setLocationError(
-            error instanceof Error ? error.message : "Unable to load cities.",
-          );
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setCitiesLoading(false);
-        }
-      }
-    };
-
-    void loadCities();
-
-    return () => controller.abort();
-  }, [selectedCountry, weatherStore]);
+  const {
+    cities,
+    citiesLoading,
+    countries,
+    countriesLoading,
+    locationError,
+    prepareCountryChange,
+    selectedCountry,
+  } = useLocationOptions(weatherStore);
 
   const handleCountryChange = (event: SelectChangeEvent) => {
     const nextCountryIso = event.target.value;
@@ -149,7 +29,7 @@ const Form = observer(() => {
       return;
     }
 
-    pendingCountryRequest.current = city ? nextCountryIso : null;
+    prepareCountryChange(nextCountryIso);
     setCountryIso(nextCountryIso);
     setShowValidationError(false);
   };
@@ -183,78 +63,30 @@ const Form = observer(() => {
   return (
     <FormCard elevation={12}>
       <FormContent>
-        <FormHeader>
-          <div>
-            <Typography component="h1" variant="h4">
-              Get your weather
-            </Typography>
-            <FormDescription color="text.secondary">
-              Search current conditions by city and country.
-            </FormDescription>
-          </div>
-          <Chip label={currentDate()} variant="outlined" color="primary" />
-        </FormHeader>
-
-        <FormElement onSubmit={formSubmit} noValidate>
-          <FormFields>
-            <FormControl disabled={countriesLoading} fullWidth>
-              <InputLabel id="country-select-label">Country</InputLabel>
-              <Select
-                id="country-select"
-                labelId="country-select-label"
-                label="Country"
-                value={selectedCountry ? countryIso : ""}
-                onChange={handleCountryChange}
-              >
-                {countries.map((country) => (
-                  <MenuItem key={country.iso2} value={country.iso2}>
-                    {country.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Autocomplete
-              id="city-select"
-              options={cities}
-              filterOptions={filterCityOptions}
-              value={city}
-              onChange={(_, value) => handleCityChange(value)}
-              loading={citiesLoading}
-              loadingText="Loading cities..."
-              noOptionsText="No cities found"
-              disabled={!selectedCountry || citiesLoading}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="City"
-                  error={showValidationError && !city}
-                />
-              )}
-            />
-            {locationError && <Alert severity="error">{locationError}</Alert>}
-            {showValidationError && (
-              <Alert severity="warning" role="alert">
-                Choose a city.
-              </Alert>
-            )}
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              loading={loading}
-              loadingPosition="start"
-              startIcon={<SearchRoundedIcon />}
-              disabled={
-                countriesLoading ||
-                citiesLoading ||
-                !!locationError ||
-                !selectedCountry
-              }
-            >
-              Get weather
-            </Button>
-          </FormFields>
-        </FormElement>
+        <FormHeader />
+        <FormElement
+          city={{
+            cities,
+            citiesLoading,
+            city,
+          }}
+          country={{
+            countries,
+            countriesLoading,
+            countryIso,
+            selectedCountry,
+          }}
+          handlers={{
+            onCityChange: handleCityChange,
+            onCountryChange: handleCountryChange,
+            onSubmit: formSubmit,
+          }}
+          status={{
+            loading,
+            locationError,
+            showValidationError,
+          }}
+        />
       </FormContent>
     </FormCard>
   );

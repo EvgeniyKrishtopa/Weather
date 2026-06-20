@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { loadStoredLocation, saveStoredLocation } from "./locationStorage";
+import { loadStoredLocation, saveStoredLocation } from ".";
+import { SELECTED_LOCATION_STORAGE_KEY } from "../../constants";
 
-const storageKey = "weather-app:selected-location";
+const storageKey = SELECTED_LOCATION_STORAGE_KEY;
 
 describe("locationStorage", () => {
   it("saves and loads a selected location", () => {

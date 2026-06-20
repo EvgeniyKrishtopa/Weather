@@ -1,4 +1,4 @@
-import type { CountryOption } from "../types/location";
+import type { CountryOption } from "../../types/location";
 
 const COUNTRIES_API_URL = "https://countriesnow.space/api/v0.1/countries/iso";
 const CITIES_API_URL = "https://countriesnow.space/api/v0.1/countries/cities";

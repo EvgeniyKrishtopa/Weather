@@ -1,19 +1,13 @@
 import {
   isWeatherResponse,
   isWeatherSuccess,
-  type WeatherSuccess,
-} from "../types/weather";
-
-const STORAGE_KEY = "weather-app:last-weather";
-
-export interface StoredWeather {
-  city: string;
-  weather: WeatherSuccess;
-}
+  type StoredWeather,
+} from "../../types/weather";
+import { LAST_WEATHER_STORAGE_KEY } from "../../constants";
 
 export const loadStoredWeather = (): StoredWeather | null => {
   try {
-    const serializedWeather = localStorage.getItem(STORAGE_KEY);
+    const serializedWeather = localStorage.getItem(LAST_WEATHER_STORAGE_KEY);
 
     if (!serializedWeather) {
       return null;
@@ -51,7 +45,7 @@ export const loadStoredWeather = (): StoredWeather | null => {
 
 export const saveStoredWeather = (weather: StoredWeather): void => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(weather));
+    localStorage.setItem(LAST_WEATHER_STORAGE_KEY, JSON.stringify(weather));
   } catch {
     // Caching is optional; weather requests should still complete without it.
   }
@@ -59,7 +53,7 @@ export const saveStoredWeather = (weather: StoredWeather): void => {
 
 export const clearStoredWeather = (): void => {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(LAST_WEATHER_STORAGE_KEY);
   } catch {
     // Cache cleanup is optional and must not block user interaction.
   }

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fetchCities, fetchCountries } from "./locationApi";
+import { fetchCities, fetchCountries } from ".";
 
 afterEach(() => {
   vi.unstubAllGlobals();

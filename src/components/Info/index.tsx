@@ -11,8 +11,8 @@ import type { SvgIconComponent } from "@mui/icons-material";
 import { observer } from "mobx-react-lite";
 import { useWeatherContext } from "../../context/weatherContext";
 import Loader from "../Loader";
-import { ErrorWeather } from "./errorWeather";
-import { WeatherComponent } from "./weather";
+import { ErrorWeather } from "./ErrorWeather";
+import { WeatherComponent } from "./WeatherComponent";
 
 const weatherIcons: Record<string, SvgIconComponent> = {
   Thunderstorm: ThunderstormRoundedIcon,

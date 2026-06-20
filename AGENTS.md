@@ -19,18 +19,32 @@
 - Preserve the existing project architecture.
 - Keep application composition in `src/App.tsx` and browser setup in
   `src/main.tsx`.
-- Keep external HTTP calls in `src/api`.
+- Keep external HTTP calls in `src/api/<apiName>/index.ts`, with the API test
+  beside it.
 - Keep shared weather and location state, actions, request ownership, and
   persistence coordination in `src/store/weatherStore.ts`.
 - Keep the store context, provider, and `useWeatherContext` hook in
   `src/context`.
-- Keep runtime data types and type guards in `src/types`.
+- Keep provider-level startup side effects in focused context hooks.
+- Keep runtime data types, type guards, shared enums, interfaces, and reusable
+  type contracts in `src/types`.
+- Keep shared constants in `src/constants.ts` and shared URL values in
+  `src/urls.ts`.
+- Keep concrete service wrappers in `src/services`.
 - Keep browser persistence logic in `src/utils`.
+- Keep reusable helper functions in `src/helpers`.
 - Keep reusable UI in `src/components`, with component-specific styled
   elements in adjacent `*.styles.ts` files.
+- Keep each API, component, utility, helper, service, and hook in a dedicated
+  folder with colocated tests when a test exists.
 - Prefer the existing `WeatherStore`, `useWeatherContext`, API functions, type
   guards, storage helpers, theme tokens, and test fixtures before adding new
   patterns.
+- Keep `WeatherStore` focused on state transitions, request ownership,
+  cancellation, stale-response protection, and persistence coordination.
+- Prefer wrapping or injecting API, storage, and default-detection dependencies
+  through services instead of importing concrete infrastructure directly into
+  store logic.
 - Keep successful weather data and weather errors separate in the store.
 - Preserve the latest-request-wins behavior: selection changes invalidate
   visible weather, cancel the active request, and prevent stale responses from
@@ -39,6 +53,10 @@
   cache. Validate all restored storage values before use.
 - Do not introduce a new library without explaining why.
 - Avoid unnecessary abstractions.
+- Apply SOLID, DRY, and KISS pragmatically: prefer single-responsibility
+  modules, remove duplication when it hides behavior or creates maintenance
+  risk, and keep small explicit validation code when it is clearer than a
+  generic abstraction.
 
 ## Project skills
 
@@ -71,6 +89,13 @@
 - Preserve existing naming conventions.
 - Use functional React components and hooks.
 - Wrap components that read observable store values with `observer`.
+- Keep presentational components small, prop-driven, and free of shared
+  request or persistence logic.
+- Put component orchestration hooks beside the component domain they serve.
+- Keep provider-level startup effects in focused hooks instead of growing the
+  provider component.
+- Group large component prop surfaces into meaningful domain objects such as
+  `city`, `country`, `status`, and `handlers`.
 - Use store actions for shared city, country, weather, error, and loading
   changes instead of duplicating them in component state.
 - Use explicit TypeScript types and `import type` for type-only imports.
@@ -84,6 +109,9 @@
   a selection must invalidate stale weather immediately.
 - Keep the form behavior consistent: valid city selections request weather
   automatically, while explicit form submission always refreshes it.
+- Keep API modules as concrete boundaries unless multiple APIs clearly share
+  enough behavior to justify a helper.
+- Prefer direct, readable implementations over premature generic abstractions.
 - Use relative imports; the project does not define path aliases.
 - Use Material UI components and the shared theme instead of adding standalone
   CSS or hard-coded design values where a theme token fits.
@@ -96,6 +124,8 @@
 - Update tests when business logic changes.
 - Use existing test patterns from the repository.
 - Place tests beside the source as `*.test.ts` or `*.test.tsx`.
+- Add unit tests for new components, hooks, services, API modules, utilities,
+  helpers, and runtime type guards.
 - Use Vitest APIs from `vitest`; do not add Jest-specific configuration.
 - Prefer user-visible queries such as roles, accessible names, and text in
   component tests.
@@ -103,18 +133,25 @@
   `vi`.
 - Reuse `src/test/weatherFixture.ts` when weather test data is needed.
 - The shared test setup already cleans up renders, local storage, and mocks.
+- Use `src/App.test.tsx` for full user workflows and cross-layer integration;
+  keep module-specific behavior in colocated unit tests.
 - Cover selection changes, request cancellation, stale response suppression,
   persistence restoration, and error visibility when weather workflow behavior
   changes.
 - Use controllable promises in store tests when request ordering or
-  cancellation matters.
+  cancellation matters. Keep these tests focused on request ownership and
+  stale-response prevention.
 - Run focused tests while developing, then run `npm run validate`.
 - Run `npm run test:coverage` when changes affect broad behavior or coverage.
 - Keep coverage at or above 90% for statements, branches, functions, and lines.
 
 ## Commands
 
-- `npm run dev` - start the Vite development server.
+- `npm run dev` - start the Vite development server and open the app in the
+  default system browser at `/Weather/`.
+- `npm start` - start the Vite development server and open the app in the
+  default system browser at `/Weather/`.
+- `npm run stop` - stop the Vite development server running on port `5173`.
 - `npm run build` - create the production build.
 - `npm run format` - format supported files with Prettier.
 - `npm run format:check` - verify formatting without changing files.

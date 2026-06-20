@@ -1,12 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  clearStoredWeather,
-  loadStoredWeather,
-  saveStoredWeather,
-} from "./weatherStorage";
-import { weatherFixture } from "../test/weatherFixture";
+import { clearStoredWeather, loadStoredWeather, saveStoredWeather } from ".";
+import { weatherFixture } from "../../test/weatherFixture";
+import { LAST_WEATHER_STORAGE_KEY } from "../../constants";
 
-const storageKey = "weather-app:last-weather";
+const storageKey = LAST_WEATHER_STORAGE_KEY;
 
 describe("weatherStorage", () => {
   it("saves and loads valid weather data", () => {

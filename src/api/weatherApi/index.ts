@@ -2,9 +2,9 @@ import {
   isWeatherResponse,
   type WeatherError,
   type WeatherResponse,
-} from "../types/weather";
-
-const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
+} from "../../types/weather";
+import { OPENWEATHER_API_KEY_ENV, OPENWEATHER_UNITS } from "../../constants";
+import { OPENWEATHER_WEATHER_API_URL } from "../../urls";
 
 const createError = (message: string): WeatherError => ({
   cod: "CLIENT_ERROR",
@@ -16,7 +16,7 @@ export const fetchWeather = async (
   country: string,
   signal?: AbortSignal,
 ): Promise<WeatherResponse> => {
-  const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+  const apiKey = import.meta.env[OPENWEATHER_API_KEY_ENV];
 
   if (!apiKey) {
     return createError("Weather API key is not configured");
@@ -25,13 +25,16 @@ export const fetchWeather = async (
   const searchParams = new URLSearchParams({
     q: `${city},${country}`,
     appid: apiKey,
-    units: "metric",
+    units: OPENWEATHER_UNITS,
   });
 
   try {
-    const response = await fetch(`${WEATHER_API_URL}?${searchParams}`, {
-      signal,
-    });
+    const response = await fetch(
+      `${OPENWEATHER_WEATHER_API_URL}?${searchParams}`,
+      {
+        signal,
+      },
+    );
     const data: unknown = await response.json();
 
     if (!isWeatherResponse(data)) {

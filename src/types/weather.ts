@@ -20,6 +20,11 @@ export interface WeatherError {
 
 export type WeatherResponse = WeatherSuccess | WeatherError;
 
+export interface StoredWeather {
+  city: string;
+  weather: WeatherSuccess;
+}
+
 export const isWeatherSuccess = (
   weather: WeatherResponse,
 ): weather is WeatherSuccess => weather.cod === 200;

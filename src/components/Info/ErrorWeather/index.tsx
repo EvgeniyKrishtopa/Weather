@@ -1,5 +1,5 @@
 import { Alert, AlertTitle, Paper } from "@mui/material";
-import type { WeatherError } from "../../types/weather";
+import type { WeatherError } from "../../../types/weather";
 
 interface ErrorWeatherProps {
   currentWeather: WeatherError;

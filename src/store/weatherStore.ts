@@ -1,21 +1,34 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { fetchWeather } from "../api/weatherApi";
+import {
+  defaultCountryService,
+  type DefaultCountryService,
+} from "../services/defaultCountryService";
+import {
+  weatherPersistenceService,
+  type WeatherPersistenceService,
+} from "../services/weatherPersistenceService";
+import {
+  weatherRequestService,
+  type WeatherRequestService,
+} from "../services/weatherRequestService";
 import {
   isWeatherSuccess,
   type WeatherError,
   type WeatherSuccess,
 } from "../types/weather";
-import {
-  loadStoredLocation,
-  saveStoredLocation,
-} from "../utils/locationStorage";
-import {
-  clearStoredWeather,
-  loadStoredWeather,
-  saveStoredWeather,
-} from "../utils/weatherStorage";
+import { DEFAULT_COUNTRY_ISO } from "../constants";
 
-const DEFAULT_COUNTRY_ISO = "US";
+export interface WeatherStoreServices {
+  defaultCountryService: DefaultCountryService;
+  persistenceService: WeatherPersistenceService;
+  requestService: WeatherRequestService;
+}
+
+const defaultWeatherStoreServices: WeatherStoreServices = {
+  defaultCountryService,
+  persistenceService: weatherPersistenceService,
+  requestService: weatherRequestService,
+};
 
 export class WeatherStore {
   weather: WeatherSuccess | null;
@@ -23,25 +36,42 @@ export class WeatherStore {
   city: string | null;
   countryIso: string;
   loading = false;
+  private countryAutoDetected: boolean;
   private activeRequest: AbortController | null = null;
   private requestId = 0;
+  private readonly services: WeatherStoreServices;
 
-  constructor() {
-    const storedWeather = loadStoredWeather();
-    const storedLocation = loadStoredLocation();
+  constructor(services = defaultWeatherStoreServices) {
+    this.services = services;
+
+    const storedWeather = this.services.persistenceService.loadStoredWeather();
+    const storedLocation =
+      this.services.persistenceService.loadStoredLocation();
 
     this.weather = storedWeather?.weather ?? null;
     this.city = storedLocation?.city ?? storedWeather?.city ?? null;
-    this.countryIso = storedLocation?.countryIso ?? DEFAULT_COUNTRY_ISO;
+    this.countryIso =
+      storedLocation?.countryIso ??
+      this.services.defaultCountryService.getDefaultCountryIso();
+    this.countryAutoDetected = !storedLocation;
 
-    makeAutoObservable<this, "activeRequest" | "requestId">(
+    makeAutoObservable<
+      this,
+      "activeRequest" | "requestId" | "countryAutoDetected" | "services"
+    >(
       this,
       {
         activeRequest: false,
         requestId: false,
+        countryAutoDetected: false,
+        services: false,
       },
       { autoBind: true },
     );
+  }
+
+  get canApplyDetectedCountryIso(): boolean {
+    return this.countryAutoDetected;
   }
 
   setCity(city: string | null): boolean {
@@ -49,6 +79,7 @@ export class WeatherStore {
       return false;
     }
 
+    this.countryAutoDetected = false;
     this.invalidateWeather();
     this.city = city;
     this.saveLocation();
@@ -61,6 +92,7 @@ export class WeatherStore {
       return false;
     }
 
+    this.countryAutoDetected = false;
     this.invalidateWeather();
     this.countryIso = countryIso;
     this.saveLocation();
@@ -69,6 +101,7 @@ export class WeatherStore {
   }
 
   async getWeather(city: string, country: string): Promise<void> {
+    this.countryAutoDetected = false;
     this.city = city;
     this.countryIso = country;
     this.saveLocation();
@@ -80,10 +113,14 @@ export class WeatherStore {
     this.weather = null;
     this.error = null;
     this.loading = true;
-    clearStoredWeather();
+    this.services.persistenceService.clearStoredWeather();
 
     try {
-      const response = await fetchWeather(city, country, controller.signal);
+      const response = await this.services.requestService.fetchWeather(
+        city,
+        country,
+        controller.signal,
+      );
 
       if (
         controller.signal.aborted ||
@@ -97,7 +134,10 @@ export class WeatherStore {
       runInAction(() => {
         if (isWeatherSuccess(response)) {
           this.weather = response;
-          saveStoredWeather({ city, weather: response });
+          this.services.persistenceService.saveStoredWeather({
+            city,
+            weather: response,
+          });
         } else {
           this.error = response;
         }
@@ -114,13 +154,37 @@ export class WeatherStore {
     }
   }
 
+  applyDetectedCountryIso(countryIso: string): boolean {
+    if (!this.countryAutoDetected || countryIso === this.countryIso) {
+      return false;
+    }
+
+    this.invalidateWeather();
+    this.city = null;
+    this.countryIso = countryIso;
+
+    return true;
+  }
+
+  reconcileDetectedCountryOptions(countryIsoOptions: string[]): boolean {
+    if (
+      !this.countryAutoDetected ||
+      countryIsoOptions.includes(this.countryIso) ||
+      !countryIsoOptions.includes(DEFAULT_COUNTRY_ISO)
+    ) {
+      return false;
+    }
+
+    return this.applyDetectedCountryIso(DEFAULT_COUNTRY_ISO);
+  }
+
   private invalidateWeather(): void {
     this.cancelActiveRequest();
     this.requestId += 1;
     this.weather = null;
     this.error = null;
     this.loading = false;
-    clearStoredWeather();
+    this.services.persistenceService.clearStoredWeather();
   }
 
   private cancelActiveRequest(): void {
@@ -129,7 +193,7 @@ export class WeatherStore {
   }
 
   private saveLocation(): void {
-    saveStoredLocation({
+    this.services.persistenceService.saveStoredLocation({
       city: this.city,
       countryIso: this.countryIso,
     });
