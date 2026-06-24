@@ -2,21 +2,19 @@ import React from "react";
 import CheckroomRoundedIcon from "@mui/icons-material/CheckroomRounded";
 import ManRoundedIcon from "@mui/icons-material/ManRounded";
 import type { SvgIconComponent } from "@mui/icons-material";
-import { Box } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import type { GenderSelection } from "../../../types/location";
 import {
-  ClothingItem,
-  ClothingItems,
-  ClothingRecommendationDescription,
-  ClothingRecommendationEyebrow,
-  ClothingRecommendationHeader,
-  ClothingRecommendationIcon,
+  ClothingRecommendationLoading,
   ClothingRecommendationSection,
-  ClothingRecommendationTitle,
 } from "../Weather.styles";
+import { ClothingRecommendationDescription } from "./Description";
+import { ClothingRecommendationHeader } from "./Header";
+import { ClothingRecommendationList } from "./List";
 
 interface ClothingRecommendationProps {
   gender: GenderSelection;
+  loading?: boolean;
 }
 
 const clothingRecommendations: Record<
@@ -54,36 +52,41 @@ const clothingRecommendations: Record<
 
 export const ClothingRecommendation = ({
   gender,
+  loading = false,
 }: ClothingRecommendationProps) => {
   const clothingRecommendation = clothingRecommendations[gender];
-  const RecommendationIcon = clothingRecommendation.Icon;
 
   return (
     <ClothingRecommendationSection
       aria-label="Clothing recommendation"
       role="region"
     >
-      <ClothingRecommendationHeader>
-        <ClothingRecommendationIcon aria-hidden="true">
-          <RecommendationIcon />
-        </ClothingRecommendationIcon>
-        <Box>
-          <ClothingRecommendationEyebrow>
-            For {clothingRecommendation.audience}
-          </ClothingRecommendationEyebrow>
-          <ClothingRecommendationTitle>
-            {clothingRecommendation.title}
-          </ClothingRecommendationTitle>
-        </Box>
-      </ClothingRecommendationHeader>
-      <ClothingItems aria-label="Recommended clothing">
-        {clothingRecommendation.items.map((item) => (
-          <ClothingItem key={item}>{item}</ClothingItem>
-        ))}
-      </ClothingItems>
-      <ClothingRecommendationDescription>
-        {clothingRecommendation.description}
-      </ClothingRecommendationDescription>
+      <ClothingRecommendationHeader
+        audience={clothingRecommendation.audience}
+        Icon={clothingRecommendation.Icon}
+        title={
+          loading
+            ? "Preparing outfit recommendation"
+            : clothingRecommendation.title
+        }
+      />
+      {loading ? (
+        <ClothingRecommendationLoading aria-live="polite">
+          <CircularProgress
+            aria-label="Loading clothing recommendation"
+            color="inherit"
+            size={18}
+          />
+          <ClothingRecommendationDescription description="Choosing weather-aware outfit ideas..." />
+        </ClothingRecommendationLoading>
+      ) : (
+        <>
+          <ClothingRecommendationList items={clothingRecommendation.items} />
+          <ClothingRecommendationDescription
+            description={clothingRecommendation.description}
+          />
+        </>
+      )}
     </ClothingRecommendationSection>
   );
 };

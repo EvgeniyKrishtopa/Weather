@@ -176,6 +176,17 @@ export const ClothingRecommendationDescription = styled(Typography)(
   }),
 );
 
+export const ClothingRecommendationLoading = styled(Stack)(({ theme }) => ({
+  flexDirection: "row",
+  alignItems: "center",
+  gap: theme.spacing(1),
+  minHeight: 58,
+  color: "inherit",
+  "& .MuiCircularProgress-root": {
+    flexShrink: 0,
+  },
+}));
+
 export const ClothingItems = styled("ul")(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "minmax(0, 1fr)",

@@ -30,4 +30,19 @@ describe("ClothingRecommendation", () => {
     expect(screen.getByText(/Chinos/)).toBeVisible();
     expect(screen.getByText(/Casual sneakers/)).toBeVisible();
   });
+
+  it("renders a loading state for future recommendation requests", () => {
+    render(<ClothingRecommendation gender="woman" loading />);
+
+    expect(screen.getByText("Preparing outfit recommendation")).toBeVisible();
+    expect(
+      screen.getByRole("progressbar", {
+        name: "Loading clothing recommendation",
+      }),
+    ).toBeVisible();
+    expect(
+      screen.getByText("Choosing weather-aware outfit ideas..."),
+    ).toBeVisible();
+    expect(screen.queryByText("Light jacket")).not.toBeInTheDocument();
+  });
 });
