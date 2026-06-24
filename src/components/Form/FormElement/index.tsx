@@ -16,7 +16,7 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import type { CountryOption, GenderSelection } from "../../../types/location";
+import { GenderSelection, type CountryOption } from "../../../types/location";
 import {
   FormElement as StyledFormElement,
   FormFields,
@@ -58,6 +58,16 @@ interface WeatherFormElementProps {
 }
 
 const filterCityOptions = createFilterOptions<string>({ limit: 100 });
+const genderOptions = [
+  {
+    label: "Woman",
+    value: GenderSelection.Woman,
+  },
+  {
+    label: "Man",
+    value: GenderSelection.Man,
+  },
+];
 
 export const FormElement = ({
   city,
@@ -106,24 +116,18 @@ export const FormElement = ({
         <GenderOptions>
           <FormLabel component="legend">Outfit for</FormLabel>
           <FormGroup row aria-label="Outfit gender">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={gender === "woman"}
-                  onChange={() => handlers.onGenderChange("woman")}
-                />
-              }
-              label="Woman"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={gender === "man"}
-                  onChange={() => handlers.onGenderChange("man")}
-                />
-              }
-              label="Man"
-            />
+            {genderOptions.map((genderOption) => (
+              <FormControlLabel
+                key={genderOption.value}
+                control={
+                  <Checkbox
+                    checked={gender === genderOption.value}
+                    onChange={() => handlers.onGenderChange(genderOption.value)}
+                  />
+                }
+                label={genderOption.label}
+              />
+            ))}
           </FormGroup>
         </GenderOptions>
         {status.locationError && (

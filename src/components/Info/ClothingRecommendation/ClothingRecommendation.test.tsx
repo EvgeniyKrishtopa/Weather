@@ -1,11 +1,12 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { GenderSelection } from "../../../types/location";
 import { ClothingRecommendation } from ".";
 
 describe("ClothingRecommendation", () => {
   it("renders the mock clothing recommendation for women", () => {
-    render(<ClothingRecommendation gender="woman" />);
+    render(<ClothingRecommendation gender={GenderSelection.Woman} />);
 
     expect(
       screen.getByRole("region", { name: "Clothing recommendation" }),
@@ -20,7 +21,7 @@ describe("ClothingRecommendation", () => {
   });
 
   it("renders the mock clothing recommendation for men", () => {
-    render(<ClothingRecommendation gender="man" />);
+    render(<ClothingRecommendation gender={GenderSelection.Man} />);
 
     expect(screen.getByText("Smart casual layers")).toBeVisible();
     expect(screen.getByText("For Man")).toBeVisible();
@@ -32,7 +33,7 @@ describe("ClothingRecommendation", () => {
   });
 
   it("renders a loading state for future recommendation requests", () => {
-    render(<ClothingRecommendation gender="woman" loading />);
+    render(<ClothingRecommendation gender={GenderSelection.Woman} loading />);
 
     expect(screen.getByText("Preparing outfit recommendation")).toBeVisible();
     expect(

@@ -4,6 +4,7 @@ import { runInAction } from "mobx";
 import { describe, expect, it } from "vitest";
 import { WeatherContext } from "../../context/weatherContext";
 import { WeatherStore } from "../../store/weatherStore";
+import { GenderSelection } from "../../types/location";
 import type { WeatherSuccess } from "../../types/weather";
 import Info from ".";
 
@@ -72,7 +73,7 @@ describe("weather information", () => {
     const store = createStore(unknownWeather);
 
     runInAction(() => {
-      store.gender = "man";
+      store.gender = GenderSelection.Man;
     });
 
     render(

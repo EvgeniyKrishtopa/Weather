@@ -8,7 +8,7 @@ import {
   loadStoredWeather,
   saveStoredWeather,
 } from "../../utils/weatherStorage";
-import type { StoredLocation } from "../../types/location";
+import { GenderSelection, type StoredLocation } from "../../types/location";
 import { weatherFixture } from "../../test/weatherFixture";
 import { weatherPersistenceService } from ".";
 
@@ -28,7 +28,7 @@ describe("weatherPersistenceService", () => {
     const location: StoredLocation = {
       city: "Kyiv",
       countryIso: "UA",
-      gender: "woman",
+      gender: GenderSelection.Woman,
     };
     vi.mocked(loadStoredLocation).mockReturnValue(location);
 

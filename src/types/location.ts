@@ -8,11 +8,14 @@ export interface CurrentCoordinates {
   longitude: number;
 }
 
-export const genderSelections = ["woman", "man"] as const;
+export enum GenderSelection {
+  Woman = "woman",
+  Man = "man",
+}
 
-export type GenderSelection = (typeof genderSelections)[number];
+export const genderSelections = Object.values(GenderSelection);
 
-export const DEFAULT_GENDER_SELECTION: GenderSelection = "woman";
+export const DEFAULT_GENDER_SELECTION = GenderSelection.Woman;
 
 export const isGenderSelection = (value: unknown): value is GenderSelection =>
   typeof value === "string" &&

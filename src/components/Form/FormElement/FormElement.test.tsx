@@ -2,6 +2,7 @@ import React, { type ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { GenderSelection } from "../../../types/location";
 import { FormElement } from ".";
 
 const countries = [
@@ -21,7 +22,7 @@ const defaultProps: ComponentProps<typeof FormElement> = {
     countryIso: "UA",
     selectedCountry: countries[0],
   },
-  gender: "woman",
+  gender: GenderSelection.Woman,
   handlers: {
     onCityChange: vi.fn(),
     onCountryChange: vi.fn(),
@@ -86,11 +87,13 @@ describe("FormElement", () => {
 
     await user.click(screen.getByRole("checkbox", { name: "Man" }));
 
-    expect(props.handlers.onGenderChange).toHaveBeenCalledWith("man");
+    expect(props.handlers.onGenderChange).toHaveBeenCalledWith(
+      GenderSelection.Man,
+    );
   });
 
   it("renders the stored selected outfit gender", () => {
-    renderFormElement({ gender: "man" });
+    renderFormElement({ gender: GenderSelection.Man });
 
     expect(screen.getByRole("checkbox", { name: "Woman" })).not.toBeChecked();
     expect(screen.getByRole("checkbox", { name: "Man" })).toBeChecked();

@@ -3,6 +3,7 @@ import AirRoundedIcon from "@mui/icons-material/AirRounded";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { weatherFixture } from "../../../test/weatherFixture";
+import { GenderSelection } from "../../../types/location";
 import { WeatherComponent } from ".";
 
 describe("WeatherComponent", () => {
@@ -16,7 +17,7 @@ describe("WeatherComponent", () => {
           weather: [{ main: "Clouds" }],
           wind: { speed: 5.67 },
         }}
-        gender="woman"
+        gender={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
       />,
     );
@@ -41,7 +42,7 @@ describe("WeatherComponent", () => {
           ...weatherFixture,
           weather: [],
         }}
-        gender="woman"
+        gender={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
       />,
     );

@@ -1,17 +1,22 @@
 import { describe, expect, it, vi } from "vitest";
 import { loadStoredLocation, saveStoredLocation } from ".";
 import { SELECTED_LOCATION_STORAGE_KEY } from "../../constants";
+import { GenderSelection } from "../../types/location";
 
 const storageKey = SELECTED_LOCATION_STORAGE_KEY;
 
 describe("locationStorage", () => {
   it("saves and loads a selected location", () => {
-    saveStoredLocation({ city: "Kyiv", countryIso: "UA", gender: "woman" });
+    saveStoredLocation({
+      city: "Kyiv",
+      countryIso: "UA",
+      gender: GenderSelection.Woman,
+    });
 
     expect(loadStoredLocation()).toEqual({
       city: "Kyiv",
       countryIso: "UA",
-      gender: "woman",
+      gender: GenderSelection.Woman,
     });
   });
 
@@ -24,7 +29,7 @@ describe("locationStorage", () => {
     expect(loadStoredLocation()).toEqual({
       city: "Kyiv",
       countryIso: "UA",
-      gender: "woman",
+      gender: GenderSelection.Woman,
     });
   });
 
@@ -45,7 +50,11 @@ describe("locationStorage", () => {
     });
 
     expect(() =>
-      saveStoredLocation({ city: "Kyiv", countryIso: "UA", gender: "woman" }),
+      saveStoredLocation({
+        city: "Kyiv",
+        countryIso: "UA",
+        gender: GenderSelection.Woman,
+      }),
     ).not.toThrow();
   });
 });
