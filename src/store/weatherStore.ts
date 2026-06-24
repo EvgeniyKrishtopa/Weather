@@ -17,6 +17,10 @@ import {
   type WeatherSuccess,
 } from "../types/weather";
 import { DEFAULT_COUNTRY_ISO } from "../constants";
+import {
+  DEFAULT_GENDER_SELECTION,
+  type GenderSelection,
+} from "../types/location";
 
 export interface WeatherStoreServices {
   defaultCountryService: DefaultCountryService;
@@ -35,6 +39,7 @@ export class WeatherStore {
   error: WeatherError | null = null;
   city: string | null;
   countryIso: string;
+  gender: GenderSelection;
   loading = false;
   private countryAutoDetected: boolean;
   private activeRequest: AbortController | null = null;
@@ -53,6 +58,7 @@ export class WeatherStore {
     this.countryIso =
       storedLocation?.countryIso ??
       this.services.defaultCountryService.getDefaultCountryIso();
+    this.gender = storedLocation?.gender ?? DEFAULT_GENDER_SELECTION;
     this.countryAutoDetected = !storedLocation;
 
     makeAutoObservable<
@@ -95,6 +101,17 @@ export class WeatherStore {
     this.countryAutoDetected = false;
     this.invalidateWeather();
     this.countryIso = countryIso;
+    this.saveLocation();
+
+    return true;
+  }
+
+  setGender(gender: GenderSelection): boolean {
+    if (gender === this.gender) {
+      return false;
+    }
+
+    this.gender = gender;
     this.saveLocation();
 
     return true;
@@ -196,6 +213,7 @@ export class WeatherStore {
     this.services.persistenceService.saveStoredLocation({
       city: this.city,
       countryIso: this.countryIso,
+      gender: this.gender,
     });
   }
 }

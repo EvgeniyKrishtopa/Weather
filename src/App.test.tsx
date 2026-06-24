@@ -68,7 +68,9 @@ describe("App", () => {
 
     const citySelect = await screen.findByRole("combobox", { name: "City" });
     await waitFor(() => expect(citySelect).toBeEnabled());
-    await user.click(screen.getByRole("button", { name: "Get weather" }));
+    await user.click(
+      screen.getByRole("button", { name: "Get weather and outfit today" }),
+    );
 
     expect(screen.getByText("Choose a city.")).toBeVisible();
   });
@@ -194,7 +196,7 @@ describe("App", () => {
     );
   });
 
-  it("forces a new request when Get weather is clicked", async () => {
+  it("forces a new request when Get weather and outfit today is clicked", async () => {
     const user = userEvent.setup();
     const fetchMock = vi.fn().mockResolvedValue({
       json: vi.fn().mockResolvedValue({
@@ -213,7 +215,9 @@ describe("App", () => {
       name: "Current weather in Chicago",
     });
 
-    await user.click(screen.getByRole("button", { name: "Get weather" }));
+    await user.click(
+      screen.getByRole("button", { name: "Get weather and outfit today" }),
+    );
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
   });
@@ -241,7 +245,9 @@ describe("App", () => {
     await waitFor(() => expect(citySelect).toBeEnabled());
     await user.type(citySelect, "Kyiv");
     await user.click(await screen.findByRole("option", { name: "Kyiv" }));
-    await user.click(screen.getByRole("button", { name: "Get weather" }));
+    await user.click(
+      screen.getByRole("button", { name: "Get weather and outfit today" }),
+    );
 
     const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
     expect(requestUrl.searchParams.get("q")).toBe("Kyiv,UA");
@@ -255,7 +261,9 @@ describe("App", () => {
     render(<App />);
 
     expect(await screen.findByText("Unable to load countries.")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Get weather" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Get weather and outfit today" }),
+    ).toBeDisabled();
   });
 
   it("displays city loading errors", async () => {
@@ -266,7 +274,9 @@ describe("App", () => {
     render(<App />);
 
     expect(await screen.findByText("Unable to load cities.")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Get weather" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Get weather and outfit today" }),
+    ).toBeDisabled();
   });
 
   it("restores cached weather on initial render", () => {

@@ -3,6 +3,7 @@ import AirRoundedIcon from "@mui/icons-material/AirRounded";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { weatherFixture } from "../../../test/weatherFixture";
+import { GenderSelection } from "../../../types/location";
 import { WeatherComponent } from ".";
 
 describe("WeatherComponent", () => {
@@ -16,6 +17,7 @@ describe("WeatherComponent", () => {
           weather: [{ main: "Clouds" }],
           wind: { speed: 5.67 },
         }}
+        gender={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
       />,
     );
@@ -28,6 +30,9 @@ describe("WeatherComponent", () => {
     expect(screen.getByText("Clouds")).toBeVisible();
     expect(screen.getByText("5.7 m/s")).toBeVisible();
     expect(screen.getByText("81%")).toBeVisible();
+    expect(
+      screen.getByRole("region", { name: "Clothing recommendation" }),
+    ).toBeVisible();
   });
 
   it("uses fallback weather description text", () => {
@@ -37,6 +42,7 @@ describe("WeatherComponent", () => {
           ...weatherFixture,
           weather: [],
         }}
+        gender={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
       />,
     );

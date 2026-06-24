@@ -4,6 +4,7 @@ import { runInAction } from "mobx";
 import { describe, expect, it } from "vitest";
 import { WeatherContext } from "../../context/weatherContext";
 import { WeatherStore } from "../../store/weatherStore";
+import { GenderSelection } from "../../types/location";
 import type { WeatherSuccess } from "../../types/weather";
 import Info from ".";
 
@@ -66,6 +67,23 @@ describe("weather information", () => {
     expect(screen.getByText("10.0")).toBeVisible();
     expect(screen.getByText("2.0 m/s")).toBeVisible();
     expect(screen.getByText("50%")).toBeVisible();
+  });
+
+  it("renders the clothing recommendation for the selected gender", () => {
+    const store = createStore(unknownWeather);
+
+    runInAction(() => {
+      store.gender = GenderSelection.Man;
+    });
+
+    render(
+      <WeatherContext.Provider value={store}>
+        <Info />
+      </WeatherContext.Provider>,
+    );
+
+    expect(screen.getByText("For Man")).toBeVisible();
+    expect(screen.getByText("Smart casual layers")).toBeVisible();
   });
 
   it("uses fallback text when no weather description is available", () => {

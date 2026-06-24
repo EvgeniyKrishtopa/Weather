@@ -2,7 +2,11 @@ import {
   COUNTRY_ISO_PATTERN,
   SELECTED_LOCATION_STORAGE_KEY,
 } from "../../constants";
-import type { StoredLocation } from "../../types/location";
+import {
+  DEFAULT_GENDER_SELECTION,
+  isGenderSelection,
+  type StoredLocation,
+} from "../../types/location";
 
 export const loadStoredLocation = (): StoredLocation | null => {
   try {
@@ -25,7 +29,8 @@ export const loadStoredLocation = (): StoredLocation | null => {
     if (
       (location.city !== null && typeof location.city !== "string") ||
       typeof location.countryIso !== "string" ||
-      !COUNTRY_ISO_PATTERN.test(location.countryIso)
+      !COUNTRY_ISO_PATTERN.test(location.countryIso) ||
+      (location.gender !== undefined && !isGenderSelection(location.gender))
     ) {
       return null;
     }
@@ -33,6 +38,9 @@ export const loadStoredLocation = (): StoredLocation | null => {
     return {
       city: location.city,
       countryIso: location.countryIso,
+      gender: isGenderSelection(location.gender)
+        ? location.gender
+        : DEFAULT_GENDER_SELECTION,
     };
   } catch {
     return null;
