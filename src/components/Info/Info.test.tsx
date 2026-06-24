@@ -68,6 +68,23 @@ describe("weather information", () => {
     expect(screen.getByText("50%")).toBeVisible();
   });
 
+  it("renders the clothing recommendation for the selected gender", () => {
+    const store = createStore(unknownWeather);
+
+    runInAction(() => {
+      store.gender = "man";
+    });
+
+    render(
+      <WeatherContext.Provider value={store}>
+        <Info />
+      </WeatherContext.Provider>,
+    );
+
+    expect(screen.getByText("For Man")).toBeVisible();
+    expect(screen.getByText("Smart casual layers")).toBeVisible();
+  });
+
   it("uses fallback text when no weather description is available", () => {
     render(
       <WeatherContext.Provider

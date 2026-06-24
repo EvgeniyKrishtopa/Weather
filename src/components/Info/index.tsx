@@ -25,7 +25,7 @@ const weatherIcons: Record<string, SvgIconComponent> = {
 };
 
 const Info = observer(() => {
-  const { error, loading, weather } = useWeatherContext();
+  const { error, gender, loading, weather } = useWeatherContext();
 
   if (loading) {
     return <Loader />;
@@ -43,7 +43,11 @@ const Info = observer(() => {
   const WeatherIcon = weatherIcons[weatherDescription] ?? AirRoundedIcon;
 
   return (
-    <WeatherComponent currentWeather={weather} WeatherIcon={WeatherIcon} />
+    <WeatherComponent
+      currentWeather={weather}
+      gender={gender}
+      WeatherIcon={WeatherIcon}
+    />
   );
 });
 

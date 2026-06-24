@@ -1,6 +1,8 @@
 import React from "react";
 import type { SvgIconComponent } from "@mui/icons-material";
+import type { GenderSelection } from "../../../types/location";
 import type { WeatherSuccess } from "../../../types/weather";
+import { ClothingRecommendation } from "../ClothingRecommendation";
 import { WeatherCard, WeatherContent } from "../Weather.styles";
 import { WeatherConditionSummary } from "../WeatherConditionSummary";
 import { WeatherHeader } from "../WeatherHeader";
@@ -8,11 +10,13 @@ import { WeatherMetrics } from "../WeatherMetrics";
 
 interface WeatherComponentProps {
   currentWeather: WeatherSuccess;
+  gender: GenderSelection;
   WeatherIcon: SvgIconComponent;
 }
 
 export const WeatherComponent = ({
   currentWeather,
+  gender,
   WeatherIcon,
 }: WeatherComponentProps) => {
   const weatherDescription = currentWeather.weather[0]?.main ?? "Current";
@@ -36,6 +40,7 @@ export const WeatherComponent = ({
           humidity={currentWeather.main.humidity}
           windSpeed={windSpeed}
         />
+        <ClothingRecommendation gender={gender} />
       </WeatherContent>
     </WeatherCard>
   );

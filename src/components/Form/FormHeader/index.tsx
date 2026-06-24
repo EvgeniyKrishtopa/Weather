@@ -9,8 +9,8 @@ import {
 export const FormHeader = () => (
   <FormHeaderContainer>
     <div>
-      <Typography component="h1" variant="h4">
-        Get your weather
+      <Typography component="h1" variant="h5">
+        Get your weather and outfit
       </Typography>
       <FormDescription color="text.secondary">
         Search current conditions by city and country.

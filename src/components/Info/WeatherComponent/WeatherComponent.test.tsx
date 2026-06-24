@@ -16,6 +16,7 @@ describe("WeatherComponent", () => {
           weather: [{ main: "Clouds" }],
           wind: { speed: 5.67 },
         }}
+        gender="woman"
         WeatherIcon={AirRoundedIcon}
       />,
     );
@@ -28,6 +29,9 @@ describe("WeatherComponent", () => {
     expect(screen.getByText("Clouds")).toBeVisible();
     expect(screen.getByText("5.7 m/s")).toBeVisible();
     expect(screen.getByText("81%")).toBeVisible();
+    expect(
+      screen.getByRole("region", { name: "Clothing recommendation" }),
+    ).toBeVisible();
   });
 
   it("uses fallback weather description text", () => {
@@ -37,6 +41,7 @@ describe("WeatherComponent", () => {
           ...weatherFixture,
           weather: [],
         }}
+        gender="woman"
         WeatherIcon={AirRoundedIcon}
       />,
     );

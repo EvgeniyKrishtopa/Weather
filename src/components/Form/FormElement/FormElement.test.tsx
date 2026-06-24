@@ -21,9 +21,11 @@ const defaultProps: ComponentProps<typeof FormElement> = {
     countryIso: "UA",
     selectedCountry: countries[0],
   },
+  gender: "woman",
   handlers: {
     onCityChange: vi.fn(),
     onCountryChange: vi.fn(),
+    onGenderChange: vi.fn(),
     onSubmit: vi.fn((event) => event.preventDefault()),
   },
   status: {
@@ -47,6 +49,7 @@ const renderFormElement = (
       ...defaultProps.country,
       ...props.country,
     },
+    gender: props.gender ?? defaultProps.gender,
     handlers: {
       ...defaultProps.handlers,
       ...props.handlers,
@@ -70,7 +73,27 @@ describe("FormElement", () => {
       "Ukraine",
     );
     expect(screen.getByRole("combobox", { name: "City" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Get weather" })).toBeEnabled();
+    expect(screen.getByRole("checkbox", { name: "Woman" })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Man" })).not.toBeChecked();
+    expect(
+      screen.getByRole("button", { name: "Get weather and outfit today" }),
+    ).toBeEnabled();
+  });
+
+  it("calls the handler when changing the selected outfit gender", async () => {
+    const user = userEvent.setup();
+    const props = renderFormElement();
+
+    await user.click(screen.getByRole("checkbox", { name: "Man" }));
+
+    expect(props.handlers.onGenderChange).toHaveBeenCalledWith("man");
+  });
+
+  it("renders the stored selected outfit gender", () => {
+    renderFormElement({ gender: "man" });
+
+    expect(screen.getByRole("checkbox", { name: "Woman" })).not.toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Man" })).toBeChecked();
   });
 
   it("calls handlers for country, city, and submit interactions", async () => {
@@ -81,7 +104,9 @@ describe("FormElement", () => {
     await user.click(screen.getByRole("option", { name: "United States" }));
     await user.type(screen.getByRole("combobox", { name: "City" }), "Kyiv");
     await user.click(await screen.findByRole("option", { name: "Kyiv" }));
-    await user.click(screen.getByRole("button", { name: "Get weather" }));
+    await user.click(
+      screen.getByRole("button", { name: "Get weather and outfit today" }),
+    );
 
     expect(props.handlers.onCountryChange).toHaveBeenCalled();
     expect(props.handlers.onCityChange).toHaveBeenCalledWith("Kyiv");
@@ -99,6 +124,8 @@ describe("FormElement", () => {
 
     expect(screen.getByText("Unable to load countries.")).toBeVisible();
     expect(screen.getByText("Choose a city.")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Get weather" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Get weather and outfit today" }),
+    ).toBeDisabled();
   });
 });

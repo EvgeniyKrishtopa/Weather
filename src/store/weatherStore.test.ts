@@ -45,11 +45,13 @@ describe("WeatherStore", () => {
     vi.mocked(services.persistenceService.loadStoredLocation).mockReturnValue({
       city: "Lviv",
       countryIso: "UA",
+      gender: "man",
     });
     const store = createStore();
 
     expect(store.city).toBe("Lviv");
     expect(store.countryIso).toBe("UA");
+    expect(store.gender).toBe("man");
 
     store.setCity("Kyiv");
 
@@ -58,7 +60,28 @@ describe("WeatherStore", () => {
     ).toHaveBeenLastCalledWith({
       city: "Kyiv",
       countryIso: "UA",
+      gender: "man",
     });
+  });
+
+  it("defaults, updates, and persists the selected gender", () => {
+    const store = createStore();
+
+    expect(store.gender).toBe("woman");
+    expect(store.setGender("woman")).toBe(false);
+    expect(store.setGender("man")).toBe(true);
+
+    expect(store.gender).toBe("man");
+    expect(
+      services.persistenceService.saveStoredLocation,
+    ).toHaveBeenLastCalledWith({
+      city: null,
+      countryIso: "US",
+      gender: "man",
+    });
+    expect(
+      services.persistenceService.clearStoredWeather,
+    ).not.toHaveBeenCalled();
   });
 
   it("defaults to the timezone country when no stored country exists", () => {
@@ -94,6 +117,7 @@ describe("WeatherStore", () => {
     vi.mocked(services.persistenceService.loadStoredLocation).mockReturnValue({
       city: "Lviv",
       countryIso: "UA",
+      gender: "woman",
     });
     const store = createStore();
 
@@ -178,6 +202,7 @@ describe("WeatherStore", () => {
     ).toHaveBeenLastCalledWith({
       city: "Chicago",
       countryIso: "UA",
+      gender: "woman",
     });
     expect(services.persistenceService.clearStoredWeather).toHaveBeenCalled();
   });
@@ -224,6 +249,7 @@ describe("WeatherStore", () => {
     ).toHaveBeenLastCalledWith({
       city: "kyiv",
       countryIso: "UA",
+      gender: "woman",
     });
   });
 

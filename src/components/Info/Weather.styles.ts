@@ -126,3 +126,75 @@ export const MetricValue = styled("dd")(({ theme }) => ({
   fontWeight: 700,
   whiteSpace: "nowrap",
 }));
+
+export const ClothingRecommendationSection = styled("section")(({ theme }) => ({
+  display: "grid",
+  gap: theme.spacing(1),
+  padding: theme.spacing(1),
+  border: `1px solid ${themeAlpha.whiteDivider}`,
+  borderRadius: theme.spacing(1.5),
+  backgroundColor: themeAlpha.whiteSurface,
+}));
+
+export const ClothingRecommendationHeader = styled(Stack)(({ theme }) => ({
+  flexDirection: "row",
+  alignItems: "center",
+  gap: theme.spacing(0.75),
+  minWidth: 0,
+}));
+
+export const ClothingRecommendationIcon = styled(Box)(({ theme }) => ({
+  width: 30,
+  height: 30,
+  flexShrink: 0,
+  display: "grid",
+  placeItems: "center",
+  borderRadius: theme.spacing(1),
+  color: themeColors.white,
+  backgroundColor: themeAlpha.whiteSurface,
+  "& .MuiSvgIcon-root": {
+    fontSize: 17,
+  },
+}));
+
+export const ClothingRecommendationEyebrow = styled(Typography)({
+  fontSize: "0.7rem",
+  opacity: 0.8,
+});
+
+export const ClothingRecommendationTitle = styled(Typography)(({ theme }) => ({
+  ...theme.typography.body2,
+  color: "inherit",
+  fontWeight: 700,
+}));
+
+export const ClothingRecommendationDescription = styled(Typography)(
+  ({ theme }) => ({
+    ...theme.typography.body2,
+    color: "inherit",
+    opacity: 0.9,
+  }),
+);
+
+export const ClothingItems = styled("ul")(({ theme }) => ({
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 1fr)",
+  gap: theme.spacing(0.75),
+  padding: 0,
+  width: "100%",
+  margin: "0 0 15px",
+  listStyle: "none",
+}));
+
+export const ClothingItem = styled("li")(({ theme }) => ({
+  ...theme.typography.caption,
+  minWidth: 0,
+  width: "100%",
+  padding: theme.spacing(0.5, 0.75),
+  borderRadius: theme.spacing(1),
+  color: "inherit",
+  fontWeight: 700,
+  textAlign: "left",
+  overflowWrap: "anywhere",
+  backgroundColor: themeAlpha.whiteSurface,
+}));
