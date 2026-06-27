@@ -3,7 +3,7 @@ import CheckroomRoundedIcon from "@mui/icons-material/CheckroomRounded";
 import ManRoundedIcon from "@mui/icons-material/ManRounded";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { CircularProgress } from "@mui/material";
-import type { GenderSelection } from "../../../types/location";
+import { GenderSelection } from "../../../types/location";
 import type { OutfitRecommendation } from "../../../types/outfitRecommendation";
 import {
   ClothingRecommendationLoading,
@@ -15,7 +15,7 @@ import { ClothingRecommendationList } from "./List";
 
 interface ClothingRecommendationProps {
   fallbackRecommendation: OutfitRecommendation;
-  gender: GenderSelection;
+  outfitProfile: GenderSelection;
   loading?: boolean;
   recommendation: OutfitRecommendation | null;
 }
@@ -27,11 +27,11 @@ const clothingRecommendationAudiences: Record<
     Icon: SvgIconComponent;
   }
 > = {
-  woman: {
+  [GenderSelection.Woman]: {
     audience: "Woman",
     Icon: CheckroomRoundedIcon,
   },
-  man: {
+  [GenderSelection.Man]: {
     audience: "Man",
     Icon: ManRoundedIcon,
   },
@@ -39,12 +39,12 @@ const clothingRecommendationAudiences: Record<
 
 export const ClothingRecommendation = ({
   fallbackRecommendation,
-  gender,
+  outfitProfile,
   loading = false,
   recommendation,
 }: ClothingRecommendationProps) => {
   const clothingRecommendationAudience =
-    clothingRecommendationAudiences[gender];
+    clothingRecommendationAudiences[outfitProfile];
   const visibleRecommendation = recommendation ?? fallbackRecommendation;
 
   return (

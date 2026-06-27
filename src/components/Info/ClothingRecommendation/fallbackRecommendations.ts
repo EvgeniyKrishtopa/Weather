@@ -51,7 +51,7 @@ export const fallbackClothingRecommendations: Record<
   GenderSelection,
   Record<BasicWeatherCondition, OutfitRecommendation>
 > = {
-  woman: {
+  [GenderSelection.Woman]: {
     thunderstorm: {
       title: "Storm-safe covered layers",
       items: [
@@ -141,7 +141,7 @@ export const fallbackClothingRecommendations: Record<
         "A breathable layered look keeps you comfortable if the temperature shifts, while closed shoes add enough coverage for mild wind.",
     },
   },
-  man: {
+  [GenderSelection.Man]: {
     thunderstorm: {
       title: "Storm-safe practical layers",
       items: [
@@ -214,7 +214,9 @@ export const fallbackClothingRecommendations: Record<
 };
 
 export const getFallbackClothingRecommendation = (
-  gender: GenderSelection,
+  outfitProfile: GenderSelection,
   condition: string,
 ): OutfitRecommendation =>
-  fallbackClothingRecommendations[gender][getBasicWeatherCondition(condition)];
+  fallbackClothingRecommendations[outfitProfile][
+    getBasicWeatherCondition(condition)
+  ];

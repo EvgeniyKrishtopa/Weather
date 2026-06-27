@@ -20,7 +20,7 @@ import { GenderSelection, type CountryOption } from "../../../types/location";
 import {
   FormElement as StyledFormElement,
   FormFields,
-  GenderOptions,
+  OutfitProfileOptions,
 } from "../Form.styles";
 
 interface CountryFieldProps {
@@ -45,20 +45,20 @@ interface FormStatusProps {
 interface FormHandlers {
   onCityChange: (value: string | null) => void;
   onCountryChange: (event: SelectChangeEvent) => void;
-  onGenderChange: (gender: GenderSelection) => void;
+  onOutfitProfileChange: (outfitProfile: GenderSelection) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
 interface WeatherFormElementProps {
   city: CityFieldProps;
   country: CountryFieldProps;
-  gender: GenderSelection;
+  outfitProfile: GenderSelection;
   handlers: FormHandlers;
   status: FormStatusProps;
 }
 
 const filterCityOptions = createFilterOptions<string>({ limit: 100 });
-const genderOptions = [
+const outfitProfileOptions = [
   {
     label: "Woman",
     value: GenderSelection.Woman,
@@ -72,7 +72,7 @@ const genderOptions = [
 export const FormElement = ({
   city,
   country,
-  gender,
+  outfitProfile,
   handlers,
   status,
 }: WeatherFormElementProps) => {
@@ -113,23 +113,25 @@ export const FormElement = ({
             />
           )}
         />
-        <GenderOptions>
+        <OutfitProfileOptions>
           <FormLabel component="legend">Outfit for</FormLabel>
-          <FormGroup row aria-label="Outfit gender">
-            {genderOptions.map((genderOption) => (
+          <FormGroup row aria-label="Outfit profile">
+            {outfitProfileOptions.map((outfitProfileOption) => (
               <FormControlLabel
-                key={genderOption.value}
+                key={outfitProfileOption.value}
                 control={
                   <Checkbox
-                    checked={gender === genderOption.value}
-                    onChange={() => handlers.onGenderChange(genderOption.value)}
+                    checked={outfitProfile === outfitProfileOption.value}
+                    onChange={() =>
+                      handlers.onOutfitProfileChange(outfitProfileOption.value)
+                    }
                   />
                 }
-                label={genderOption.label}
+                label={outfitProfileOption.label}
               />
             ))}
           </FormGroup>
-        </GenderOptions>
+        </OutfitProfileOptions>
         {status.locationError && (
           <Alert severity="error">{status.locationError}</Alert>
         )}

@@ -12,7 +12,7 @@ describe("ClothingRecommendation", () => {
         fallbackRecommendation={
           fallbackClothingRecommendations[GenderSelection.Woman].current
         }
-        gender={GenderSelection.Woman}
+        outfitProfile={GenderSelection.Woman}
         recommendation={null}
       />,
     );
@@ -35,7 +35,7 @@ describe("ClothingRecommendation", () => {
         fallbackRecommendation={
           fallbackClothingRecommendations[GenderSelection.Man].current
         }
-        gender={GenderSelection.Man}
+        outfitProfile={GenderSelection.Man}
         recommendation={null}
       />,
     );
@@ -55,7 +55,7 @@ describe("ClothingRecommendation", () => {
         fallbackRecommendation={
           fallbackClothingRecommendations[GenderSelection.Woman].current
         }
-        gender={GenderSelection.Woman}
+        outfitProfile={GenderSelection.Woman}
         recommendation={{
           title: "Rain-ready warm layers",
           items: ["Water-resistant coat", "Warm base layer"],
@@ -79,7 +79,7 @@ describe("ClothingRecommendation", () => {
         fallbackRecommendation={
           fallbackClothingRecommendations[GenderSelection.Woman].current
         }
-        gender={GenderSelection.Woman}
+        outfitProfile={GenderSelection.Woman}
         loading
         recommendation={null}
       />,

@@ -28,7 +28,7 @@ describe("weatherPersistenceService", () => {
     const location: StoredLocation = {
       city: "Kyiv",
       countryIso: "UA",
-      gender: GenderSelection.Woman,
+      outfitProfile: GenderSelection.Woman,
     };
     vi.mocked(loadStoredLocation).mockReturnValue(location);
 

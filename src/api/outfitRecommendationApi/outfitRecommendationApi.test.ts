@@ -11,7 +11,7 @@ const recommendationRequest: OutfitRecommendationRequest = {
   humidity: 82,
   condition: "rain",
   city: "Kyiv",
-  gender: GenderSelection.Woman,
+  outfitProfile: GenderSelection.Woman,
 };
 
 const recommendation = {
@@ -63,7 +63,15 @@ describe("fetchOutfitRecommendation", () => {
     expect(fetchMock).toHaveBeenCalledWith(
       "https://weather-outfits.example/recommend-outfit",
       {
-        body: JSON.stringify(recommendationRequest),
+        body: JSON.stringify({
+          temperature: 4,
+          feelsLike: -1,
+          windSpeed: 8,
+          humidity: 82,
+          condition: "rain",
+          city: "Kyiv",
+          gender: "woman",
+        }),
         headers: {
           "Content-Type": "application/json",
         },

@@ -22,11 +22,11 @@ const defaultProps: ComponentProps<typeof FormElement> = {
     countryIso: "UA",
     selectedCountry: countries[0],
   },
-  gender: GenderSelection.Woman,
+  outfitProfile: GenderSelection.Woman,
   handlers: {
     onCityChange: vi.fn(),
     onCountryChange: vi.fn(),
-    onGenderChange: vi.fn(),
+    onOutfitProfileChange: vi.fn(),
     onSubmit: vi.fn((event) => event.preventDefault()),
   },
   status: {
@@ -50,7 +50,7 @@ const renderFormElement = (
       ...defaultProps.country,
       ...props.country,
     },
-    gender: props.gender ?? defaultProps.gender,
+    outfitProfile: props.outfitProfile ?? defaultProps.outfitProfile,
     handlers: {
       ...defaultProps.handlers,
       ...props.handlers,
@@ -81,19 +81,19 @@ describe("FormElement", () => {
     ).toBeEnabled();
   });
 
-  it("calls the handler when changing the selected outfit gender", async () => {
+  it("calls the handler when changing the selected outfit profile", async () => {
     const user = userEvent.setup();
     const props = renderFormElement();
 
     await user.click(screen.getByRole("checkbox", { name: "Man" }));
 
-    expect(props.handlers.onGenderChange).toHaveBeenCalledWith(
+    expect(props.handlers.onOutfitProfileChange).toHaveBeenCalledWith(
       GenderSelection.Man,
     );
   });
 
-  it("renders the stored selected outfit gender", () => {
-    renderFormElement({ gender: GenderSelection.Man });
+  it("renders the stored selected outfit profile", () => {
+    renderFormElement({ outfitProfile: GenderSelection.Man });
 
     expect(screen.getByRole("checkbox", { name: "Woman" })).not.toBeChecked();
     expect(screen.getByRole("checkbox", { name: "Man" })).toBeChecked();

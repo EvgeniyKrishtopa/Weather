@@ -7,7 +7,7 @@ export interface OutfitRecommendationRequest {
   humidity: number;
   condition: string;
   city: string;
-  gender: GenderSelection;
+  outfitProfile: GenderSelection;
 }
 
 export interface OutfitRecommendation {
