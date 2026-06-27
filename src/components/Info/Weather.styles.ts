@@ -126,3 +126,100 @@ export const MetricValue = styled("dd")(({ theme }) => ({
   fontWeight: 700,
   whiteSpace: "nowrap",
 }));
+
+export const ClothingRecommendationSection = styled("section")(({ theme }) => ({
+  display: "grid",
+  gap: theme.spacing(1),
+  gridTemplateRows: "auto minmax(0, 1fr)",
+  minHeight: 300,
+  padding: theme.spacing(1),
+  border: `1px solid ${themeAlpha.whiteDivider}`,
+  borderRadius: theme.spacing(1.5),
+  backgroundColor: themeAlpha.whiteSurface,
+}));
+
+export const ClothingRecommendationHeader = styled(Stack)(({ theme }) => ({
+  flexDirection: "row",
+  alignItems: "center",
+  gap: theme.spacing(0.75),
+  minWidth: 0,
+}));
+
+export const ClothingRecommendationIcon = styled(Box)(({ theme }) => ({
+  width: 30,
+  height: 30,
+  flexShrink: 0,
+  display: "grid",
+  placeItems: "center",
+  borderRadius: theme.spacing(1),
+  color: themeColors.white,
+  backgroundColor: themeAlpha.whiteSurface,
+  "& .MuiSvgIcon-root": {
+    fontSize: 17,
+  },
+}));
+
+export const ClothingRecommendationEyebrow = styled(Typography)({
+  fontSize: "0.7rem",
+  opacity: 0.8,
+});
+
+export const ClothingRecommendationTitle = styled(Typography)(({ theme }) => ({
+  ...theme.typography.body2,
+  marginBottom: 20,
+  color: "inherit",
+  fontWeight: 700,
+}));
+
+export const ClothingRecommendationDescription = styled(Typography)(
+  ({ theme }) => ({
+    ...theme.typography.body2,
+    color: "inherit",
+    opacity: 0.9,
+  }),
+);
+
+export const ClothingRecommendationLoading = styled(Stack)(({ theme }) => ({
+  position: "relative",
+  flexDirection: "row",
+  alignItems: "center",
+  gap: theme.spacing(1),
+  justifyContent: "center",
+  minHeight: 0,
+  color: "inherit",
+  "& .MuiCircularProgress-root": {
+    flexShrink: 0,
+  },
+  "& .MuiTypography-root": {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    maxWidth: "100%",
+  },
+}));
+
+export const ClothingItems = styled("ul")({
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 1fr)",
+  gap: "15px",
+  padding: 0,
+  width: "100%",
+  margin: "0 0 15px",
+  listStyle: "none",
+});
+
+export const ClothingItem = styled("li")(({ theme }) => ({
+  ...theme.typography.caption,
+  display: "flex",
+  alignItems: "center",
+  minWidth: 0,
+  height: 40,
+  width: "100%",
+  padding: theme.spacing(0.5, 0.75),
+  borderRadius: theme.spacing(1),
+  color: "inherit",
+  fontWeight: 700,
+  textAlign: "left",
+  overflowWrap: "anywhere",
+  backgroundColor: themeAlpha.whiteSurface,
+}));

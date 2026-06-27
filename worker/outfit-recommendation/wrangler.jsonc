@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "weather-outfit-recommendation",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-24",
+  "ai": {
+    "binding": "AI",
+  },
+}

@@ -11,7 +11,7 @@
 - Vitest with jsdom
 - React Testing Library, jest-dom, and user-event
 - ESLint flat configuration
-- npm and Node.js 20.19 or newer
+- npm and Node.js 22.0 or newer
 - GitHub Pages deployment under the `/Weather/` base path
 
 ## Architecture

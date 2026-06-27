@@ -83,10 +83,12 @@ describe("useLocationOptions", () => {
       "Ukraine,United States",
     );
     expect(screen.getByTestId("selected-country")).toHaveTextContent("Ukraine");
-    expect(store.reconcileDetectedCountryOptions).toHaveBeenCalledWith([
-      "UA",
-      "US",
-    ]);
+    await waitFor(() =>
+      expect(store.reconcileDetectedCountryOptions).toHaveBeenCalledWith([
+        "UA",
+        "US",
+      ]),
+    );
 
     await waitFor(() =>
       expect(screen.getByTestId("cities")).toHaveTextContent("Kyiv,Lviv"),

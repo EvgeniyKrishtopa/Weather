@@ -33,4 +33,8 @@ export const FormFields = styled(Stack)(({ theme }) => ({
   gap: theme.spacing(1.5),
 }));
 
+export const OutfitProfileOptions = styled(Stack)(({ theme }) => ({
+  gap: theme.spacing(0.25),
+}));
+
 export const FormElement = styled("form")({});

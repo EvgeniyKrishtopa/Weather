@@ -12,10 +12,12 @@ describe("FormHeader", () => {
     render(<FormHeader />);
 
     expect(
-      screen.getByRole("heading", { name: "Get your weather" }),
+      screen.getByRole("heading", { name: "Weather Outfit Advisor" }),
     ).toBeVisible();
     expect(
-      screen.getByText("Search current conditions by city and country."),
+      screen.getByText(
+        "Search current conditions and outfit ideas by city and country.",
+      ),
     ).toBeVisible();
     expect(screen.getByText("June 19, 2026")).toBeVisible();
   });

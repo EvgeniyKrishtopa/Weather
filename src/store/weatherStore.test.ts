@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { weatherFixture } from "../test/weatherFixture";
+import { GenderSelection } from "../types/location";
 import { WeatherStore, type WeatherStoreServices } from "./weatherStore";
 
 let services: WeatherStoreServices;
@@ -45,11 +46,13 @@ describe("WeatherStore", () => {
     vi.mocked(services.persistenceService.loadStoredLocation).mockReturnValue({
       city: "Lviv",
       countryIso: "UA",
+      outfitProfile: GenderSelection.Man,
     });
     const store = createStore();
 
     expect(store.city).toBe("Lviv");
     expect(store.countryIso).toBe("UA");
+    expect(store.outfitProfile).toBe(GenderSelection.Man);
 
     store.setCity("Kyiv");
 
@@ -58,7 +61,28 @@ describe("WeatherStore", () => {
     ).toHaveBeenLastCalledWith({
       city: "Kyiv",
       countryIso: "UA",
+      outfitProfile: GenderSelection.Man,
     });
+  });
+
+  it("defaults, updates, and persists the selected outfit profile", () => {
+    const store = createStore();
+
+    expect(store.outfitProfile).toBe(GenderSelection.Woman);
+    expect(store.setOutfitProfile(GenderSelection.Woman)).toBe(false);
+    expect(store.setOutfitProfile(GenderSelection.Man)).toBe(true);
+
+    expect(store.outfitProfile).toBe(GenderSelection.Man);
+    expect(
+      services.persistenceService.saveStoredLocation,
+    ).toHaveBeenLastCalledWith({
+      city: null,
+      countryIso: "US",
+      outfitProfile: GenderSelection.Man,
+    });
+    expect(
+      services.persistenceService.clearStoredWeather,
+    ).not.toHaveBeenCalled();
   });
 
   it("defaults to the timezone country when no stored country exists", () => {
@@ -94,6 +118,7 @@ describe("WeatherStore", () => {
     vi.mocked(services.persistenceService.loadStoredLocation).mockReturnValue({
       city: "Lviv",
       countryIso: "UA",
+      outfitProfile: GenderSelection.Woman,
     });
     const store = createStore();
 
@@ -178,6 +203,7 @@ describe("WeatherStore", () => {
     ).toHaveBeenLastCalledWith({
       city: "Chicago",
       countryIso: "UA",
+      outfitProfile: GenderSelection.Woman,
     });
     expect(services.persistenceService.clearStoredWeather).toHaveBeenCalled();
   });
@@ -224,6 +250,7 @@ describe("WeatherStore", () => {
     ).toHaveBeenLastCalledWith({
       city: "kyiv",
       countryIso: "UA",
+      outfitProfile: GenderSelection.Woman,
     });
   });
 

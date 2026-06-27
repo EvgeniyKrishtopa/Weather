@@ -1,9 +1,11 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { runInAction } from "mobx";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { OUTFIT_RECOMMENDATION_API_URL_ENV } from "../../constants";
 import { WeatherContext } from "../../context/weatherContext";
 import { WeatherStore } from "../../store/weatherStore";
+import { GenderSelection } from "../../types/location";
 import type { WeatherSuccess } from "../../types/weather";
 import Info from ".";
 
@@ -12,6 +14,7 @@ const unknownWeather: WeatherSuccess = {
   name: "Kyiv",
   main: {
     temp: 10,
+    feels_like: 8,
     humidity: 50,
   },
   weather: [{ main: "Volcanic ash" }],
@@ -31,6 +34,14 @@ const createStore = (weather: WeatherSuccess): WeatherStore => {
   return store;
 };
 
+beforeEach(() => {
+  vi.stubEnv(OUTFIT_RECOMMENDATION_API_URL_ENV, "");
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
+
 describe("weather information", () => {
   it("uses a fallback icon for unknown weather conditions", () => {
     render(
@@ -47,7 +58,7 @@ describe("weather information", () => {
     const store = createStore({
       ...unknownWeather,
       name: "Kyiv City",
-      main: { temp: 10, humidity: 50 },
+      main: { temp: 10, feels_like: 8, humidity: 50 },
       wind: { speed: 2 },
     });
 
@@ -66,6 +77,23 @@ describe("weather information", () => {
     expect(screen.getByText("10.0")).toBeVisible();
     expect(screen.getByText("2.0 m/s")).toBeVisible();
     expect(screen.getByText("50%")).toBeVisible();
+  });
+
+  it("renders the clothing recommendation for the selected outfit profile", () => {
+    const store = createStore(unknownWeather);
+
+    runInAction(() => {
+      store.outfitProfile = GenderSelection.Man;
+    });
+
+    render(
+      <WeatherContext.Provider value={store}>
+        <Info />
+      </WeatherContext.Provider>,
+    );
+
+    expect(screen.getByText("For Man")).toBeVisible();
+    expect(screen.getByText("Smart casual layers")).toBeVisible();
   });
 
   it("uses fallback text when no weather description is available", () => {

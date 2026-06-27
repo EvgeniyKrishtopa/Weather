@@ -9,8 +9,16 @@ import { useLocationOptions } from "./useLocationOptions";
 
 const Form = observer(() => {
   const weatherStore = useWeatherContext();
-  const { city, countryIso, getWeather, loading, setCity, setCountryIso } =
-    weatherStore;
+  const {
+    city,
+    countryIso,
+    outfitProfile,
+    getWeather,
+    loading,
+    setCity,
+    setCountryIso,
+    setOutfitProfile,
+  } = weatherStore;
   const [showValidationError, setShowValidationError] = useState(false);
   const {
     cities,
@@ -76,9 +84,11 @@ const Form = observer(() => {
             countryIso,
             selectedCountry,
           }}
+          outfitProfile={outfitProfile}
           handlers={{
             onCityChange: handleCityChange,
             onCountryChange: handleCountryChange,
+            onOutfitProfileChange: setOutfitProfile,
             onSubmit: formSubmit,
           }}
           status={{
