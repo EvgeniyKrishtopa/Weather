@@ -1,5 +1,5 @@
 {
-  "name": "weather-app",
+  "name": "weather-outfit-advisor",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,13 +15,17 @@
     "react-dom": "^19.2.7"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "start": "vite",
     "stop": "node scripts/stop-dev-server.mjs",
     "build": "vite build",
     "preview": "vite preview",
+    "wrangler:dev": "npm run build && wrangler dev --config wrangler.jsonc",
+    "wrangler:deploy": "npm run build && wrangler deploy --config wrangler.jsonc",
+    "outfit-worker:dev": "wrangler dev --config worker/outfit-recommendation/wrangler.jsonc --port 8787",
+    "outfit-worker:deploy": "wrangler deploy --config worker/outfit-recommendation/wrangler.jsonc",
+    "deploy": "npm run deploy:gh-pages",
+    "deploy:gh-pages": "npm run build && gh-pages -d dist",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -34,9 +38,10 @@
     "prepare": "husky"
   },
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=22.0.0"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.42.3",
     "@eslint/js": "^10.0.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -57,6 +62,7 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.0",
     "vite": "^8.0.16",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.8",
+    "wrangler": "^4.105.0"
   }
 }

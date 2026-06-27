@@ -1,0 +1,4 @@
+interface:
+  display_name: "Weather Code Review"
+  short_description: "Review Weather app changes for regressions"
+  default_prompt: "Use $weather-code-review to review these Weather app changes."

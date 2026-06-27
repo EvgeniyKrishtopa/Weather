@@ -4,6 +4,7 @@ import ManRoundedIcon from "@mui/icons-material/ManRounded";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { CircularProgress } from "@mui/material";
 import type { GenderSelection } from "../../../types/location";
+import type { OutfitRecommendation } from "../../../types/outfitRecommendation";
 import {
   ClothingRecommendationLoading,
   ClothingRecommendationSection,
@@ -13,48 +14,38 @@ import { ClothingRecommendationHeader } from "./Header";
 import { ClothingRecommendationList } from "./List";
 
 interface ClothingRecommendationProps {
+  fallbackRecommendation: OutfitRecommendation;
   gender: GenderSelection;
   loading?: boolean;
+  recommendation: OutfitRecommendation | null;
 }
 
-const clothingRecommendations: Record<
+const clothingRecommendationAudiences: Record<
   GenderSelection,
   {
     audience: string;
-    title: string;
-    items: string[];
-    description: string;
     Icon: SvgIconComponent;
   }
 > = {
   woman: {
     audience: "Woman",
-    title: "Light layered outfit",
-    items: [
-      "Light jacket",
-      "Long-sleeve top",
-      "Comfortable trousers",
-      "Closed shoes",
-    ],
-    description:
-      "A breathable layered look keeps you comfortable if the temperature shifts, while closed shoes add enough coverage for mild wind.",
     Icon: CheckroomRoundedIcon,
   },
   man: {
     audience: "Man",
-    title: "Smart casual layers",
-    items: ["Light coat", "Cotton shirt", "Chinos", "Casual sneakers"],
-    description:
-      "Easy layers give enough warmth without feeling heavy, and casual sneakers keep the outfit practical for mild outdoor conditions.",
     Icon: ManRoundedIcon,
   },
 };
 
 export const ClothingRecommendation = ({
+  fallbackRecommendation,
   gender,
   loading = false,
+  recommendation,
 }: ClothingRecommendationProps) => {
-  const clothingRecommendation = clothingRecommendations[gender];
+  const clothingRecommendationAudience =
+    clothingRecommendationAudiences[gender];
+  const visibleRecommendation = recommendation ?? fallbackRecommendation;
 
   return (
     <ClothingRecommendationSection
@@ -62,12 +53,12 @@ export const ClothingRecommendation = ({
       role="region"
     >
       <ClothingRecommendationHeader
-        audience={clothingRecommendation.audience}
-        Icon={clothingRecommendation.Icon}
+        audience={clothingRecommendationAudience.audience}
+        Icon={clothingRecommendationAudience.Icon}
         title={
           loading
             ? "Preparing outfit recommendation"
-            : clothingRecommendation.title
+            : visibleRecommendation.title
         }
       />
       {loading ? (
@@ -81,9 +72,9 @@ export const ClothingRecommendation = ({
         </ClothingRecommendationLoading>
       ) : (
         <>
-          <ClothingRecommendationList items={clothingRecommendation.items} />
+          <ClothingRecommendationList items={visibleRecommendation.items} />
           <ClothingRecommendationDescription
-            description={clothingRecommendation.description}
+            description={visibleRecommendation.description}
           />
         </>
       )}

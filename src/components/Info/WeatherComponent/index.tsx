@@ -7,6 +7,7 @@ import { WeatherCard, WeatherContent } from "../Weather.styles";
 import { WeatherConditionSummary } from "../WeatherConditionSummary";
 import { WeatherHeader } from "../WeatherHeader";
 import { WeatherMetrics } from "../WeatherMetrics";
+import { useOutfitRecommendation } from "../useOutfitRecommendation";
 
 interface WeatherComponentProps {
   currentWeather: WeatherSuccess;
@@ -19,6 +20,7 @@ export const WeatherComponent = ({
   gender,
   WeatherIcon,
 }: WeatherComponentProps) => {
+  const outfitRecommendation = useOutfitRecommendation(currentWeather, gender);
   const weatherDescription = currentWeather.weather[0]?.main ?? "Current";
   const temperature = currentWeather.main.temp.toFixed(1);
   const windSpeed = currentWeather.wind.speed.toFixed(1);
@@ -40,7 +42,7 @@ export const WeatherComponent = ({
           humidity={currentWeather.main.humidity}
           windSpeed={windSpeed}
         />
-        <ClothingRecommendation gender={gender} />
+        <ClothingRecommendation gender={gender} {...outfitRecommendation} />
       </WeatherContent>
     </WeatherCard>
   );

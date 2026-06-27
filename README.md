@@ -1,7 +1,8 @@
-## Get Current Weather
+## Weather Outfit Advisor
 
-This project was created with React and the OpenWeather API.
-Select a country and city to get the current weather.
+This project was created with React, the OpenWeather API, and Cloudflare
+Workers AI. Select a country and city to get current weather and outfit
+recommendations.
 
 Country names, ISO2 codes, and city options are loaded from the public
 [CountriesNow API](https://countriesnow.space/).
@@ -12,7 +13,7 @@ https://EvgeniyKrishtopa.github.io/Weather
 
 ## Local Development
 
-Requires Node.js 20.19 or newer.
+Requires Node.js 22.0 or newer.
 
 Install dependencies:
 
@@ -43,7 +44,9 @@ Every push to `master` builds the application with that secret and deploys the
 `dist` directory to GitHub Pages. The workflow can also be started manually
 from the Actions tab.
 
-Create a local environment file and add an OpenWeather API key:
+Create a local environment file and add an OpenWeather API key. Add
+`VITE_OUTFIT_RECOMMENDATION_API_URL` when a local or deployed Cloudflare Worker
+should provide LLM outfit recommendations:
 
 ```sh
 cp .env.example .env.local
@@ -64,6 +67,7 @@ npm run build
 Preview the production build locally:
 
 ```sh
+npm run build
 npm run preview
 ```
 
@@ -71,4 +75,24 @@ Deploy the `dist` directory to GitHub Pages:
 
 ```sh
 npm run deploy
+```
+
+The same GitHub Pages deploy is available under an explicit script name:
+
+```sh
+npm run deploy:gh-pages
+```
+
+Run or deploy the Cloudflare Worker for outfit recommendations:
+
+```sh
+npm run outfit-worker:dev
+npm run outfit-worker:deploy
+```
+
+Run or deploy the app with Wrangler instead of GitHub Pages:
+
+```sh
+npm run wrangler:dev
+npm run wrangler:deploy
 ```

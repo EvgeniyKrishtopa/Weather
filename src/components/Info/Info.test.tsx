@@ -1,7 +1,8 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { runInAction } from "mobx";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { OUTFIT_RECOMMENDATION_API_URL_ENV } from "../../constants";
 import { WeatherContext } from "../../context/weatherContext";
 import { WeatherStore } from "../../store/weatherStore";
 import { GenderSelection } from "../../types/location";
@@ -13,6 +14,7 @@ const unknownWeather: WeatherSuccess = {
   name: "Kyiv",
   main: {
     temp: 10,
+    feels_like: 8,
     humidity: 50,
   },
   weather: [{ main: "Volcanic ash" }],
@@ -32,6 +34,14 @@ const createStore = (weather: WeatherSuccess): WeatherStore => {
   return store;
 };
 
+beforeEach(() => {
+  vi.stubEnv(OUTFIT_RECOMMENDATION_API_URL_ENV, "");
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
+
 describe("weather information", () => {
   it("uses a fallback icon for unknown weather conditions", () => {
     render(
@@ -48,7 +58,7 @@ describe("weather information", () => {
     const store = createStore({
       ...unknownWeather,
       name: "Kyiv City",
-      main: { temp: 10, humidity: 50 },
+      main: { temp: 10, feels_like: 8, humidity: 50 },
       wind: { speed: 2 },
     });
 

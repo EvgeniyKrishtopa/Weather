@@ -18,6 +18,12 @@ A concise description of how each skill/agent optimizes workflow and context han
 - How it optimizes: Catches issues locally before CI, reduces fix iterations, and speeds releases.
 - When to use: Before pushing, opening a PR, or releasing.
 
+## weather-code-review
+
+- What it does: Guides findings-first reviews of local diffs, PRs, UI, API, Worker, request-state, and deploy changes.
+- How it optimizes: Focuses review on regressions, stale state, env leaks, deploy risk, and missing tests.
+- When to use: When asking for a review, code review, PR audit, or regression check.
+
 ## weather-request-state
 
 - What it does: Rules and patterns for managing requests, cancellation, "last‑request‑wins" logic, caching, and state restoration.
@@ -55,8 +61,9 @@ A concise description of how each skill/agent optimizes workflow and context han
 1. Run `Explore` to gather context and file lists.
 2. Follow `weather-feature-workflow` when implementing a feature.
 3. Apply `weather-request-state` for changes affecting requests/state.
-4. Run `weather-release-checks` before opening a PR.
-5. If needed, adjust agent behavior via `agent-customization`.
+4. Use `weather-code-review` to review important diffs before release.
+5. Run `weather-release-checks` before opening a PR.
+6. If needed, adjust agent behavior via `agent-customization`.
 
 ---
 
