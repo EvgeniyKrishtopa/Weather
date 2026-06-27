@@ -10,10 +10,10 @@ export const FormHeader = () => (
   <FormHeaderContainer>
     <div>
       <Typography component="h1" variant="h5">
-        Get your weather and outfit
+        Weather Outfit Advisor
       </Typography>
       <FormDescription color="text.secondary">
-        Search current conditions by city and country.
+        Search current conditions and outfit ideas by city and country.
       </FormDescription>
     </div>
     <Chip label={currentDate()} variant="outlined" color="primary" />

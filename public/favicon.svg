@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Weather Outfit Advisor">
+  <defs>
+    <linearGradient id="sky" x1="80" y1="56" x2="432" y2="456" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#38bdf8" />
+      <stop offset="0.55" stop-color="#2563eb" />
+      <stop offset="1" stop-color="#111827" />
+    </linearGradient>
+    <linearGradient id="coat" x1="180" y1="180" x2="352" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f97316" />
+      <stop offset="1" stop-color="#fb7185" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.28" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#sky)" />
+  <circle cx="354" cy="142" r="58" fill="#fde68a" />
+  <path
+    d="M140 264c-42 0-76-32-76-72s34-72 76-72c12 0 24 3 34 8 20-34 58-56 102-56 64 0 116 48 122 110 30 8 52 34 52 66 0 38-31 68-70 68H144c-2 0-3-1-4-1"
+    fill="#f8fafc"
+    opacity="0.95"
+  />
+  <path
+    d="M188 219h136l48 58-42 42-22-24v124H204V295l-22 24-42-42 48-58Z"
+    fill="url(#coat)"
+    filter="url(#shadow)"
+  />
+  <path d="M218 219c12 20 25 30 38 30s26-10 38-30" fill="none" stroke="#fff7ed" stroke-width="20" stroke-linecap="round" />
+  <path d="M256 258v154" stroke="#fff7ed" stroke-width="18" stroke-linecap="round" opacity="0.75" />
+  <path d="M222 306h68" stroke="#111827" stroke-width="14" stroke-linecap="round" opacity="0.2" />
+</svg>

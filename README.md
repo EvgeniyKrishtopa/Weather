@@ -1,7 +1,8 @@
-## Get Current Weather
+## Weather Outfit Advisor
 
-This project was created with React and the OpenWeather API.
-Select a country and city to get the current weather.
+This project was created with React, the OpenWeather API, and Cloudflare
+Workers AI. Select a country and city to get current weather and outfit
+recommendations.
 
 Country names, ISO2 codes, and city options are loaded from the public
 [CountriesNow API](https://countriesnow.space/).
@@ -43,7 +44,9 @@ Every push to `master` builds the application with that secret and deploys the
 `dist` directory to GitHub Pages. The workflow can also be started manually
 from the Actions tab.
 
-Create a local environment file and add an OpenWeather API key:
+Create a local environment file and add an OpenWeather API key. Add
+`VITE_OUTFIT_RECOMMENDATION_API_URL` when a local or deployed Cloudflare Worker
+should provide LLM outfit recommendations:
 
 ```sh
 cp .env.example .env.local
