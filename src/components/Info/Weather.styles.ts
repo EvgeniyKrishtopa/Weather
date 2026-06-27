@@ -166,6 +166,7 @@ export const ClothingRecommendationEyebrow = styled(Typography)({
 
 export const ClothingRecommendationTitle = styled(Typography)(({ theme }) => ({
   ...theme.typography.body2,
+  marginBottom: 20,
   color: "inherit",
   fontWeight: 700,
 }));
@@ -197,19 +198,22 @@ export const ClothingRecommendationLoading = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export const ClothingItems = styled("ul")(({ theme }) => ({
+export const ClothingItems = styled("ul")({
   display: "grid",
   gridTemplateColumns: "minmax(0, 1fr)",
-  gap: theme.spacing(0.75),
+  gap: "15px",
   padding: 0,
   width: "100%",
   margin: "0 0 15px",
   listStyle: "none",
-}));
+});
 
 export const ClothingItem = styled("li")(({ theme }) => ({
   ...theme.typography.caption,
+  display: "flex",
+  alignItems: "center",
   minWidth: 0,
+  height: 40,
   width: "100%",
   padding: theme.spacing(0.5, 0.75),
   borderRadius: theme.spacing(1),

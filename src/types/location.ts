@@ -24,5 +24,5 @@ export const isGenderSelection = (value: unknown): value is GenderSelection =>
 export interface StoredLocation {
   city: string | null;
   countryIso: string;
-  gender: GenderSelection;
+  outfitProfile: GenderSelection;
 }

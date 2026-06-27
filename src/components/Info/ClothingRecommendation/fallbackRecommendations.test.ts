@@ -21,9 +21,9 @@ const basicWeatherConditions: BasicWeatherCondition[] = [
 describe("fallback clothing recommendations", () => {
   it.each([GenderSelection.Woman, GenderSelection.Man])(
     "defines fallback variants for all basic weather conditions for %s",
-    (gender) => {
+    (outfitProfile) => {
       expect(
-        Object.keys(fallbackClothingRecommendations[gender]).sort(),
+        Object.keys(fallbackClothingRecommendations[outfitProfile]).sort(),
       ).toEqual([...basicWeatherConditions].sort());
     },
   );
@@ -35,7 +35,7 @@ describe("fallback clothing recommendations", () => {
     expect(getBasicWeatherCondition("Volcanic ash")).toBe("current");
   });
 
-  it("returns gender-specific fallback recommendations for the same weather", () => {
+  it("returns outfit profile-specific fallback recommendations for the same weather", () => {
     expect(
       getFallbackClothingRecommendation(GenderSelection.Woman, "Rain").items,
     ).toContain("Water-resistant trench coat");

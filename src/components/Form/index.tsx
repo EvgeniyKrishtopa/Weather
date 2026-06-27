@@ -12,12 +12,12 @@ const Form = observer(() => {
   const {
     city,
     countryIso,
-    gender,
+    outfitProfile,
     getWeather,
     loading,
     setCity,
     setCountryIso,
-    setGender,
+    setOutfitProfile,
   } = weatherStore;
   const [showValidationError, setShowValidationError] = useState(false);
   const {
@@ -84,11 +84,11 @@ const Form = observer(() => {
             countryIso,
             selectedCountry,
           }}
-          gender={gender}
+          outfitProfile={outfitProfile}
           handlers={{
             onCityChange: handleCityChange,
             onCountryChange: handleCountryChange,
-            onGenderChange: setGender,
+            onOutfitProfileChange: setOutfitProfile,
             onSubmit: formSubmit,
           }}
           status={{

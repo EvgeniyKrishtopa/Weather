@@ -4,6 +4,10 @@ import {
   type OutfitRecommendation,
   type OutfitRecommendationRequest,
 } from "../../types/outfitRecommendation";
+import { GenderSelection } from "../../types/location";
+
+const getWorkerGender = (outfitProfile: GenderSelection): "woman" | "man" =>
+  outfitProfile === GenderSelection.Man ? "man" : "woman";
 
 export const hasOutfitRecommendationProvider = (): boolean =>
   Boolean(import.meta.env[OUTFIT_RECOMMENDATION_API_URL_ENV]);
@@ -19,8 +23,13 @@ export const fetchOutfitRecommendation = async (
   }
 
   try {
+    const { outfitProfile, ...weatherRequest } = recommendationRequest;
+
     const response = await fetch(apiUrl, {
-      body: JSON.stringify(recommendationRequest),
+      body: JSON.stringify({
+        ...weatherRequest,
+        gender: getWorkerGender(outfitProfile),
+      }),
       headers: {
         "Content-Type": "application/json",
       },

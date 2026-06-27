@@ -38,7 +38,7 @@ const createOutfitRecommendationRequest = (
     temperature: number;
     windSpeed: number;
   },
-  gender: GenderSelection,
+  outfitProfile: GenderSelection,
 ): OutfitRecommendationRequest => ({
   temperature: weatherData.temperature,
   feelsLike: weatherData.feelsLike,
@@ -46,12 +46,12 @@ const createOutfitRecommendationRequest = (
   humidity: weatherData.humidity,
   condition: weatherData.condition,
   city: weatherData.city,
-  gender,
+  outfitProfile,
 });
 
 export const useOutfitRecommendation = (
   weather: WeatherSuccess,
-  gender: GenderSelection,
+  outfitProfile: GenderSelection,
 ): OutfitRecommendationState => {
   const city = weather.name;
   const condition = (weather.weather[0]?.main ?? "current").toLowerCase();
@@ -60,7 +60,7 @@ export const useOutfitRecommendation = (
   const temperature = weather.main.temp;
   const windSpeed = weather.wind.speed;
   const fallbackRecommendation = getFallbackClothingRecommendation(
-    gender,
+    outfitProfile,
     condition,
   );
   const providerAvailable = hasOutfitRecommendationProvider();
@@ -75,9 +75,17 @@ export const useOutfitRecommendation = (
           temperature,
           windSpeed,
         },
-        gender,
+        outfitProfile,
       ),
-    [city, condition, feelsLike, gender, humidity, temperature, windSpeed],
+    [
+      city,
+      condition,
+      feelsLike,
+      outfitProfile,
+      humidity,
+      temperature,
+      windSpeed,
+    ],
   );
   const requestKey = useMemo(
     () => JSON.stringify(recommendationRequest),

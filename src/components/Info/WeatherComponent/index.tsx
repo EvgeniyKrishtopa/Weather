@@ -11,16 +11,19 @@ import { useOutfitRecommendation } from "../useOutfitRecommendation";
 
 interface WeatherComponentProps {
   currentWeather: WeatherSuccess;
-  gender: GenderSelection;
+  outfitProfile: GenderSelection;
   WeatherIcon: SvgIconComponent;
 }
 
 export const WeatherComponent = ({
   currentWeather,
-  gender,
+  outfitProfile,
   WeatherIcon,
 }: WeatherComponentProps) => {
-  const outfitRecommendation = useOutfitRecommendation(currentWeather, gender);
+  const outfitRecommendation = useOutfitRecommendation(
+    currentWeather,
+    outfitProfile,
+  );
   const weatherDescription = currentWeather.weather[0]?.main ?? "Current";
   const temperature = currentWeather.main.temp.toFixed(1);
   const windSpeed = currentWeather.wind.speed.toFixed(1);
@@ -42,7 +45,10 @@ export const WeatherComponent = ({
           humidity={currentWeather.main.humidity}
           windSpeed={windSpeed}
         />
-        <ClothingRecommendation gender={gender} {...outfitRecommendation} />
+        <ClothingRecommendation
+          outfitProfile={outfitProfile}
+          {...outfitRecommendation}
+        />
       </WeatherContent>
     </WeatherCard>
   );

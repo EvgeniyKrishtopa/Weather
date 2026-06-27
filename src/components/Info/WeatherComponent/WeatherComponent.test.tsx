@@ -28,7 +28,7 @@ describe("WeatherComponent", () => {
           weather: [{ main: "Clouds" }],
           wind: { speed: 5.67 },
         }}
-        gender={GenderSelection.Woman}
+        outfitProfile={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
       />,
     );
@@ -72,7 +72,7 @@ describe("WeatherComponent", () => {
           weather: [{ main: "Rain" }],
           wind: { speed: 8 },
         }}
-        gender={GenderSelection.Woman}
+        outfitProfile={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
       />,
     );
@@ -92,7 +92,7 @@ describe("WeatherComponent", () => {
     render(
       <WeatherComponent
         currentWeather={weatherFixture}
-        gender={GenderSelection.Woman}
+        outfitProfile={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
       />,
     );
@@ -104,7 +104,7 @@ describe("WeatherComponent", () => {
     ).toBeVisible();
   });
 
-  it("shows a brief loader while refreshing after a gender change", async () => {
+  it("shows a brief loader while refreshing after an outfit profile change", async () => {
     vi.useFakeTimers();
     vi.stubEnv(
       OUTFIT_RECOMMENDATION_API_URL_ENV,
@@ -135,7 +135,7 @@ describe("WeatherComponent", () => {
     const { rerender } = render(
       <WeatherComponent
         currentWeather={weatherFixture}
-        gender={GenderSelection.Woman}
+        outfitProfile={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
       />,
     );
@@ -151,7 +151,7 @@ describe("WeatherComponent", () => {
     rerender(
       <WeatherComponent
         currentWeather={weatherFixture}
-        gender={GenderSelection.Man}
+        outfitProfile={GenderSelection.Man}
         WeatherIcon={AirRoundedIcon}
       />,
     );
@@ -178,7 +178,7 @@ describe("WeatherComponent", () => {
           ...weatherFixture,
           weather: [],
         }}
-        gender={GenderSelection.Woman}
+        outfitProfile={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
       />,
     );

@@ -39,7 +39,7 @@ export class WeatherStore {
   error: WeatherError | null = null;
   city: string | null;
   countryIso: string;
-  gender: GenderSelection;
+  outfitProfile: GenderSelection;
   loading = false;
   private countryAutoDetected: boolean;
   private activeRequest: AbortController | null = null;
@@ -58,7 +58,8 @@ export class WeatherStore {
     this.countryIso =
       storedLocation?.countryIso ??
       this.services.defaultCountryService.getDefaultCountryIso();
-    this.gender = storedLocation?.gender ?? DEFAULT_GENDER_SELECTION;
+    this.outfitProfile =
+      storedLocation?.outfitProfile ?? DEFAULT_GENDER_SELECTION;
     this.countryAutoDetected = !storedLocation;
 
     makeAutoObservable<
@@ -106,12 +107,12 @@ export class WeatherStore {
     return true;
   }
 
-  setGender(gender: GenderSelection): boolean {
-    if (gender === this.gender) {
+  setOutfitProfile(outfitProfile: GenderSelection): boolean {
+    if (outfitProfile === this.outfitProfile) {
       return false;
     }
 
-    this.gender = gender;
+    this.outfitProfile = outfitProfile;
     this.saveLocation();
 
     return true;
@@ -213,7 +214,7 @@ export class WeatherStore {
     this.services.persistenceService.saveStoredLocation({
       city: this.city,
       countryIso: this.countryIso,
-      gender: this.gender,
+      outfitProfile: this.outfitProfile,
     });
   }
 }
