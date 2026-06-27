@@ -21,6 +21,7 @@ describe("weather type guards", () => {
     { cod: 200 },
     { ...weatherFixture, name: 123 },
     { ...weatherFixture, main: { temp: "21", humidity: 62 } },
+    { ...weatherFixture, main: { temp: 21, humidity: 62 } },
     { ...weatherFixture, weather: [] },
     { ...weatherFixture, wind: { speed: "fast" } },
     { cod: 500 },

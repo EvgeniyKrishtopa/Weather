@@ -3,6 +3,7 @@ export interface WeatherSuccess {
   name: string;
   main: {
     temp: number;
+    feels_like: number;
     humidity: number;
   };
   weather: Array<{
@@ -45,6 +46,7 @@ export const isWeatherResponse = (value: unknown): value is WeatherResponse => {
       typeof response.name === "string" &&
       !!main &&
       typeof main.temp === "number" &&
+      typeof main.feels_like === "number" &&
       typeof main.humidity === "number" &&
       Array.isArray(weather) &&
       weather.length > 0 &&

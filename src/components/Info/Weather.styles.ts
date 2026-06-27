@@ -130,6 +130,8 @@ export const MetricValue = styled("dd")(({ theme }) => ({
 export const ClothingRecommendationSection = styled("section")(({ theme }) => ({
   display: "grid",
   gap: theme.spacing(1),
+  gridTemplateRows: "auto minmax(0, 1fr)",
+  minHeight: 300,
   padding: theme.spacing(1),
   border: `1px solid ${themeAlpha.whiteDivider}`,
   borderRadius: theme.spacing(1.5),
@@ -177,13 +179,21 @@ export const ClothingRecommendationDescription = styled(Typography)(
 );
 
 export const ClothingRecommendationLoading = styled(Stack)(({ theme }) => ({
+  position: "relative",
   flexDirection: "row",
   alignItems: "center",
   gap: theme.spacing(1),
-  minHeight: 58,
+  justifyContent: "center",
+  minHeight: 0,
   color: "inherit",
   "& .MuiCircularProgress-root": {
     flexShrink: 0,
+  },
+  "& .MuiTypography-root": {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    maxWidth: "100%",
   },
 }));
 

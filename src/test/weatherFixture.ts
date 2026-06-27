@@ -5,6 +5,7 @@ export const weatherFixture: WeatherSuccess = {
   name: "Kyiv",
   main: {
     temp: 21.4,
+    feels_like: 20.8,
     humidity: 62,
   },
   weather: [

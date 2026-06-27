@@ -11,6 +11,9 @@
 # production
 /dist
 
+# local Cloudflare Worker state
+.wrangler
+
 # misc
 .DS_Store
 .env
