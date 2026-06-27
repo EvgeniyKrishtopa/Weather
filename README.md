@@ -13,7 +13,7 @@ https://EvgeniyKrishtopa.github.io/Weather
 
 ## Local Development
 
-Requires Node.js 20.19 or newer.
+Requires Node.js 22.0 or newer.
 
 Install dependencies:
 
@@ -67,6 +67,7 @@ npm run build
 Preview the production build locally:
 
 ```sh
+npm run build
 npm run preview
 ```
 
@@ -74,4 +75,24 @@ Deploy the `dist` directory to GitHub Pages:
 
 ```sh
 npm run deploy
+```
+
+The same GitHub Pages deploy is available under an explicit script name:
+
+```sh
+npm run deploy:gh-pages
+```
+
+Run or deploy the Cloudflare Worker for outfit recommendations:
+
+```sh
+npm run outfit-worker:dev
+npm run outfit-worker:deploy
+```
+
+Run or deploy the app with Wrangler instead of GitHub Pages:
+
+```sh
+npm run wrangler:dev
+npm run wrangler:deploy
 ```

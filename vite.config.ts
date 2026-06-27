@@ -1,4 +1,5 @@
 import { defineConfig } from "vitest/config";
+import { cloudflare } from "@cloudflare/vite-plugin";
 import react from "@vitejs/plugin-react";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Plugin } from "vite";
@@ -75,9 +76,13 @@ function terminalConsoleBridgePlugin(): Plugin {
   };
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: APP_BASE_PATH,
-  plugins: [react(), terminalConsoleBridgePlugin()],
+  plugins: [
+    react(),
+    terminalConsoleBridgePlugin(),
+    ...(mode === "test" ? [] : [cloudflare()]),
+  ],
   server: {
     open: APP_BASE_PATH,
   },
@@ -108,4 +113,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
