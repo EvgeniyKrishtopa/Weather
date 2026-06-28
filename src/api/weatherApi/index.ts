@@ -4,6 +4,11 @@ import {
   type WeatherResponse,
 } from "../../types/weather";
 import { OPENWEATHER_API_KEY_ENV, OPENWEATHER_UNITS } from "../../constants";
+import {
+  DEFAULT_LANGUAGE,
+  getTranslation,
+  type SupportedLanguage,
+} from "../../i18n";
 import { OPENWEATHER_WEATHER_API_URL } from "../../urls";
 
 const createError = (message: string): WeatherError => ({
@@ -14,17 +19,20 @@ const createError = (message: string): WeatherError => ({
 export const fetchWeather = async (
   city: string,
   country: string,
+  language: SupportedLanguage = DEFAULT_LANGUAGE,
   signal?: AbortSignal,
 ): Promise<WeatherResponse> => {
   const apiKey = import.meta.env[OPENWEATHER_API_KEY_ENV];
+  const t = getTranslation(language);
 
   if (!apiKey) {
-    return createError("Weather API key is not configured");
+    return createError(t.errors.weatherApiKeyMissing);
   }
 
   const searchParams = new URLSearchParams({
     q: `${city},${country}`,
     appid: apiKey,
+    lang: language,
     units: OPENWEATHER_UNITS,
   });
 
@@ -38,7 +46,7 @@ export const fetchWeather = async (
     const data: unknown = await response.json();
 
     if (!isWeatherResponse(data)) {
-      return createError("Weather service returned an invalid response");
+      return createError(t.errors.weatherInvalidResponse);
     }
 
     return data;
@@ -47,6 +55,6 @@ export const fetchWeather = async (
       throw error;
     }
 
-    return createError("Unable to connect to the weather service");
+    return createError(t.errors.unableToConnectWeather);
   }
 };

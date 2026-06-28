@@ -3,6 +3,7 @@ import {
   fetchOutfitRecommendation,
   hasOutfitRecommendationProvider,
 } from "../../../api/outfitRecommendationApi";
+import { getLanguageName, type SupportedLanguage } from "../../../i18n";
 import type { GenderSelection } from "../../../types/location";
 import type {
   OutfitRecommendation,
@@ -39,6 +40,8 @@ const createOutfitRecommendationRequest = (
     windSpeed: number;
   },
   outfitProfile: GenderSelection,
+  language: SupportedLanguage,
+  countryIso: string,
 ): OutfitRecommendationRequest => ({
   temperature: weatherData.temperature,
   feelsLike: weatherData.feelsLike,
@@ -46,12 +49,17 @@ const createOutfitRecommendationRequest = (
   humidity: weatherData.humidity,
   condition: weatherData.condition,
   city: weatherData.city,
+  countryIso,
+  language,
+  languageName: getLanguageName(language),
   outfitProfile,
 });
 
 export const useOutfitRecommendation = (
   weather: WeatherSuccess,
   outfitProfile: GenderSelection,
+  language: SupportedLanguage,
+  countryIso: string,
 ): OutfitRecommendationState => {
   const city = weather.name;
   const condition = (weather.weather[0]?.main ?? "current").toLowerCase();
@@ -62,6 +70,7 @@ export const useOutfitRecommendation = (
   const fallbackRecommendation = getFallbackClothingRecommendation(
     outfitProfile,
     condition,
+    language,
   );
   const providerAvailable = hasOutfitRecommendationProvider();
   const recommendationRequest = useMemo(
@@ -76,13 +85,17 @@ export const useOutfitRecommendation = (
           windSpeed,
         },
         outfitProfile,
+        language,
+        countryIso,
       ),
     [
       city,
       condition,
+      countryIso,
       feelsLike,
       outfitProfile,
       humidity,
+      language,
       temperature,
       windSpeed,
     ],

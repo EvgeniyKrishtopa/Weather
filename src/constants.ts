@@ -7,7 +7,6 @@ export const OPENWEATHER_API_KEY_ENV = "VITE_OPENWEATHER_API_KEY";
 export const OUTFIT_RECOMMENDATION_API_URL_ENV =
   "VITE_OUTFIT_RECOMMENDATION_API_URL";
 export const OPENWEATHER_UNITS = "metric";
-export const OPENWEATHER_REVERSE_GEOCODING_LIMIT = "1";
 
 export const SELECTED_LOCATION_STORAGE_KEY = "weather-app:selected-location";
 export const LAST_WEATHER_STORAGE_KEY = "weather-app:last-weather";

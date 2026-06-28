@@ -1,12 +1,16 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { getTranslation } from "../../../i18n";
 import { ErrorWeather } from ".";
 
 describe("ErrorWeather", () => {
   it("renders weather error message", () => {
     render(
-      <ErrorWeather currentWeather={{ cod: 404, message: "Not found" }} />,
+      <ErrorWeather
+        currentWeather={{ cod: 404, message: "Not found" }}
+        translation={getTranslation("en")}
+      />,
     );
 
     expect(screen.getByRole("alert")).toBeVisible();

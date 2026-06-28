@@ -2,6 +2,7 @@ import React from "react";
 import AirRoundedIcon from "@mui/icons-material/AirRounded";
 import WaterDropOutlinedIcon from "@mui/icons-material/WaterDropOutlined";
 import { Box } from "@mui/material";
+import type { TranslationDictionary } from "../../../i18n";
 import {
   MetricIcon,
   MetricLabel,
@@ -18,6 +19,7 @@ interface MetricProps {
 
 interface WeatherMetricsProps {
   humidity: number;
+  translation: TranslationDictionary;
   windSpeed: string;
 }
 
@@ -33,17 +35,18 @@ const Metric = ({ icon, label, value }: MetricProps) => (
 
 export const WeatherMetrics = ({
   humidity,
+  translation,
   windSpeed,
 }: WeatherMetricsProps) => (
   <Metrics>
     <Metric
       icon={<AirRoundedIcon />}
-      label="Wind speed"
+      label={translation.weather.windSpeed}
       value={`${windSpeed} m/s`}
     />
     <Metric
       icon={<WaterDropOutlinedIcon />}
-      label="Humidity"
+      label={translation.weather.humidity}
       value={`${humidity}%`}
     />
   </Metrics>

@@ -12,7 +12,7 @@ describe("fetchWeather", () => {
   it("returns a configuration error without an API key", async () => {
     vi.stubEnv(OPENWEATHER_API_KEY_ENV, "");
 
-    await expect(fetchWeather("Kyiv", "UA")).resolves.toEqual({
+    await expect(fetchWeather("Kyiv", "UA", "en")).resolves.toEqual({
       cod: "CLIENT_ERROR",
       message: "Weather API key is not configured",
     });
@@ -25,11 +25,14 @@ describe("fetchWeather", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
 
-    await expect(fetchWeather("Kyiv", "UA")).resolves.toEqual(weatherFixture);
+    await expect(fetchWeather("Kyiv", "UA", "uk")).resolves.toEqual(
+      weatherFixture,
+    );
 
     const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
     expect(requestUrl.searchParams.get("q")).toBe("Kyiv,UA");
     expect(requestUrl.searchParams.get("appid")).toBe("test-key");
+    expect(requestUrl.searchParams.get("lang")).toBe("uk");
     expect(requestUrl.searchParams.get("units")).toBe(OPENWEATHER_UNITS);
   });
 
@@ -42,7 +45,7 @@ describe("fetchWeather", () => {
       }),
     );
 
-    await expect(fetchWeather("Kyiv", "UA")).resolves.toEqual({
+    await expect(fetchWeather("Kyiv", "UA", "en")).resolves.toEqual({
       cod: "CLIENT_ERROR",
       message: "Weather service returned an invalid response",
     });
@@ -52,7 +55,7 @@ describe("fetchWeather", () => {
     vi.stubEnv(OPENWEATHER_API_KEY_ENV, "test-key");
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
 
-    await expect(fetchWeather("Kyiv", "UA")).resolves.toEqual({
+    await expect(fetchWeather("Kyiv", "UA", "en")).resolves.toEqual({
       cod: "CLIENT_ERROR",
       message: "Unable to connect to the weather service",
     });

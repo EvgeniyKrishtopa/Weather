@@ -14,8 +14,8 @@
 ## External APIs
 
 - Weather data uses OpenWeather current weather with metric units.
-- Reverse geocoding uses OpenWeather coordinates-to-country lookup.
-- Country and city options use Countries Now endpoints.
+- Country and city options use static in-repo supported country and curated
+  city data.
 - Outfit recommendation calls are optional and depend on
   `VITE_OUTFIT_RECOMMENDATION_API_URL`.
 
@@ -32,13 +32,10 @@ boundary validation.
 - Preserve backward-compatible reads for older stored outfit profile values
   unless intentionally removing a migration.
 
-## Location And Country Refinement
+## Location And Country Defaults
 
 - The default country starts from locale/default-country service behavior.
-- Browser geolocation can refine the country only while the store still allows
-  auto-detected country application.
-- A country option list that does not contain the detected country reconciles to
-  `DEFAULT_COUNTRY_ISO` when possible.
+- Unsupported default or stored countries normalize to `DEFAULT_COUNTRY_ISO`.
 - Changing country retains the current city until the new city list determines
   whether it remains valid.
 - A valid retained city requests weather for the new country.

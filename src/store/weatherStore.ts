@@ -16,7 +16,13 @@ import {
   type WeatherError,
   type WeatherSuccess,
 } from "../types/weather";
-import { DEFAULT_COUNTRY_ISO } from "../constants";
+import {
+  getCuratedCityValues,
+  getLanguageForCountryIso,
+  isSupportedCountryIso,
+  normalizeSupportedCountryIso,
+  type SupportedLanguage,
+} from "../i18n";
 import {
   DEFAULT_GENDER_SELECTION,
   type GenderSelection,
@@ -41,7 +47,6 @@ export class WeatherStore {
   countryIso: string;
   outfitProfile: GenderSelection;
   loading = false;
-  private countryAutoDetected: boolean;
   private activeRequest: AbortController | null = null;
   private requestId = 0;
   private readonly services: WeatherStoreServices;
@@ -52,33 +57,52 @@ export class WeatherStore {
     const storedWeather = this.services.persistenceService.loadStoredWeather();
     const storedLocation =
       this.services.persistenceService.loadStoredLocation();
-
-    this.weather = storedWeather?.weather ?? null;
-    this.city = storedLocation?.city ?? storedWeather?.city ?? null;
-    this.countryIso =
+    const storedCountryUnsupported =
+      !!storedLocation && !isSupportedCountryIso(storedLocation.countryIso);
+    const initialCountryIso = normalizeSupportedCountryIso(
       storedLocation?.countryIso ??
-      this.services.defaultCountryService.getDefaultCountryIso();
+        this.services.defaultCountryService.getDefaultCountryIso(),
+    );
+    const storedCity = storedLocation?.city ?? storedWeather?.city ?? null;
+    const storedCityUnsupported =
+      !!storedCity &&
+      !getCuratedCityValues(initialCountryIso).includes(storedCity);
+    const shouldClearStoredLocation =
+      storedCountryUnsupported || storedCityUnsupported;
+
+    this.weather = shouldClearStoredLocation
+      ? null
+      : (storedWeather?.weather ?? null);
+    this.city = shouldClearStoredLocation ? null : storedCity;
+    this.countryIso = initialCountryIso;
     this.outfitProfile =
       storedLocation?.outfitProfile ?? DEFAULT_GENDER_SELECTION;
-    this.countryAutoDetected = !storedLocation;
 
-    makeAutoObservable<
-      this,
-      "activeRequest" | "requestId" | "countryAutoDetected" | "services"
-    >(
+    if (shouldClearStoredLocation) {
+      this.services.persistenceService.clearStoredWeather();
+
+      if (storedLocation) {
+        this.services.persistenceService.saveStoredLocation({
+          city: null,
+          countryIso: initialCountryIso,
+          outfitProfile: this.outfitProfile,
+        });
+      }
+    }
+
+    makeAutoObservable<this, "activeRequest" | "requestId" | "services">(
       this,
       {
         activeRequest: false,
         requestId: false,
-        countryAutoDetected: false,
         services: false,
       },
       { autoBind: true },
     );
   }
 
-  get canApplyDetectedCountryIso(): boolean {
-    return this.countryAutoDetected;
+  get language(): SupportedLanguage {
+    return getLanguageForCountryIso(this.countryIso);
   }
 
   setCity(city: string | null): boolean {
@@ -86,7 +110,6 @@ export class WeatherStore {
       return false;
     }
 
-    this.countryAutoDetected = false;
     this.invalidateWeather();
     this.city = city;
     this.saveLocation();
@@ -95,13 +118,14 @@ export class WeatherStore {
   }
 
   setCountryIso(countryIso: string): boolean {
-    if (countryIso === this.countryIso) {
+    const nextCountryIso = normalizeSupportedCountryIso(countryIso);
+
+    if (nextCountryIso === this.countryIso) {
       return false;
     }
 
-    this.countryAutoDetected = false;
     this.invalidateWeather();
-    this.countryIso = countryIso;
+    this.countryIso = nextCountryIso;
     this.saveLocation();
 
     return true;
@@ -119,9 +143,10 @@ export class WeatherStore {
   }
 
   async getWeather(city: string, country: string): Promise<void> {
-    this.countryAutoDetected = false;
     this.city = city;
-    this.countryIso = country;
+    const nextCountryIso = normalizeSupportedCountryIso(country);
+
+    this.countryIso = nextCountryIso;
     this.saveLocation();
     this.cancelActiveRequest();
 
@@ -136,7 +161,8 @@ export class WeatherStore {
     try {
       const response = await this.services.requestService.fetchWeather(
         city,
-        country,
+        nextCountryIso,
+        getLanguageForCountryIso(nextCountryIso),
         controller.signal,
       );
 
@@ -144,7 +170,7 @@ export class WeatherStore {
         controller.signal.aborted ||
         requestId !== this.requestId ||
         city !== this.city ||
-        country !== this.countryIso
+        nextCountryIso !== this.countryIso
       ) {
         return;
       }
@@ -170,30 +196,6 @@ export class WeatherStore {
         });
       }
     }
-  }
-
-  applyDetectedCountryIso(countryIso: string): boolean {
-    if (!this.countryAutoDetected || countryIso === this.countryIso) {
-      return false;
-    }
-
-    this.invalidateWeather();
-    this.city = null;
-    this.countryIso = countryIso;
-
-    return true;
-  }
-
-  reconcileDetectedCountryOptions(countryIsoOptions: string[]): boolean {
-    if (
-      !this.countryAutoDetected ||
-      countryIsoOptions.includes(this.countryIso) ||
-      !countryIsoOptions.includes(DEFAULT_COUNTRY_ISO)
-    ) {
-      return false;
-    }
-
-    return this.applyDetectedCountryIso(DEFAULT_COUNTRY_ISO);
   }
 
   private invalidateWeather(): void {

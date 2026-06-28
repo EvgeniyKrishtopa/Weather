@@ -1,6 +1,7 @@
 import React from "react";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { Box } from "@mui/material";
+import type { TranslationDictionary } from "../../../../i18n";
 import {
   ClothingRecommendationEyebrow,
   ClothingRecommendationHeader as StyledClothingRecommendationHeader,
@@ -12,12 +13,14 @@ interface ClothingRecommendationHeaderProps {
   audience: string;
   Icon: SvgIconComponent;
   title: string;
+  translation: TranslationDictionary;
 }
 
 export const ClothingRecommendationHeader = ({
   audience,
   Icon,
   title,
+  translation,
 }: ClothingRecommendationHeaderProps) => (
   <StyledClothingRecommendationHeader>
     <ClothingRecommendationIcon aria-hidden="true">
@@ -25,7 +28,7 @@ export const ClothingRecommendationHeader = ({
     </ClothingRecommendationIcon>
     <Box>
       <ClothingRecommendationEyebrow>
-        For {audience}
+        {translation.recommendation.forAudience(audience)}
       </ClothingRecommendationEyebrow>
       <ClothingRecommendationTitle>{title}</ClothingRecommendationTitle>
     </Box>

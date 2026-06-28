@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { getTranslation } from "../../../i18n";
 import { FormHeader } from ".";
 
 vi.mock("../../../helpers/currentDate", () => ({
@@ -9,7 +10,7 @@ vi.mock("../../../helpers/currentDate", () => ({
 
 describe("FormHeader", () => {
   it("renders the form title, description, and current date", () => {
-    render(<FormHeader />);
+    render(<FormHeader language="en" translation={getTranslation("en")} />);
 
     expect(
       screen.getByRole("heading", { name: "Weather Outfit Advisor" }),

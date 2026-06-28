@@ -1,21 +1,21 @@
 # Project Map
 
-| Area                           | Responsibility                                                   |
-| ------------------------------ | ---------------------------------------------------------------- |
-| `src/App.tsx`                  | Application composition                                          |
-| `src/main.tsx`                 | Browser bootstrap, theme provider, console bridge                |
-| `vite.config.ts`               | Vite, Cloudflare plugin, Vitest, console bridge middleware       |
-| `src/components/Form`          | Form UI, option loading, retained-city reconciliation            |
-| `src/components/Info`          | Weather display, errors, clothing recommendations                |
-| `src/store/weatherStore.ts`    | Shared selection, request, weather, error, loading, persistence  |
-| `src/context`                  | Store provider, `useWeatherContext`, detected country refinement |
-| `src/api`                      | Weather, geocoding, location, recommendation HTTP boundaries     |
-| `src/services`                 | Injectable default-country, persistence, and request wrappers    |
-| `src/types`                    | Runtime data contracts and type guards                           |
-| `src/utils`                    | Storage, geolocation, locale country, terminal console bridge    |
-| `src/test`                     | Shared setup and weather fixture                                 |
-| `worker/outfit-recommendation` | Cloudflare Workers AI outfit recommendation service              |
-| `docs/ai`                      | Shared agent standards loaded by task-specific skills            |
+| Area                           | Responsibility                                                  |
+| ------------------------------ | --------------------------------------------------------------- |
+| `src/App.tsx`                  | Application composition                                         |
+| `src/main.tsx`                 | Browser bootstrap, theme provider, console bridge               |
+| `vite.config.ts`               | Vite, Cloudflare plugin, Vitest, console bridge middleware      |
+| `src/components/Form`          | Form UI, option derivation, retained-city reconciliation        |
+| `src/components/Info`          | Weather display, errors, clothing recommendations               |
+| `src/store/weatherStore.ts`    | Shared selection, request, weather, error, loading, persistence |
+| `src/context`                  | Store provider, `useWeatherContext`                             |
+| `src/api`                      | Weather, static location options, recommendation boundaries     |
+| `src/services`                 | Injectable default-country, persistence, and request wrappers   |
+| `src/types`                    | Runtime data contracts and type guards                          |
+| `src/utils`                    | Storage, locale country, terminal console bridge                |
+| `src/test`                     | Shared setup and weather fixture                                |
+| `worker/outfit-recommendation` | Cloudflare Workers AI outfit recommendation service             |
+| `docs/ai`                      | Shared agent standards loaded by task-specific skills           |
 
 ## UI Behavior
 

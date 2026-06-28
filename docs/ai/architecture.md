@@ -11,8 +11,6 @@
 - Keep HTTP calls in `src/api/<apiName>/index.ts`, with tests beside each API.
 - Keep shared state transitions in `src/store/weatherStore.ts`.
 - Keep the store context, provider, and `useWeatherContext` in `src/context`.
-- Keep provider startup effects in focused context hooks, currently
-  `src/context/useDetectedCountryRefinement`.
 - Keep concrete service wrappers in `src/services`.
 - Keep browser persistence and browser-specific helpers in `src/utils`.
 - Keep runtime contracts and type guards in `src/types`.
@@ -22,8 +20,7 @@
 ## API And Service Boundaries
 
 - `src/api/weatherApi`: OpenWeather current weather boundary.
-- `src/api/geocodingApi`: OpenWeather reverse geocoding boundary.
-- `src/api/locationApi`: Countries Now countries/cities boundary.
+- `src/api/locationApi`: static supported country and curated city options.
 - `src/api/outfitRecommendationApi`: browser-to-Worker recommendation boundary.
 - `src/services/defaultCountryService`: default country detection wrapper.
 - `src/services/weatherPersistenceService`: storage wrapper.
@@ -36,7 +33,7 @@ store logic.
 ## UI Composition
 
 - `src/components/Form` owns form UI and local validation visibility.
-- `src/components/Form/useLocationOptions` owns country/city option loading and
+- `src/components/Form/useLocationOptions` owns country/city option derivation and
   retained-city reconciliation.
 - `src/components/Info` owns weather display, error display, and clothing
   recommendation UI.
