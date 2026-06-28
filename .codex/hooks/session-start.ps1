@@ -21,12 +21,14 @@ try {
 
   $context = @"
 Weather project orientation:
-- Read AGENTS.md before editing.
+- Read AGENTS.md as the root context router before editing.
 - Current branch: $branch.
 - $state
 - Use weather-feature-workflow for application features.
 - Use weather-request-state for selection, cancellation, persistence, or request-order changes.
+- Use weather-code-review for review or regression analysis.
 - Use weather-release-checks before committing or publishing.
+- Load only relevant docs/ai files named by the selected task or skill.
 - Never read or edit .env, and never expose VITE_OPENWEATHER_API_KEY.
 "@
 

@@ -1,15 +1,16 @@
 # Check Matrix
 
-| Change                     | Required checks                                            |
-| -------------------------- | ---------------------------------------------------------- |
-| Documentation only         | `npm run format:check`                                     |
-| Narrow component styles    | Focused test, typecheck, format check                      |
-| Component behavior         | Focused component/App tests, `npm run validate`            |
-| Store, API, or persistence | Focused unit and App tests, `npm run validate`, coverage   |
-| Dependencies               | Install, validation, deprecated check, audit, build        |
-| Public assets or manifest  | Format check, build                                        |
-| Vite or deployment         | Validation, build, review `/Weather/` paths                |
-| Before commit or push      | Diff review, format check, validation, clean staging scope |
+| Change                     | Required checks                                             |
+| -------------------------- | ----------------------------------------------------------- |
+| Documentation only         | `npm run format:check`                                      |
+| Narrow component styles    | Focused test, typecheck, format check                       |
+| Component behavior         | Focused component/App tests, `npm run validate`             |
+| Store, API, or persistence | Focused unit and App tests, `npm run validate`, coverage    |
+| Recommendation or Worker   | Focused API/hook/Worker tests, validation, build if routing |
+| Dependencies               | Install, validation, deprecated check, audit, build         |
+| Public assets or manifest  | Format check, build                                         |
+| Vite or deployment         | Validation, build, review `/Weather/` paths                 |
+| Before commit or push      | Diff review, format check, validation, clean staging scope  |
 
 ## Windows Notes
 
@@ -17,6 +18,7 @@
 - Treat an exact test timeout as potentially transient only after rerunning the
   focused test; rerun the full validation before publishing.
 - Git writes to `.git` may require workspace approval.
+- `.wrangler` output must stay unstaged.
 
 ## Coverage Thresholds
 

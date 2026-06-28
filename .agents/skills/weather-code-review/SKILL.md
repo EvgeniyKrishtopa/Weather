@@ -5,8 +5,9 @@ description: Review Weather app local diffs, pull requests, deployment changes, 
 
 # Weather Code Review
 
-Read `AGENTS.md`, relevant changed files and tests, and
-`references/review-checklist.md` before reporting findings.
+Read `AGENTS.md`, `docs/ai/code-review.md`, relevant changed files and tests,
+and `references/review-checklist.md` before reporting findings. Load additional
+`docs/ai/*` files that match the changed area.
 
 ## Workflow
 
