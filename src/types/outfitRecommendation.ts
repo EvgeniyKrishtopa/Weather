@@ -1,4 +1,5 @@
 import type { GenderSelection } from "./location";
+import type { SupportedLanguage } from "../i18n";
 
 export interface OutfitRecommendationRequest {
   temperature: number;
@@ -7,6 +8,9 @@ export interface OutfitRecommendationRequest {
   humidity: number;
   condition: string;
   city: string;
+  countryIso: string;
+  language: SupportedLanguage;
+  languageName: string;
   outfitProfile: GenderSelection;
 }
 

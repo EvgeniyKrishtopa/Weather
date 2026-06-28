@@ -13,9 +13,14 @@ describe("weatherRequestService", () => {
     vi.mocked(fetchWeather).mockResolvedValue(weatherFixture);
 
     await expect(
-      weatherRequestService.fetchWeather("Kyiv", "UA", controller.signal),
+      weatherRequestService.fetchWeather("Kyiv", "UA", "uk", controller.signal),
     ).resolves.toEqual(weatherFixture);
 
-    expect(fetchWeather).toHaveBeenCalledWith("Kyiv", "UA", controller.signal);
+    expect(fetchWeather).toHaveBeenCalledWith(
+      "Kyiv",
+      "UA",
+      "uk",
+      controller.signal,
+    );
   });
 });

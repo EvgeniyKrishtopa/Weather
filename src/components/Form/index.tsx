@@ -2,6 +2,7 @@ import React, { useState, type FormEvent } from "react";
 import { type SelectChangeEvent } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useWeatherContext } from "../../context/weatherContext";
+import { getTranslation } from "../../i18n";
 import { FormElement } from "./FormElement";
 import { FormHeader } from "./FormHeader";
 import { FormCard, FormContent } from "./Form.styles";
@@ -19,16 +20,11 @@ const Form = observer(() => {
     setCountryIso,
     setOutfitProfile,
   } = weatherStore;
+  const language = weatherStore.language;
+  const translation = getTranslation(language);
   const [showValidationError, setShowValidationError] = useState(false);
-  const {
-    cities,
-    citiesLoading,
-    countries,
-    countriesLoading,
-    locationError,
-    prepareCountryChange,
-    selectedCountry,
-  } = useLocationOptions(weatherStore);
+  const { cities, countries, prepareCountryChange, selectedCountry } =
+    useLocationOptions(weatherStore, language);
 
   const handleCountryChange = (event: SelectChangeEvent) => {
     const nextCountryIso = event.target.value;
@@ -71,16 +67,14 @@ const Form = observer(() => {
   return (
     <FormCard elevation={12}>
       <FormContent>
-        <FormHeader />
+        <FormHeader language={language} translation={translation} />
         <FormElement
           city={{
             cities,
-            citiesLoading,
             city,
           }}
           country={{
             countries,
-            countriesLoading,
             countryIso,
             selectedCountry,
           }}
@@ -91,11 +85,12 @@ const Form = observer(() => {
             onOutfitProfileChange: setOutfitProfile,
             onSubmit: formSubmit,
           }}
+          language={language}
           status={{
             loading,
-            locationError,
             showValidationError,
           }}
+          translation={translation}
         />
       </FormContent>
     </FormCard>

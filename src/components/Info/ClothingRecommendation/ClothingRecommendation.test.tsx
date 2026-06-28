@@ -1,19 +1,25 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { getTranslation } from "../../../i18n";
 import { GenderSelection } from "../../../types/location";
 import { ClothingRecommendation } from ".";
-import { fallbackClothingRecommendations } from "./fallbackRecommendations";
+import { getFallbackClothingRecommendation } from "./fallbackRecommendations";
+
+const translation = getTranslation("en");
 
 describe("ClothingRecommendation", () => {
   it("renders the fallback clothing recommendation for women", () => {
     render(
       <ClothingRecommendation
-        fallbackRecommendation={
-          fallbackClothingRecommendations[GenderSelection.Woman].current
-        }
+        fallbackRecommendation={getFallbackClothingRecommendation(
+          GenderSelection.Woman,
+          "current",
+          "en",
+        )}
         outfitProfile={GenderSelection.Woman}
         recommendation={null}
+        translation={translation}
       />,
     );
 
@@ -22,7 +28,7 @@ describe("ClothingRecommendation", () => {
     ).toBeVisible();
     expect(screen.getByText("Light layered outfit")).toBeVisible();
     expect(screen.getByText("For Woman")).toBeVisible();
-    expect(screen.getByText(/breathable layered look/i)).toBeVisible();
+    expect(screen.getByText(/temperature shifts/i)).toBeVisible();
     expect(screen.getByText(/Light jacket/)).toBeVisible();
     expect(screen.getByText(/Long-sleeve top/)).toBeVisible();
     expect(screen.getByText(/Comfortable trousers/)).toBeVisible();
@@ -32,17 +38,20 @@ describe("ClothingRecommendation", () => {
   it("renders the fallback clothing recommendation for men", () => {
     render(
       <ClothingRecommendation
-        fallbackRecommendation={
-          fallbackClothingRecommendations[GenderSelection.Man].current
-        }
+        fallbackRecommendation={getFallbackClothingRecommendation(
+          GenderSelection.Man,
+          "current",
+          "en",
+        )}
         outfitProfile={GenderSelection.Man}
         recommendation={null}
+        translation={translation}
       />,
     );
 
-    expect(screen.getByText("Smart casual layers")).toBeVisible();
+    expect(screen.getByText("Light layered outfit")).toBeVisible();
     expect(screen.getByText("For Man")).toBeVisible();
-    expect(screen.getByText(/Easy layers/i)).toBeVisible();
+    expect(screen.getByText(/temperature shifts/i)).toBeVisible();
     expect(screen.getByText(/Light coat/)).toBeVisible();
     expect(screen.getByText(/Cotton shirt/)).toBeVisible();
     expect(screen.getByText(/Chinos/)).toBeVisible();
@@ -52,15 +61,18 @@ describe("ClothingRecommendation", () => {
   it("renders a provider recommendation when one is available", () => {
     render(
       <ClothingRecommendation
-        fallbackRecommendation={
-          fallbackClothingRecommendations[GenderSelection.Woman].current
-        }
+        fallbackRecommendation={getFallbackClothingRecommendation(
+          GenderSelection.Woman,
+          "current",
+          "en",
+        )}
         outfitProfile={GenderSelection.Woman}
         recommendation={{
           title: "Rain-ready warm layers",
           items: ["Water-resistant coat", "Warm base layer"],
           description: "Stay warm and dry with compact rain layers.",
         }}
+        translation={translation}
       />,
     );
 
@@ -76,12 +88,15 @@ describe("ClothingRecommendation", () => {
   it("renders a loading state for future recommendation requests", () => {
     render(
       <ClothingRecommendation
-        fallbackRecommendation={
-          fallbackClothingRecommendations[GenderSelection.Woman].current
-        }
+        fallbackRecommendation={getFallbackClothingRecommendation(
+          GenderSelection.Woman,
+          "current",
+          "en",
+        )}
         outfitProfile={GenderSelection.Woman}
         loading
         recommendation={null}
+        translation={translation}
       />,
     );
 

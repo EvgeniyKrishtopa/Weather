@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
+import {
+  supportedLanguageValues,
+  type BasicWeatherCondition,
+} from "../../../i18n";
 import { GenderSelection } from "../../../types/location";
 import {
   fallbackClothingRecommendations,
   getBasicWeatherCondition,
   getFallbackClothingRecommendation,
-  type BasicWeatherCondition,
 } from "./fallbackRecommendations";
 
 const basicWeatherConditions: BasicWeatherCondition[] = [
@@ -23,7 +26,9 @@ describe("fallback clothing recommendations", () => {
     "defines fallback variants for all basic weather conditions for %s",
     (outfitProfile) => {
       expect(
-        Object.keys(fallbackClothingRecommendations[outfitProfile]).sort(),
+        Object.keys(
+          fallbackClothingRecommendations.items[outfitProfile],
+        ).sort(),
       ).toEqual([...basicWeatherConditions].sort());
     },
   );
@@ -37,10 +42,27 @@ describe("fallback clothing recommendations", () => {
 
   it("returns outfit profile-specific fallback recommendations for the same weather", () => {
     expect(
-      getFallbackClothingRecommendation(GenderSelection.Woman, "Rain").items,
+      getFallbackClothingRecommendation(GenderSelection.Woman, "Rain", "en")
+        .items,
     ).toContain("Water-resistant trench coat");
     expect(
-      getFallbackClothingRecommendation(GenderSelection.Man, "Rain").items,
+      getFallbackClothingRecommendation(GenderSelection.Man, "Rain", "en")
+        .items,
     ).toContain("Water-resistant jacket");
   });
+
+  it.each(supportedLanguageValues)(
+    "returns translated fallback recommendations for %s",
+    (language) => {
+      const recommendation = getFallbackClothingRecommendation(
+        GenderSelection.Woman,
+        "Rain",
+        language,
+      );
+
+      expect(recommendation.title).toBeTruthy();
+      expect(recommendation.items.length).toBeGreaterThan(0);
+      expect(recommendation.description).toBeTruthy();
+    },
+  );
 });

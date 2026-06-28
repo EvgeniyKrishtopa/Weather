@@ -11,6 +11,9 @@ const recommendationRequest: OutfitRecommendationRequest = {
   humidity: 82,
   condition: "rain",
   city: "Kyiv",
+  countryIso: "UA",
+  language: "uk",
+  languageName: "Ukrainian",
   outfitProfile: GenderSelection.Woman,
 };
 
@@ -70,6 +73,9 @@ describe("fetchOutfitRecommendation", () => {
           humidity: 82,
           condition: "rain",
           city: "Kyiv",
+          countryIso: "UA",
+          language: "uk",
+          languageName: "Ukrainian",
           gender: "woman",
         }),
         headers: {

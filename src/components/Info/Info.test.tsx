@@ -27,6 +27,7 @@ const createStore = (weather: WeatherSuccess): WeatherStore => {
   const store = new WeatherStore();
 
   runInAction(() => {
+    store.countryIso = "US";
     store.weather = weather;
     store.city = "Kyiv";
   });
@@ -93,7 +94,7 @@ describe("weather information", () => {
     );
 
     expect(screen.getByText("For Man")).toBeVisible();
-    expect(screen.getByText("Smart casual layers")).toBeVisible();
+    expect(screen.getByText("Light layered outfit")).toBeVisible();
   });
 
   it("uses fallback text when no weather description is available", () => {

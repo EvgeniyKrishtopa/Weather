@@ -2,6 +2,7 @@ import React, { type ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { getTranslation } from "../../../i18n";
 import { GenderSelection } from "../../../types/location";
 import { FormElement } from ".";
 
@@ -12,17 +13,19 @@ const countries = [
 
 const defaultProps: ComponentProps<typeof FormElement> = {
   city: {
-    cities: ["Kyiv", "Lviv"],
-    citiesLoading: false,
+    cities: [
+      { value: "Kyiv", label: "Kyiv" },
+      { value: "Lviv", label: "Lviv" },
+    ],
     city: null,
   },
   country: {
     countries,
-    countriesLoading: false,
     countryIso: "UA",
     selectedCountry: countries[0],
   },
   outfitProfile: GenderSelection.Woman,
+  language: "en",
   handlers: {
     onCityChange: vi.fn(),
     onCountryChange: vi.fn(),
@@ -31,9 +34,9 @@ const defaultProps: ComponentProps<typeof FormElement> = {
   },
   status: {
     loading: false,
-    locationError: "",
     showValidationError: false,
   },
+  translation: getTranslation("en"),
 };
 
 const renderFormElement = (
@@ -51,6 +54,7 @@ const renderFormElement = (
       ...props.country,
     },
     outfitProfile: props.outfitProfile ?? defaultProps.outfitProfile,
+    language: props.language ?? defaultProps.language,
     handlers: {
       ...defaultProps.handlers,
       ...props.handlers,
@@ -59,6 +63,7 @@ const renderFormElement = (
       ...defaultProps.status,
       ...props.status,
     },
+    translation: props.translation ?? defaultProps.translation,
   };
 
   render(<FormElement {...mergedProps} />);
@@ -116,19 +121,40 @@ describe("FormElement", () => {
     expect(props.handlers.onSubmit).toHaveBeenCalled();
   });
 
-  it("shows status messages and disables submit when location loading failed", () => {
+  it("renders localized city labels and emits canonical city values", async () => {
+    const user = userEvent.setup();
+    const italy = { name: "Italy", iso2: "IT" };
+    const props = renderFormElement({
+      city: {
+        cities: [{ value: "Rome", label: "Roma" }],
+        city: null,
+      },
+      country: {
+        countries: [italy],
+        countryIso: "IT",
+        selectedCountry: italy,
+      },
+      language: "it",
+      translation: getTranslation("it"),
+    });
+
+    await user.type(screen.getByRole("combobox", { name: "Città" }), "Roma");
+    await user.click(await screen.findByRole("option", { name: "Roma" }));
+
+    expect(props.handlers.onCityChange).toHaveBeenCalledWith("Rome");
+  });
+
+  it("shows validation status messages", () => {
     renderFormElement({
       status: {
-        locationError: "Unable to load countries.",
         loading: false,
         showValidationError: true,
       },
     });
 
-    expect(screen.getByText("Unable to load countries.")).toBeVisible();
     expect(screen.getByText("Choose a city.")).toBeVisible();
     expect(
       screen.getByRole("button", { name: "Get weather and outfit today" }),
-    ).toBeDisabled();
+    ).toBeEnabled();
   });
 });

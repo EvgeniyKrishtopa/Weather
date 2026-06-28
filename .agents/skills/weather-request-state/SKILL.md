@@ -1,12 +1,13 @@
 ---
 name: weather-request-state
-description: Modify or debug WeatherStore selection, persistence, loading, error, cancellation, and request-order behavior. Use when changing city or country interactions, automatic weather fetching, refresh behavior, AbortController handling, stale-response suppression, local storage, or weather visibility rules.
+description: Modify or debug WeatherStore selection, outfit profile persistence, loading, error, cancellation, and request-order behavior. Use when changing city or country interactions, automatic weather fetching, refresh behavior, AbortController handling, stale-response suppression, local storage, or weather visibility rules.
 ---
 
 # Weather Request State
 
-Read `references/state-invariants.md` before changing request or selection
-logic.
+Read `docs/ai/state-management.md`, `docs/ai/weather-domain.md`, and
+`references/state-invariants.md` before changing request, selection, or
+persistence logic.
 
 ## Workflow
 
@@ -31,16 +32,19 @@ logic.
    and the selected city and country still match the request.
 6. Save only successful weather. Store failures in `error`, not `weather`.
 7. Ignore abort failures. Finish loading only for the current request.
+8. Persist outfit profile changes without invalidating successful weather.
 
 ## Required Tests
 
 - Same city or country is a no-op.
+- Same outfit profile is a no-op.
 - Clearing a city invalidates weather and an active request.
 - A newer request wins even if an older promise resolves last.
 - A valid retained city requests after country options load.
 - An invalid retained city is cleared without a weather request.
 - Explicit submission requests even when selections are unchanged.
 - Failed latest requests keep weather hidden and show an error.
+- Outfit profile changes persist without clearing current weather.
 
 Use controllable promises for ordering tests and assert that stale requests do
 not save weather.

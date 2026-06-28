@@ -22,7 +22,7 @@
   signal still match.
 - Abort failures are ignored as control flow; latest non-abort failures show an
   error without saving weather.
-- Gender changes persist selection but do not invalidate weather.
+- Outfit profile changes persist selection but do not invalidate weather.
 
 ## API, Services, And Runtime Types
 
@@ -61,8 +61,8 @@
 - `/Weather/` base path is preserved for GitHub Pages.
 - New production env vars are passed in GitHub Actions build steps.
 - Deploy workflows fail clearly when required secrets or variables are missing.
-- `dist`, `coverage`, `node_modules`, `.env*`, and local `.wrangler` cache are
-  not staged.
+- `dist`, `coverage`, `node_modules`, `.env*`, and `.wrangler` content are not
+  staged.
 - Worker config, GitHub Pages config, and README/deploy instructions agree.
 
 ## Tests

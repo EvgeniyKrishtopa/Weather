@@ -28,14 +28,14 @@ const createStore = () => new WeatherStore(services);
 describe("WeatherStore", () => {
   it("restores stored weather", () => {
     vi.mocked(services.persistenceService.loadStoredWeather).mockReturnValue({
-      city: "Kyiv",
-      weather: weatherFixture,
+      city: "Chicago",
+      weather: { ...weatherFixture, name: "Chicago" },
     });
 
     const store = createStore();
 
-    expect(store.city).toBe("Kyiv");
-    expect(store.weather).toEqual(weatherFixture);
+    expect(store.city).toBe("Chicago");
+    expect(store.weather).toEqual({ ...weatherFixture, name: "Chicago" });
     expect(store.loading).toBe(false);
   });
 
@@ -63,6 +63,59 @@ describe("WeatherStore", () => {
       countryIso: "UA",
       outfitProfile: GenderSelection.Man,
     });
+  });
+
+  it("migrates unsupported stored countries to United States", () => {
+    vi.mocked(services.persistenceService.loadStoredLocation).mockReturnValue({
+      city: "Toronto",
+      countryIso: "CA",
+      outfitProfile: GenderSelection.Man,
+    });
+    vi.mocked(services.persistenceService.loadStoredWeather).mockReturnValue({
+      city: "Toronto",
+      weather: { ...weatherFixture, name: "Toronto" },
+    });
+
+    const store = createStore();
+
+    expect(store.city).toBeNull();
+    expect(store.countryIso).toBe("US");
+    expect(store.language).toBe("en");
+    expect(store.weather).toBeNull();
+    expect(services.persistenceService.clearStoredWeather).toHaveBeenCalled();
+    expect(services.persistenceService.saveStoredLocation).toHaveBeenCalledWith(
+      {
+        city: null,
+        countryIso: "US",
+        outfitProfile: GenderSelection.Man,
+      },
+    );
+  });
+
+  it("clears unsupported stored cities for the selected country", () => {
+    vi.mocked(services.persistenceService.loadStoredLocation).mockReturnValue({
+      city: "Toronto",
+      countryIso: "US",
+      outfitProfile: GenderSelection.Man,
+    });
+    vi.mocked(services.persistenceService.loadStoredWeather).mockReturnValue({
+      city: "Toronto",
+      weather: { ...weatherFixture, name: "Toronto" },
+    });
+
+    const store = createStore();
+
+    expect(store.city).toBeNull();
+    expect(store.countryIso).toBe("US");
+    expect(store.weather).toBeNull();
+    expect(services.persistenceService.clearStoredWeather).toHaveBeenCalled();
+    expect(services.persistenceService.saveStoredLocation).toHaveBeenCalledWith(
+      {
+        city: null,
+        countryIso: "US",
+        outfitProfile: GenderSelection.Man,
+      },
+    );
   });
 
   it("defaults, updates, and persists the selected outfit profile", () => {
@@ -93,96 +146,17 @@ describe("WeatherStore", () => {
     const store = createStore();
 
     expect(store.countryIso).toBe("UA");
+    expect(store.language).toBe("uk");
     expect(
       services.persistenceService.saveStoredLocation,
     ).not.toHaveBeenCalled();
   });
 
-  it("applies a geolocation country while the selection is still automatic", () => {
+  it("falls back to United States when the timezone country is unsupported", () => {
     vi.mocked(
       services.defaultCountryService.getDefaultCountryIso,
-    ).mockReturnValue("US");
+    ).mockReturnValue("CA");
     const store = createStore();
-
-    expect(store.applyDetectedCountryIso("UA")).toBe(true);
-
-    expect(store.countryIso).toBe("UA");
-    expect(store.city).toBeNull();
-    expect(services.persistenceService.clearStoredWeather).toHaveBeenCalled();
-    expect(
-      services.persistenceService.saveStoredLocation,
-    ).not.toHaveBeenCalled();
-  });
-
-  it("does not apply a geolocation country over a stored location", () => {
-    vi.mocked(services.persistenceService.loadStoredLocation).mockReturnValue({
-      city: "Lviv",
-      countryIso: "UA",
-      outfitProfile: GenderSelection.Woman,
-    });
-    const store = createStore();
-
-    expect(store.applyDetectedCountryIso("CA")).toBe(false);
-
-    expect(store.countryIso).toBe("UA");
-    expect(store.city).toBe("Lviv");
-    expect(
-      services.persistenceService.clearStoredWeather,
-    ).not.toHaveBeenCalled();
-  });
-
-  it("does not apply a late geolocation country after user selection", () => {
-    const store = createStore();
-
-    store.setCountryIso("UA");
-    vi.clearAllMocks();
-
-    expect(store.applyDetectedCountryIso("CA")).toBe(false);
-    expect(store.countryIso).toBe("UA");
-    expect(
-      services.persistenceService.clearStoredWeather,
-    ).not.toHaveBeenCalled();
-  });
-
-  it("does not apply a late geolocation country after a weather request", async () => {
-    vi.mocked(services.requestService.fetchWeather).mockResolvedValue(
-      weatherFixture,
-    );
-    const store = createStore();
-
-    await store.getWeather("Chicago", "US");
-    vi.clearAllMocks();
-
-    expect(store.applyDetectedCountryIso("UA")).toBe(false);
-    expect(store.countryIso).toBe("US");
-    expect(store.city).toBe("Chicago");
-    expect(
-      services.persistenceService.clearStoredWeather,
-    ).not.toHaveBeenCalled();
-  });
-
-  it("clears stale restored weather and city when geolocation changes country", () => {
-    vi.mocked(services.persistenceService.loadStoredWeather).mockReturnValue({
-      city: "Chicago",
-      weather: { ...weatherFixture, name: "Chicago" },
-    });
-    const store = createStore();
-
-    expect(store.applyDetectedCountryIso("UA")).toBe(true);
-
-    expect(store.countryIso).toBe("UA");
-    expect(store.city).toBeNull();
-    expect(store.weather).toBeNull();
-    expect(services.persistenceService.clearStoredWeather).toHaveBeenCalled();
-  });
-
-  it("falls back to United States when detected country is not available", () => {
-    vi.mocked(
-      services.defaultCountryService.getDefaultCountryIso,
-    ).mockReturnValue("GB");
-    const store = createStore();
-
-    expect(store.reconcileDetectedCountryOptions(["UA", "US"])).toBe(true);
 
     expect(store.countryIso).toBe("US");
     expect(
