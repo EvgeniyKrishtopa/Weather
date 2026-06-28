@@ -52,14 +52,14 @@ without loading every project detail for every task.
 
 ## Shared Standards Routing
 
-| Topic                                            | File                            |
-| ------------------------------------------------ | ------------------------------- |
-| Stack, product shape, repo map, commands         | `docs/ai/project-overview.md`   |
-| Module boundaries and ownership                  | `docs/ai/architecture.md`       |
-| Weather, location, geocoding, and storage domain | `docs/ai/weather-domain.md`     |
-| Outfit recommendations and Cloudflare Workers AI | `docs/ai/ai-layer.md`           |
-| React, MUI, styling, and UX standards            | `docs/ai/frontend-standards.md` |
-| MobX store, request ownership, and persistence   | `docs/ai/state-management.md`   |
-| Locale/default country and future i18n           | `docs/ai/i18n.md`               |
-| Test patterns, coverage, and validation commands | `docs/ai/testing.md`            |
-| Findings-first review checklist                  | `docs/ai/code-review.md`        |
+| Topic                                                | File                            |
+| ---------------------------------------------------- | ------------------------------- |
+| Stack, product shape, repo map, commands             | `docs/ai/project-overview.md`   |
+| Module boundaries and ownership                      | `docs/ai/architecture.md`       |
+| Weather, static location options, and storage domain | `docs/ai/weather-domain.md`     |
+| Outfit recommendations and Cloudflare Workers AI     | `docs/ai/ai-layer.md`           |
+| React, MUI, styling, and UX standards                | `docs/ai/frontend-standards.md` |
+| MobX store, request ownership, and persistence       | `docs/ai/state-management.md`   |
+| Locale/default country and future i18n               | `docs/ai/i18n.md`               |
+| Test patterns, coverage, and validation commands     | `docs/ai/testing.md`            |
+| Findings-first review checklist                      | `docs/ai/code-review.md`        |

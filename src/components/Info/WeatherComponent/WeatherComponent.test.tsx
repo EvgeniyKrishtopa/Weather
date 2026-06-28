@@ -3,6 +3,7 @@ import AirRoundedIcon from "@mui/icons-material/AirRounded";
 import { act, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { OUTFIT_RECOMMENDATION_API_URL_ENV } from "../../../constants";
+import { getTranslation } from "../../../i18n";
 import { weatherFixture } from "../../../test/weatherFixture";
 import { GenderSelection } from "../../../types/location";
 import { WeatherComponent } from ".";
@@ -10,6 +11,12 @@ import { WeatherComponent } from ".";
 beforeEach(() => {
   vi.stubEnv(OUTFIT_RECOMMENDATION_API_URL_ENV, "");
 });
+
+const localizationProps = {
+  countryIso: "UA",
+  language: "en" as const,
+  translation: getTranslation("en"),
+};
 
 afterEach(() => {
   vi.useRealTimers();
@@ -21,6 +28,7 @@ describe("WeatherComponent", () => {
   it("renders formatted weather details", () => {
     render(
       <WeatherComponent
+        {...localizationProps}
         currentWeather={{
           ...weatherFixture,
           name: "Kyiv",
@@ -65,6 +73,7 @@ describe("WeatherComponent", () => {
 
     render(
       <WeatherComponent
+        {...localizationProps}
         currentWeather={{
           ...weatherFixture,
           name: "Kyiv",
@@ -91,6 +100,7 @@ describe("WeatherComponent", () => {
 
     render(
       <WeatherComponent
+        {...localizationProps}
         currentWeather={weatherFixture}
         outfitProfile={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
@@ -134,6 +144,7 @@ describe("WeatherComponent", () => {
 
     const { rerender } = render(
       <WeatherComponent
+        {...localizationProps}
         currentWeather={weatherFixture}
         outfitProfile={GenderSelection.Woman}
         WeatherIcon={AirRoundedIcon}
@@ -150,6 +161,7 @@ describe("WeatherComponent", () => {
 
     rerender(
       <WeatherComponent
+        {...localizationProps}
         currentWeather={weatherFixture}
         outfitProfile={GenderSelection.Man}
         WeatherIcon={AirRoundedIcon}
@@ -174,6 +186,7 @@ describe("WeatherComponent", () => {
   it("uses fallback weather description text", () => {
     render(
       <WeatherComponent
+        {...localizationProps}
         currentWeather={{
           ...weatherFixture,
           weather: [],

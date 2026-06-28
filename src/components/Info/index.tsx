@@ -10,6 +10,7 @@ import WbSunnyRoundedIcon from "@mui/icons-material/WbSunnyRounded";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { observer } from "mobx-react-lite";
 import { useWeatherContext } from "../../context/weatherContext";
+import { getTranslation } from "../../i18n";
 import Loader from "../Loader";
 import { ErrorWeather } from "./ErrorWeather";
 import { WeatherComponent } from "./WeatherComponent";
@@ -25,14 +26,16 @@ const weatherIcons: Record<string, SvgIconComponent> = {
 };
 
 const Info = observer(() => {
-  const { error, outfitProfile, loading, weather } = useWeatherContext();
+  const { countryIso, error, language, outfitProfile, loading, weather } =
+    useWeatherContext();
+  const translation = getTranslation(language);
 
   if (loading) {
-    return <Loader />;
+    return <Loader translation={translation} />;
   }
 
   if (error) {
-    return <ErrorWeather currentWeather={error} />;
+    return <ErrorWeather currentWeather={error} translation={translation} />;
   }
 
   if (!weather) {
@@ -45,7 +48,10 @@ const Info = observer(() => {
   return (
     <WeatherComponent
       currentWeather={weather}
+      countryIso={countryIso}
+      language={language}
       outfitProfile={outfitProfile}
+      translation={translation}
       WeatherIcon={WeatherIcon}
     />
   );

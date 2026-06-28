@@ -3,6 +3,7 @@ import CheckroomRoundedIcon from "@mui/icons-material/CheckroomRounded";
 import ManRoundedIcon from "@mui/icons-material/ManRounded";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { CircularProgress } from "@mui/material";
+import type { TranslationDictionary } from "../../../i18n";
 import { GenderSelection } from "../../../types/location";
 import type { OutfitRecommendation } from "../../../types/outfitRecommendation";
 import {
@@ -18,6 +19,7 @@ interface ClothingRecommendationProps {
   outfitProfile: GenderSelection;
   loading?: boolean;
   recommendation: OutfitRecommendation | null;
+  translation: TranslationDictionary;
 }
 
 const clothingRecommendationAudiences: Record<
@@ -42,6 +44,7 @@ export const ClothingRecommendation = ({
   outfitProfile,
   loading = false,
   recommendation,
+  translation,
 }: ClothingRecommendationProps) => {
   const clothingRecommendationAudience =
     clothingRecommendationAudiences[outfitProfile];
@@ -49,30 +52,39 @@ export const ClothingRecommendation = ({
 
   return (
     <ClothingRecommendationSection
-      aria-label="Clothing recommendation"
+      aria-label={translation.recommendation.regionLabel}
       role="region"
     >
       <ClothingRecommendationHeader
-        audience={clothingRecommendationAudience.audience}
+        audience={
+          translation.outfitProfiles[outfitProfile] ??
+          clothingRecommendationAudience.audience
+        }
         Icon={clothingRecommendationAudience.Icon}
         title={
           loading
-            ? "Preparing outfit recommendation"
+            ? translation.recommendation.preparingTitle
             : visibleRecommendation.title
         }
+        translation={translation}
       />
       {loading ? (
         <ClothingRecommendationLoading aria-live="polite">
           <CircularProgress
-            aria-label="Loading clothing recommendation"
+            aria-label={translation.recommendation.loadingAria}
             color="inherit"
             size={18}
           />
-          <ClothingRecommendationDescription description="Choosing weather-aware outfit ideas..." />
+          <ClothingRecommendationDescription
+            description={translation.recommendation.loadingDescription}
+          />
         </ClothingRecommendationLoading>
       ) : (
         <>
-          <ClothingRecommendationList items={visibleRecommendation.items} />
+          <ClothingRecommendationList
+            items={visibleRecommendation.items}
+            translation={translation}
+          />
           <ClothingRecommendationDescription
             description={visibleRecommendation.description}
           />

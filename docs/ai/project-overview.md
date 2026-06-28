@@ -17,10 +17,10 @@
 
 The app lets a user select a country, city, and outfit profile, fetches current
 weather, displays weather details, and shows clothing recommendations. Weather
-data comes from OpenWeather. Countries and cities come from Countries Now.
-Default country refinement uses browser geolocation plus OpenWeather reverse
-geocoding. Outfit recommendations are local fallbacks by default and may be
-enhanced through a Cloudflare Workers AI endpoint.
+data comes from OpenWeather. Countries and curated top-city lists are static
+in-repo data. The default country is inferred from the browser timezone. Outfit
+recommendations are local fallbacks by default and may be enhanced through a
+Cloudflare Workers AI endpoint.
 
 ## Repository Map
 
@@ -29,14 +29,14 @@ enhanced through a Cloudflare Workers AI endpoint.
 | `src/App.tsx`                  | Application composition                                                                |
 | `src/main.tsx`                 | Browser bootstrap, MUI theme provider, theme color, terminal console bridge            |
 | `vite.config.ts`               | Vite, React plugin, Cloudflare plugin, Vitest config, console bridge middleware        |
-| `src/components/Form`          | Country/city/outfit form UI and option loading                                         |
+| `src/components/Form`          | Country/city/outfit form UI and retained-city reconciliation                           |
 | `src/components/Info`          | Weather rendering, errors, outfit recommendations                                      |
 | `src/store/weatherStore.ts`    | Shared selection, weather, error, loading, request ownership, persistence coordination |
-| `src/context`                  | Store provider, `useWeatherContext`, startup country refinement                        |
-| `src/api`                      | Weather, geocoding, location, and outfit recommendation HTTP boundaries                |
+| `src/context`                  | Store provider and `useWeatherContext`                                                 |
+| `src/api`                      | Weather, static location options, and outfit recommendation boundaries                 |
 | `src/services`                 | Injectable wrappers for default country, persistence, and request services             |
 | `src/types`                    | Runtime contracts, type guards, enums, and shared interfaces                           |
-| `src/utils`                    | Browser storage, geolocation, locale country, terminal console bridge                  |
+| `src/utils`                    | Browser storage, locale country, terminal console bridge                               |
 | `src/helpers`                  | Reusable pure helpers                                                                  |
 | `src/test`                     | Shared setup and weather fixture                                                       |
 | `worker/outfit-recommendation` | Cloudflare Workers AI outfit recommendation service                                    |

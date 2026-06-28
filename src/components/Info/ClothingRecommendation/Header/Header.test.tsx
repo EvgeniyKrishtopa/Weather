@@ -2,6 +2,7 @@ import React from "react";
 import CheckroomRoundedIcon from "@mui/icons-material/CheckroomRounded";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { getTranslation } from "../../../../i18n";
 import { ClothingRecommendationHeader } from ".";
 
 describe("ClothingRecommendationHeader", () => {
@@ -11,6 +12,7 @@ describe("ClothingRecommendationHeader", () => {
         audience="Woman"
         Icon={CheckroomRoundedIcon}
         title="Light layered outfit"
+        translation={getTranslation("en")}
       />,
     );
 

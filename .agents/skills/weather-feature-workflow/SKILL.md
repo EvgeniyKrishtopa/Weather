@@ -12,7 +12,7 @@ description: Implement and review scoped features in this Weather React applicat
 2. Load shared standards based on scope:
    - `docs/ai/architecture.md` for ownership boundaries
    - `docs/ai/frontend-standards.md` for React, MUI, styling, and UX changes
-   - `docs/ai/weather-domain.md` for weather, location, geocoding, or storage
+   - `docs/ai/weather-domain.md` for weather, static location options, or storage
    - `docs/ai/ai-layer.md` for outfit recommendation or Worker changes
    - `docs/ai/state-management.md` for store, context, request, or persistence
    - `docs/ai/testing.md` before adding or updating tests

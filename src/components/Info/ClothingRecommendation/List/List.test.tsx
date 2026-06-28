@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { getTranslation } from "../../../../i18n";
 import { ClothingRecommendationList } from ".";
 
 describe("ClothingRecommendationList", () => {
@@ -8,6 +9,7 @@ describe("ClothingRecommendationList", () => {
     render(
       <ClothingRecommendationList
         items={["Light jacket", "Long-sleeve top", "Closed shoes"]}
+        translation={getTranslation("en")}
       />,
     );
 

@@ -14,8 +14,9 @@
 - React 19, TypeScript strict, Vite, Material UI, Emotion, MobX, Vitest, npm,
   Node.js 22 or newer.
 - Weather outfit advisor with country/city selection, OpenWeather data,
-  geocoding-based default country refinement, local persistence, and optional
-  Cloudflare Workers AI outfit recommendations.
+  timezone-based default country selection, local persistence, static supported
+  country/city options, and optional Cloudflare Workers AI outfit
+  recommendations.
 - GitHub Pages deploys under the `/Weather/` base path.
 
 ## Context Routing
@@ -25,7 +26,7 @@
 | Project orientation or repo map                                                                              | `docs/ai/project-overview.md`, `docs/ai/architecture.md`                    |
 | App feature, UI, API, persistence, accessibility, or tests                                                   | `.agents/skills/weather-feature-workflow/SKILL.md`                          |
 | City/country selection, outfit profile, weather request ownership, cancellation, stale responses, or storage | `.agents/skills/weather-request-state/SKILL.md`                             |
-| Weather API, geocoding, location APIs, storage semantics, or domain behavior                                 | `docs/ai/weather-domain.md`                                                 |
+| Weather API, static location options, storage semantics, or domain behavior                                  | `docs/ai/weather-domain.md`                                                 |
 | Outfit recommendation API, Worker, Workers AI, fallbacks, or Worker deploy                                   | `docs/ai/ai-layer.md`                                                       |
 | React, Material UI, styling, component structure, or browser UX                                              | `docs/ai/frontend-standards.md`                                             |
 | Store, MobX, context, request ownership, or persistence coordination                                         | `docs/ai/state-management.md`                                               |

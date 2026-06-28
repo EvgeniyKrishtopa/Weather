@@ -16,7 +16,16 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import { GenderSelection, type CountryOption } from "../../../types/location";
+import {
+  getCountryDisplayName,
+  type SupportedLanguage,
+  type TranslationDictionary,
+} from "../../../i18n";
+import {
+  GenderSelection,
+  type CityOption,
+  type CountryOption,
+} from "../../../types/location";
 import {
   FormElement as StyledFormElement,
   FormFields,
@@ -25,20 +34,17 @@ import {
 
 interface CountryFieldProps {
   countries: CountryOption[];
-  countriesLoading: boolean;
   countryIso: string;
   selectedCountry: CountryOption | undefined;
 }
 
 interface CityFieldProps {
   city: string | null;
-  cities: string[];
-  citiesLoading: boolean;
+  cities: CityOption[];
 }
 
 interface FormStatusProps {
   loading: boolean;
-  locationError: string;
   showValidationError: boolean;
 }
 
@@ -54,17 +60,20 @@ interface WeatherFormElementProps {
   country: CountryFieldProps;
   outfitProfile: GenderSelection;
   handlers: FormHandlers;
+  language: SupportedLanguage;
   status: FormStatusProps;
+  translation: TranslationDictionary;
 }
 
-const filterCityOptions = createFilterOptions<string>({ limit: 100 });
+const filterCityOptions = createFilterOptions<CityOption>({
+  limit: 100,
+  stringify: (option) => `${option.label} ${option.value}`,
+});
 const outfitProfileOptions = [
   {
-    label: "Woman",
     value: GenderSelection.Woman,
   },
   {
-    label: "Man",
     value: GenderSelection.Man,
   },
 ];
@@ -74,23 +83,31 @@ export const FormElement = ({
   country,
   outfitProfile,
   handlers,
+  language,
   status,
+  translation,
 }: WeatherFormElementProps) => {
+  const selectedCityOption = city.city
+    ? (city.cities.find((cityOption) => cityOption.value === city.city) ?? null)
+    : null;
+
   return (
     <StyledFormElement onSubmit={handlers.onSubmit} noValidate>
       <FormFields>
-        <FormControl disabled={country.countriesLoading} fullWidth>
-          <InputLabel id="country-select-label">Country</InputLabel>
+        <FormControl fullWidth>
+          <InputLabel id="country-select-label">
+            {translation.form.countryLabel}
+          </InputLabel>
           <Select
             id="country-select"
             labelId="country-select-label"
-            label="Country"
+            label={translation.form.countryLabel}
             value={country.selectedCountry ? country.countryIso : ""}
             onChange={handlers.onCountryChange}
           >
             {country.countries.map((countryOption) => (
               <MenuItem key={countryOption.iso2} value={countryOption.iso2}>
-                {countryOption.name}
+                {getCountryDisplayName(countryOption.iso2, language)}
               </MenuItem>
             ))}
           </Select>
@@ -99,23 +116,23 @@ export const FormElement = ({
           id="city-select"
           options={city.cities}
           filterOptions={filterCityOptions}
-          value={city.city}
-          onChange={(_, value) => handlers.onCityChange(value)}
-          loading={city.citiesLoading}
-          loadingText="Loading cities..."
-          noOptionsText="No cities found"
-          disabled={!country.selectedCountry || city.citiesLoading}
+          value={selectedCityOption}
+          getOptionLabel={(option) => option.label}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
+          onChange={(_, value) => handlers.onCityChange(value?.value ?? null)}
+          noOptionsText={translation.form.noCities}
+          disabled={!country.selectedCountry}
           renderInput={(params) => (
             <TextField
               {...params}
-              label="City"
+              label={translation.form.cityLabel}
               error={status.showValidationError && !city.city}
             />
           )}
         />
         <OutfitProfileOptions>
-          <FormLabel component="legend">Outfit for</FormLabel>
-          <FormGroup row aria-label="Outfit profile">
+          <FormLabel component="legend">{translation.form.outfitFor}</FormLabel>
+          <FormGroup row aria-label={translation.form.outfitProfileAria}>
             {outfitProfileOptions.map((outfitProfileOption) => (
               <FormControlLabel
                 key={outfitProfileOption.value}
@@ -127,17 +144,14 @@ export const FormElement = ({
                     }
                   />
                 }
-                label={outfitProfileOption.label}
+                label={translation.outfitProfiles[outfitProfileOption.value]}
               />
             ))}
           </FormGroup>
         </OutfitProfileOptions>
-        {status.locationError && (
-          <Alert severity="error">{status.locationError}</Alert>
-        )}
         {status.showValidationError && (
           <Alert severity="warning" role="alert">
-            Choose a city.
+            {translation.form.validationChooseCity}
           </Alert>
         )}
         <Button
@@ -147,14 +161,9 @@ export const FormElement = ({
           loading={status.loading}
           loadingPosition="start"
           startIcon={<SearchRoundedIcon />}
-          disabled={
-            country.countriesLoading ||
-            city.citiesLoading ||
-            !!status.locationError ||
-            !country.selectedCountry
-          }
+          disabled={!country.selectedCountry}
         >
-          Get weather and outfit today
+          {translation.form.submit}
         </Button>
       </FormFields>
     </StyledFormElement>

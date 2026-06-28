@@ -26,7 +26,7 @@
 - Valid city selections request weather automatically.
 - Explicit form submission always refreshes weather when selections are valid.
 - Local validation visibility belongs in the form component.
-- Country/city option loading and retained-city reconciliation belong in
+- Country/city option derivation and retained-city reconciliation belong in
   `src/components/Form/useLocationOptions`.
 
 ## Browser Utilities

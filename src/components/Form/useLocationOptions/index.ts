@@ -1,137 +1,63 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { fetchCities, fetchCountries } from "../../../api/locationApi";
+import { useEffect, useMemo, useRef } from "react";
+import {
+  getCuratedCityValues,
+  getSupportedCountryOptions,
+} from "../../../api/locationApi";
+import { createCityOptions, type SupportedLanguage } from "../../../i18n";
 import type { WeatherStore } from "../../../store/weatherStore";
-import type { CountryOption } from "../../../types/location";
 
 type LocationOptionsStore = Pick<
   WeatherStore,
-  | "city"
-  | "countryIso"
-  | "getWeather"
-  | "reconcileDetectedCountryOptions"
-  | "setCity"
+  "city" | "countryIso" | "getWeather" | "setCity"
 >;
 
-export const useLocationOptions = (weatherStore: LocationOptionsStore) => {
+export const useLocationOptions = (
+  weatherStore: LocationOptionsStore,
+  language: SupportedLanguage,
+) => {
   const { countryIso } = weatherStore;
-  const [countries, setCountries] = useState<CountryOption[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
-  const [countriesLoading, setCountriesLoading] = useState(true);
-  const [citiesLoading, setCitiesLoading] = useState(false);
-  const [locationError, setLocationError] = useState("");
+  const countries = useMemo(() => getSupportedCountryOptions(), []);
   const pendingCountryRequest = useRef<string | null>(null);
 
   const selectedCountry = useMemo(
     () => countries.find((country) => country.iso2 === countryIso),
     [countries, countryIso],
   );
-  const countryIsoOptions = useMemo(
-    () => countries.map((country) => country.iso2),
-    [countries],
+  const cityValues = useMemo(
+    () => (selectedCountry ? getCuratedCityValues(selectedCountry.iso2) : []),
+    [selectedCountry],
   );
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const loadCountries = async () => {
-      setCountriesLoading(true);
-      setLocationError("");
-
-      try {
-        const loadedCountries = await fetchCountries(controller.signal);
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setCountries(loadedCountries);
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          setLocationError(
-            error instanceof Error
-              ? error.message
-              : "Unable to load countries.",
-          );
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setCountriesLoading(false);
-        }
-      }
-    };
-
-    void loadCountries();
-
-    return () => controller.abort();
-  }, []);
-
-  useEffect(() => {
-    if (countryIsoOptions.length === 0) {
-      return;
-    }
-
-    weatherStore.reconcileDetectedCountryOptions(countryIsoOptions);
-  }, [countryIso, countryIsoOptions, weatherStore]);
+  const cities = useMemo(
+    () =>
+      selectedCountry
+        ? createCityOptions(cityValues, selectedCountry.iso2, language)
+        : [],
+    [cityValues, language, selectedCountry],
+  );
 
   useEffect(() => {
     if (!selectedCountry) {
       return;
     }
 
-    const controller = new AbortController();
+    const currentCity = weatherStore.city;
 
-    const loadCities = async () => {
-      setCitiesLoading(true);
-      setLocationError("");
-      setCities([]);
+    if (!currentCity) {
+      pendingCountryRequest.current = null;
+      return;
+    }
 
-      try {
-        const loadedCities = await fetchCities(
-          selectedCountry.name,
-          controller.signal,
-        );
+    if (!cityValues.includes(currentCity)) {
+      pendingCountryRequest.current = null;
+      weatherStore.setCity(null);
+      return;
+    }
 
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setCities(loadedCities);
-
-        if (pendingCountryRequest.current !== selectedCountry.iso2) {
-          return;
-        }
-
-        pendingCountryRequest.current = null;
-
-        const currentCity = weatherStore.city;
-
-        if (!currentCity) {
-          return;
-        }
-
-        if (loadedCities.includes(currentCity)) {
-          void weatherStore.getWeather(currentCity, selectedCountry.iso2);
-        } else {
-          weatherStore.setCity(null);
-        }
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          pendingCountryRequest.current = null;
-          setLocationError(
-            error instanceof Error ? error.message : "Unable to load cities.",
-          );
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setCitiesLoading(false);
-        }
-      }
-    };
-
-    void loadCities();
-
-    return () => controller.abort();
-  }, [selectedCountry, weatherStore]);
+    if (pendingCountryRequest.current === selectedCountry.iso2) {
+      pendingCountryRequest.current = null;
+      void weatherStore.getWeather(currentCity, selectedCountry.iso2);
+    }
+  }, [cityValues, selectedCountry, weatherStore]);
 
   const prepareCountryChange = (nextCountryIso: string) => {
     pendingCountryRequest.current = weatherStore.city ? nextCountryIso : null;
@@ -139,10 +65,7 @@ export const useLocationOptions = (weatherStore: LocationOptionsStore) => {
 
   return {
     cities,
-    citiesLoading,
     countries,
-    countriesLoading,
-    locationError,
     prepareCountryChange,
     selectedCountry,
   };

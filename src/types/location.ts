@@ -3,9 +3,9 @@ export interface CountryOption {
   iso2: string;
 }
 
-export interface CurrentCoordinates {
-  latitude: number;
-  longitude: number;
+export interface CityOption {
+  value: string;
+  label: string;
 }
 
 export enum GenderSelection {
