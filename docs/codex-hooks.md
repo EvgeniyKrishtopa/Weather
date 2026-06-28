@@ -17,6 +17,10 @@ Adds project context at startup, resume, clear, and compaction:
 - relevant project-local skills
 - `.env` and API-key safety reminder
 
+Keep this hook concise. Put durable task procedures in project skills, shared
+standards in `docs/ai`, and context-layer maintenance notes in
+`docs/codex-context.md`.
+
 ### PreToolUse
 
 Checks shell and file-edit tool calls before execution.
@@ -117,6 +121,8 @@ The expected result contains `permissionDecision: "deny"`.
 - Prefer warnings over blocking unless the action is clearly unsafe.
 - Avoid full lint or test suites in lifecycle hooks; Husky and CI already run
   validation.
+- Keep hook output short enough to orient Codex without duplicating
+  `AGENTS.md`, `docs/ai`, or skill bodies.
 - Re-test safe and blocked payloads after changing a handler.
 
 Official hook behavior and schemas:

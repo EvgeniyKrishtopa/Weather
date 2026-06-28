@@ -5,7 +5,8 @@ description: Validate and prepare Weather repository changes before commit, push
 
 # Weather Release Checks
 
-Read `references/check-matrix.md` and choose checks based on the change scope.
+Read `docs/ai/testing.md`, `docs/ai/project-overview.md`, and
+`references/check-matrix.md`, then choose checks based on the change scope.
 
 ## Workflow
 
@@ -38,8 +39,8 @@ Read `references/check-matrix.md` and choose checks based on the change scope.
    npm run build
    ```
 
-7. Confirm generated `dist`, `coverage`, and `node_modules` content is not
-   staged.
+7. Confirm generated `dist`, `coverage`, `.wrangler`, and `node_modules`
+   content is not staged.
 8. Commit only after checks pass. Push only with explicit user permission.
 
 ## CI Parity
