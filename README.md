@@ -29,10 +29,10 @@ manually with:
 npm run validate
 ```
 
-Pull requests run the same checks in GitHub Actions. CI also requires at least
-90% unit test coverage for statements, branches, functions, and lines, rejects
-deprecated dependencies, audits high and critical dependency vulnerabilities,
-and runs CodeQL security analysis for JavaScript and TypeScript.
+Pull requests run formatting, ESLint, the TypeScript compiler check, and
+coverage-enforced unit tests in GitHub Actions. CI also rejects deprecated
+dependencies, audits high and critical dependency vulnerabilities, and runs
+CodeQL security analysis for JavaScript and TypeScript.
 
 ## GitHub Pages Deployment
 
@@ -75,12 +75,6 @@ Deploy the `dist` directory to GitHub Pages:
 
 ```sh
 npm run deploy
-```
-
-The same GitHub Pages deploy is available under an explicit script name:
-
-```sh
-npm run deploy:gh-pages
 ```
 
 Run or deploy the Cloudflare Worker for outfit recommendations:

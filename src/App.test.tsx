@@ -61,6 +61,7 @@ describe("App", () => {
       json: vi.fn().mockResolvedValue({
         ...weatherFixture,
         name: "Kyiv",
+        weather: [{ main: "Clouds", description: "хмарно" }],
       }),
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -79,11 +80,13 @@ describe("App", () => {
       await screen.findByRole(
         "region",
         {
-          name: "Поточна погода в Kyiv",
+          name: "Поточна погода в Київ",
         },
         WEATHER_RESULT_TIMEOUT,
       ),
     ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Київ" })).toBeVisible();
+    expect(screen.getByText("хмарно")).toBeVisible();
     const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
     expect(requestUrl.searchParams.get("q")).toBe("Kyiv,UA");
     expect(requestUrl.searchParams.get("lang")).toBe("uk");
@@ -333,6 +336,7 @@ describe("App", () => {
       json: vi.fn().mockResolvedValue({
         ...weatherFixture,
         name: "Rome",
+        weather: [{ main: "Clear", description: "cielo sereno" }],
       }),
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -353,11 +357,13 @@ describe("App", () => {
       await screen.findByRole(
         "region",
         {
-          name: "Meteo attuale a Rome",
+          name: "Meteo attuale a Roma",
         },
         WEATHER_RESULT_TIMEOUT,
       ),
     ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Roma" })).toBeVisible();
+    expect(screen.getByText("cielo sereno")).toBeVisible();
     const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
     expect(requestUrl.searchParams.get("q")).toBe("Rome,IT");
     expect(requestUrl.searchParams.get("lang")).toBe("it");
@@ -388,7 +394,7 @@ describe("App", () => {
     render(<App />);
 
     expect(
-      screen.getByRole("region", { name: "Поточна погода в Kyiv" }),
+      screen.getByRole("region", { name: "Поточна погода в Київ" }),
     ).toBeVisible();
   });
 
@@ -434,7 +440,7 @@ describe("App", () => {
       await screen.findByRole(
         "region",
         {
-          name: "Поточна погода в Kyiv",
+          name: "Поточна погода в Київ",
         },
         WEATHER_RESULT_TIMEOUT,
       ),

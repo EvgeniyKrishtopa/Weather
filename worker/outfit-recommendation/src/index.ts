@@ -43,7 +43,9 @@ export const MODEL_POLICY = {
 
 const allowedOrigins = new Set([
   "http://localhost:5173",
+  "http://localhost:5174",
   "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
   "https://EvgeniyKrishtopa.github.io",
   "https://evgeniykrishtopa.github.io",
 ]);
@@ -850,9 +852,24 @@ const fallbackRecommendationCopy: Record<
   },
 };
 
-const createCorsHeaders = (request: Request): HeadersInit => {
+const getAllowedCorsOrigin = (request: Request): string | null => {
   const origin = request.headers.get("Origin");
-  const allowOrigin = origin && allowedOrigins.has(origin) ? origin : "*";
+
+  if (!origin) {
+    return "*";
+  }
+
+  return allowedOrigins.has(origin) ? origin : null;
+};
+
+const createCorsHeaders = (request: Request): HeadersInit => {
+  const allowOrigin = getAllowedCorsOrigin(request);
+
+  if (!allowOrigin) {
+    return {
+      Vary: "Origin",
+    };
+  }
 
   return {
     "Access-Control-Allow-Headers": "Content-Type",
@@ -861,6 +878,9 @@ const createCorsHeaders = (request: Request): HeadersInit => {
     Vary: "Origin",
   };
 };
+
+const isCorsOriginAllowed = (request: Request): boolean =>
+  getAllowedCorsOrigin(request) !== null;
 
 const json = (
   request: Request,
@@ -1062,6 +1082,13 @@ const createFallbackRecommendation = (
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === "OPTIONS") {
+      if (!isCorsOriginAllowed(request)) {
+        return new Response(null, {
+          headers: { Vary: "Origin" },
+          status: 403,
+        });
+      }
+
       return new Response(null, {
         headers: createCorsHeaders(request),
         status: 204,
@@ -1072,6 +1099,10 @@ export default {
 
     if (request.method !== "POST" || url.pathname !== "/recommend-outfit") {
       return json(request, { message: "Not found" }, { status: 404 });
+    }
+
+    if (!isCorsOriginAllowed(request)) {
+      return json(request, { message: "Origin not allowed" }, { status: 403 });
     }
 
     let payload: unknown;

@@ -1,6 +1,10 @@
 import React from "react";
 import type { SvgIconComponent } from "@mui/icons-material";
-import type { SupportedLanguage, TranslationDictionary } from "../../../i18n";
+import {
+  getCityDisplayName,
+  type SupportedLanguage,
+  type TranslationDictionary,
+} from "../../../i18n";
 import type { GenderSelection } from "../../../types/location";
 import type { WeatherSuccess } from "../../../types/weather";
 import { ClothingRecommendation } from "../ClothingRecommendation";
@@ -15,6 +19,7 @@ interface WeatherComponentProps {
   currentWeather: WeatherSuccess;
   language: SupportedLanguage;
   outfitProfile: GenderSelection;
+  selectedCity: string | null;
   translation: TranslationDictionary;
   WeatherIcon: SvgIconComponent;
 }
@@ -24,6 +29,7 @@ export const WeatherComponent = ({
   currentWeather,
   language,
   outfitProfile,
+  selectedCity,
   translation,
   WeatherIcon,
 }: WeatherComponentProps) => {
@@ -33,8 +39,16 @@ export const WeatherComponent = ({
     language,
     countryIso,
   );
+  const displayCityName = getCityDisplayName(
+    selectedCity ?? currentWeather.name,
+    countryIso,
+    language,
+  );
+  const currentCondition = currentWeather.weather[0];
   const weatherDescription =
-    currentWeather.weather[0]?.main ?? translation.weather.currentCondition;
+    currentCondition?.description ??
+    currentCondition?.main ??
+    translation.weather.currentCondition;
   const temperature = currentWeather.main.temp.toFixed(1);
   const windSpeed = currentWeather.wind.speed.toFixed(1);
 
@@ -42,13 +56,10 @@ export const WeatherComponent = ({
     <WeatherCard
       elevation={12}
       role="region"
-      aria-label={translation.weather.regionLabel(currentWeather.name)}
+      aria-label={translation.weather.regionLabel(displayCityName)}
     >
       <WeatherContent>
-        <WeatherHeader
-          cityName={currentWeather.name}
-          translation={translation}
-        />
+        <WeatherHeader cityName={displayCityName} translation={translation} />
         <WeatherConditionSummary
           temperature={temperature}
           weatherDescription={weatherDescription}

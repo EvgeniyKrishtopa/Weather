@@ -7,6 +7,7 @@ export interface WeatherSuccess {
     humidity: number;
   };
   weather: Array<{
+    description?: string;
     main: string;
   }>;
   wind: {
@@ -55,7 +56,9 @@ export const isWeatherResponse = (value: unknown): value is WeatherResponse => {
           !!condition &&
           typeof condition === "object" &&
           "main" in condition &&
-          typeof condition.main === "string",
+          typeof condition.main === "string" &&
+          (!("description" in condition) ||
+            typeof condition.description === "string"),
       ) &&
       !!wind &&
       typeof wind.speed === "number"

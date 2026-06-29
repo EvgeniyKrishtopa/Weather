@@ -116,11 +116,10 @@ export const useOutfitRecommendation = (
       return;
     }
 
-    const controller = new AbortController();
     let active = true;
 
     void Promise.all([
-      fetchOutfitRecommendation(recommendationRequest, controller.signal),
+      fetchOutfitRecommendation(recommendationRequest),
       waitForMinimumLoading(),
     ])
       .then(([nextRecommendation]) => {
@@ -142,7 +141,6 @@ export const useOutfitRecommendation = (
 
     return () => {
       active = false;
-      controller.abort();
     };
   }, [providerAvailable, recommendationRequest, requestKey]);
 

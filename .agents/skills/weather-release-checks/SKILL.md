@@ -45,8 +45,8 @@ Read `docs/ai/testing.md`, `docs/ai/project-overview.md`, and
 
 ## CI Parity
 
-- Pull requests run formatting, validation, 90% unit test coverage enforcement,
-  deprecated dependency checks, high-severity audit, and CodeQL.
+- Pull requests run formatting, lint, typecheck, 90% unit test coverage
+  enforcement, deprecated dependency checks, high-severity audit, and CodeQL.
 - GitHub Pages builds on `master` with Node 24 and requires the
   `VITE_OPENWEATHER_API_KEY` repository secret.
 - Deployment uses the Vite `/Weather/` base and uploads `dist`.
