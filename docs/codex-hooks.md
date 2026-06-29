@@ -15,7 +15,7 @@ Adds project context at startup, resume, clear, and compaction:
 - current branch and working-tree state
 - instruction to read `AGENTS.md`
 - relevant project-local skills
-- `.env` and API-key safety reminder
+- secret-bearing `.env` and API-key safety reminder
 
 Keep this hook concise. Put durable task procedures in project skills, shared
 standards in `docs/ai`, and context-layer maintenance notes in
@@ -32,7 +32,8 @@ It blocks:
 - `git checkout -- <path>`
 - direct pushes to `main` or `master`
 - forced pushes
-- reading or changing `.env`
+- reading or changing secret-bearing `.env` files; `.env.example` is allowed as
+  a tracked placeholder template
 - edits to `dist`, `coverage`, or `node_modules`
 
 It warns before installing a production dependency with `npm install`,

@@ -14,6 +14,8 @@
 - Selecting the current value changes nothing.
 - Changing or clearing a selection invalidates visible and cached weather.
 - Changing outfit profile persists selection without invalidating weather.
+- Changing outfit profile can request missing weather when a valid city is
+  selected and no weather is currently shown.
 - Changing country retains the current city until the new city list determines
   whether it remains valid.
 - A valid retained city starts a request for the new country.
@@ -25,7 +27,9 @@
 - A response may update state only when all request ownership checks pass.
 - An aborted or outdated response must not update weather, error, loading,
   persistence, or selection.
-- Explicit submit always refreshes when city and country are valid.
+- The form has no submit request path; valid city selection requests weather.
+- Weather request loading remains visible for at least 2 seconds for the latest
+  request.
 - API failures produce `WeatherError`; aborts are control flow, not user errors.
 
 ## Persistence Rules

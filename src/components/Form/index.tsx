@@ -1,5 +1,8 @@
-import React, { useState, type FormEvent } from "react";
-import { type SelectChangeEvent } from "@mui/material";
+import React, { useState } from "react";
+import {
+  type AutocompleteInputChangeReason,
+  type SelectChangeEvent,
+} from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useWeatherContext } from "../../context/weatherContext";
 import { getTranslation } from "../../i18n";
@@ -19,6 +22,7 @@ const Form = observer(() => {
     setCity,
     setCountryIso,
     setOutfitProfile,
+    weather,
   } = weatherStore;
   const language = weatherStore.language;
   const translation = getTranslation(language);
@@ -26,12 +30,16 @@ const Form = observer(() => {
   const { cities, countries, prepareCountryChange, selectedCountry } =
     useLocationOptions(weatherStore, language);
 
-  const handleCountryChange = (event: SelectChangeEvent) => {
-    const nextCountryIso = event.target.value;
-
-    if (nextCountryIso === countryIso) {
+  const requestMissingWeather = () => {
+    if (!city || !selectedCountry || loading || weather) {
       return;
     }
+
+    void getWeather(city, selectedCountry.iso2);
+  };
+
+  const handleCountryChange = (event: SelectChangeEvent) => {
+    const nextCountryIso = event.target.value;
 
     prepareCountryChange(nextCountryIso);
     setCountryIso(nextCountryIso);
@@ -39,6 +47,12 @@ const Form = observer(() => {
   };
 
   const handleCityChange = (value: string | null) => {
+    if (!value) {
+      setCity(null);
+      setShowValidationError(true);
+      return;
+    }
+
     const changed = setCity(value);
 
     if (!changed) {
@@ -47,21 +61,44 @@ const Form = observer(() => {
 
     setShowValidationError(false);
 
-    if (value && selectedCountry) {
+    if (selectedCountry) {
       void getWeather(value, selectedCountry.iso2);
     }
   };
 
-  const formSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!countryIso || !city) {
-      setShowValidationError(true);
+  const handleCityInputChange = (
+    value: string,
+    reason: AutocompleteInputChangeReason,
+  ) => {
+    if (reason !== "input" || !city) {
       return;
     }
 
-    setShowValidationError(false);
-    await getWeather(city, countryIso);
+    const selectedCityOption = cities.find(
+      (cityOption) => cityOption.value === city,
+    );
+
+    if (value === selectedCityOption?.label) {
+      return;
+    }
+
+    setCity(null);
+    setShowValidationError(true);
+  };
+
+  const handleCityBlur = () => {
+    setShowValidationError(!city);
+    requestMissingWeather();
+  };
+
+  const handleOutfitProfileChange = (
+    nextOutfitProfile: typeof outfitProfile,
+  ) => {
+    const changed = setOutfitProfile(nextOutfitProfile);
+
+    if (changed) {
+      requestMissingWeather();
+    }
   };
 
   return (
@@ -80,14 +117,14 @@ const Form = observer(() => {
           }}
           outfitProfile={outfitProfile}
           handlers={{
+            onCityBlur: handleCityBlur,
             onCityChange: handleCityChange,
+            onCityInputChange: handleCityInputChange,
             onCountryChange: handleCountryChange,
-            onOutfitProfileChange: setOutfitProfile,
-            onSubmit: formSubmit,
+            onOutfitProfileChange: handleOutfitProfileChange,
           }}
           language={language}
           status={{
-            loading,
             showValidationError,
           }}
           translation={translation}

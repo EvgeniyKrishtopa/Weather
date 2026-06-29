@@ -30,14 +30,28 @@ import {
 
 export interface WeatherStoreServices {
   defaultCountryService: DefaultCountryService;
+  minimumWeatherLoadingMs?: number;
   persistenceService: WeatherPersistenceService;
   requestService: WeatherRequestService;
 }
 
+const DEFAULT_MINIMUM_WEATHER_LOADING_MS = 2000;
+
 const defaultWeatherStoreServices: WeatherStoreServices = {
   defaultCountryService,
+  minimumWeatherLoadingMs: DEFAULT_MINIMUM_WEATHER_LOADING_MS,
   persistenceService: weatherPersistenceService,
   requestService: weatherRequestService,
+};
+
+const waitForMinimumWeatherLoading = (minimumLoadingMs: number) => {
+  if (minimumLoadingMs <= 0) {
+    return Promise.resolve();
+  }
+
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, minimumLoadingMs);
+  });
 };
 
 export class WeatherStore {
@@ -157,6 +171,10 @@ export class WeatherStore {
     this.error = null;
     this.loading = true;
     this.services.persistenceService.clearStoredWeather();
+    const minimumLoading = waitForMinimumWeatherLoading(
+      this.services.minimumWeatherLoadingMs ??
+        DEFAULT_MINIMUM_WEATHER_LOADING_MS,
+    );
 
     try {
       const response = await this.services.requestService.fetchWeather(
@@ -165,6 +183,7 @@ export class WeatherStore {
         getLanguageForCountryIso(nextCountryIso),
         controller.signal,
       );
+      await minimumLoading;
 
       if (
         controller.signal.aborted ||
@@ -187,6 +206,7 @@ export class WeatherStore {
         }
       });
     } catch {
+      await minimumLoading;
       // Aborted requests are intentionally ignored.
     } finally {
       if (requestId === this.requestId) {

@@ -38,7 +38,10 @@
 
 ## Critical Safety
 
-- Never read, edit, log, or expose `.env` files.
+- Never read, edit, log, or expose secret-bearing `.env` files such as
+  `.env.local`, `.env.production`, or developer-specific env files.
+- `.env.example` is a tracked placeholder template and may be staged when a
+  config-template change is intentional.
 - Never expose `VITE_OPENWEATHER_API_KEY`, Cloudflare credentials, Workers AI
   account details, tokens, or secrets.
 - Treat browser-visible `VITE_*` values as public client configuration.

@@ -23,7 +23,7 @@ interface OutfitRecommendationResult {
   requestKey: string;
 }
 
-const MIN_OUTFIT_RECOMMENDATION_LOADING_MS = 300;
+const MIN_OUTFIT_RECOMMENDATION_LOADING_MS = 1000;
 
 const waitForMinimumLoading = (): Promise<void> =>
   new Promise((resolve) => {

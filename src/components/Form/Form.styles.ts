@@ -37,4 +37,4 @@ export const OutfitProfileOptions = styled(Stack)(({ theme }) => ({
   gap: theme.spacing(0.25),
 }));
 
-export const FormElement = styled("form")({});
+export const FormElement = styled("div")({});

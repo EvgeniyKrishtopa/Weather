@@ -55,6 +55,7 @@ describe("WeatherComponent", () => {
   });
 
   it("renders an outfit recommendation from the provider", async () => {
+    vi.useFakeTimers();
     vi.stubEnv(
       OUTFIT_RECOMMENDATION_API_URL_ENV,
       "https://weather-outfits.example/recommend-outfit",
@@ -87,11 +88,16 @@ describe("WeatherComponent", () => {
     );
 
     expect(screen.getByText("Preparing outfit recommendation")).toBeVisible();
-    expect(await screen.findByText("Rain-ready warm layers")).toBeVisible();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+
+    expect(screen.getByText("Rain-ready warm layers")).toBeVisible();
     expect(screen.getByText("Water-resistant coat")).toBeVisible();
   });
 
   it("keeps fallback recommendations visible when the provider fails", async () => {
+    vi.useFakeTimers();
     vi.stubEnv(
       OUTFIT_RECOMMENDATION_API_URL_ENV,
       "https://weather-outfits.example/recommend-outfit",
@@ -108,7 +114,11 @@ describe("WeatherComponent", () => {
     );
 
     expect(screen.getByText("Preparing outfit recommendation")).toBeVisible();
-    expect(await screen.findByText("Light clear-weather outfit")).toBeVisible();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+
+    expect(screen.getByText("Light clear-weather outfit")).toBeVisible();
     expect(
       screen.getByRole("region", { name: "Current weather in Kyiv" }),
     ).toBeVisible();
@@ -154,7 +164,7 @@ describe("WeatherComponent", () => {
     expect(screen.getByText("Preparing outfit recommendation")).toBeVisible();
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(300);
+      await vi.advanceTimersByTimeAsync(1000);
     });
 
     expect(screen.getByText("Woman rain layers")).toBeVisible();
@@ -171,7 +181,7 @@ describe("WeatherComponent", () => {
     expect(screen.getByText("Preparing outfit recommendation")).toBeVisible();
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(299);
+      await vi.advanceTimersByTimeAsync(999);
     });
 
     expect(screen.getByText("Preparing outfit recommendation")).toBeVisible();
