@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { weatherFixture } from "../test/weatherFixture";
 import { GenderSelection } from "../types/location";
 import { WeatherStore, type WeatherStoreServices } from "./weatherStore";
@@ -10,6 +10,7 @@ beforeEach(() => {
     defaultCountryService: {
       getDefaultCountryIso: vi.fn().mockReturnValue("US"),
     },
+    minimumWeatherLoadingMs: 0,
     persistenceService: {
       clearStoredWeather: vi.fn(),
       loadStoredLocation: vi.fn().mockReturnValue(null),
@@ -21,6 +22,10 @@ beforeEach(() => {
       fetchWeather: vi.fn(),
     },
   };
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 const createStore = () => new WeatherStore(services);
@@ -226,6 +231,31 @@ describe("WeatherStore", () => {
       countryIso: "UA",
       outfitProfile: GenderSelection.Woman,
     });
+  });
+
+  it("keeps loading visible for the configured minimum duration", async () => {
+    vi.useFakeTimers();
+    let resolveRequest: ((value: typeof weatherFixture) => void) | undefined;
+    vi.mocked(services.requestService.fetchWeather).mockReturnValue(
+      new Promise((resolve) => {
+        resolveRequest = resolve;
+      }),
+    );
+    services.minimumWeatherLoadingMs = 2000;
+    const store = createStore();
+
+    const request = store.getWeather("Kyiv", "UA");
+    resolveRequest?.(weatherFixture);
+
+    await vi.advanceTimersByTimeAsync(1999);
+    expect(store.loading).toBe(true);
+    expect(store.weather).toBeNull();
+
+    await vi.advanceTimersByTimeAsync(1);
+    await request;
+
+    expect(store.loading).toBe(false);
+    expect(store.weather).toEqual(weatherFixture);
   });
 
   it("stores an error separately from weather data", async () => {

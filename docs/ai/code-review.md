@@ -61,7 +61,10 @@ checks, and pre-merge risk assessment.
 - Restored storage values are validated before use.
 - `/Weather/` base path is preserved for GitHub Pages.
 - New production env vars are passed in GitHub Actions build steps when needed.
-- `dist`, `coverage`, `node_modules`, `.env*`, and `.wrangler` are not staged.
+- `dist`, `coverage`, `node_modules`, secret-bearing `.env*` files other than
+  `.env.example`, and `.wrangler` are not staged.
+- `.env.example` may be staged when the change is an intentional placeholder
+  config-template update.
 - User workflows belong in `src/App.test.tsx`; module behavior belongs beside
   the module.
 - Request ordering and cancellation use controllable promises when timing

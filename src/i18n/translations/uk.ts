@@ -148,7 +148,6 @@ export const uk: TranslationDictionary = {
     noCities: "Міст не знайдено",
     outfitFor: "Образ для",
     outfitProfileAria: "Профіль образу",
-    submit: "Показати погоду й образ на сьогодні",
     title: "Погодний радник для одягу",
     validationChooseCity: "Оберіть місто.",
   },

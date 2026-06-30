@@ -17,7 +17,8 @@
 Keep that state out of `WeatherStore`. The hook should:
 
 - derive the recommendation request from current weather and outfit profile
-- use `AbortController` for cancellable Worker requests
+- avoid aborting in-flight browser Worker requests during UI cleanup so DevTools
+  does not show expected stale requests as failed network entries
 - avoid showing stale recommendation responses for a newer request
 - keep local fallback recommendations available
 - preserve the short minimum loading behavior when relevant

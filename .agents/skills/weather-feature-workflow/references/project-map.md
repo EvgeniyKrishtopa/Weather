@@ -20,8 +20,17 @@
 ## UI Behavior
 
 - Selecting a valid city requests weather automatically.
-- Explicit form submission always refreshes weather.
+- The form has no submit control; valid city selection is the weather request
+  trigger.
+- City validation appears as helper text on the city field after user
+  interaction.
+- Blurring a selected city or changing outfit profile requests missing weather
+  when no weather is currently shown.
+- Manual city text edits clear stale weather when they diverge from the
+  selected city.
 - Selection changes hide stale weather immediately.
+- Weather request loaders remain visible for at least 2 seconds, and provider
+  recommendation loaders remain visible for at least 1 second.
 - The weather section is hidden while loading or when no valid weather exists.
 - Errors are stored separately from successful weather data.
 - Country, city, and outfit profile selections persist independently from

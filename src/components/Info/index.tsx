@@ -26,7 +26,7 @@ const weatherIcons: Record<string, SvgIconComponent> = {
 };
 
 const Info = observer(() => {
-  const { countryIso, error, language, outfitProfile, loading, weather } =
+  const { city, countryIso, error, language, outfitProfile, loading, weather } =
     useWeatherContext();
   const translation = getTranslation(language);
 
@@ -48,6 +48,7 @@ const Info = observer(() => {
   return (
     <WeatherComponent
       currentWeather={weather}
+      selectedCity={city}
       countryIso={countryIso}
       language={language}
       outfitProfile={outfitProfile}

@@ -154,7 +154,6 @@ export const ru: TranslationDictionary = {
     noCities: "Города не найдены",
     outfitFor: "Образ для",
     outfitProfileAria: "Профиль образа",
-    submit: "Показать погоду и образ на сегодня",
     title: "Погодный советник по одежде",
     validationChooseCity: "Выберите город.",
   },
