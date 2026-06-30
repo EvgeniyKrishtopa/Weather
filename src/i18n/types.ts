@@ -36,7 +36,6 @@ export interface TranslationDictionary {
     noCities: string;
     outfitFor: string;
     outfitProfileAria: string;
-    submit: string;
     title: string;
     validationChooseCity: string;
   };

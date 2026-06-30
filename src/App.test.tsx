@@ -11,6 +11,8 @@ import {
 } from "./constants";
 import { weatherFixture } from "./test/weatherFixture";
 
+const WEATHER_RESULT_TIMEOUT = { timeout: 2500 };
+
 const stubTimeZone = (timeZone?: string) => {
   vi.spyOn(Intl.DateTimeFormat.prototype, "resolvedOptions").mockReturnValue({
     calendar: "gregory",
@@ -27,21 +29,26 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
 });
 
 describe("App", () => {
-  it("shows validation when a city is not selected", async () => {
+  it("shows city helper validation without a submit button", async () => {
     const user = userEvent.setup();
     render(<App />);
 
     const citySelect = await screen.findByRole("combobox", { name: "City" });
     await waitFor(() => expect(citySelect).toBeEnabled());
-    await user.click(
-      screen.getByRole("button", { name: "Get weather and outfit today" }),
-    );
+    expect(
+      screen.queryByRole("button", { name: "Get weather and outfit today" }),
+    ).not.toBeInTheDocument();
 
+    await user.click(citySelect);
+    await user.tab();
+
+    expect(citySelect).toBeInvalid();
     expect(screen.getByText("Choose a city.")).toBeVisible();
   });
 
@@ -54,6 +61,7 @@ describe("App", () => {
       json: vi.fn().mockResolvedValue({
         ...weatherFixture,
         name: "Kyiv",
+        weather: [{ main: "Clouds", description: "хмарно" }],
       }),
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -69,10 +77,16 @@ describe("App", () => {
     await user.click(await screen.findByRole("option", { name: "Київ" }));
 
     expect(
-      await screen.findByRole("region", {
-        name: "Поточна погода в Kyiv",
-      }),
+      await screen.findByRole(
+        "region",
+        {
+          name: "Поточна погода в Київ",
+        },
+        WEATHER_RESULT_TIMEOUT,
+      ),
     ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Київ" })).toBeVisible();
+    expect(screen.getByText("хмарно")).toBeVisible();
     const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
     expect(requestUrl.searchParams.get("q")).toBe("Kyiv,UA");
     expect(requestUrl.searchParams.get("lang")).toBe("uk");
@@ -100,9 +114,13 @@ describe("App", () => {
     await user.click(await screen.findByRole("option", { name: "Chicago" }));
 
     expect(
-      await screen.findByRole("region", {
-        name: "Current weather in Chicago",
-      }),
+      await screen.findByRole(
+        "region",
+        {
+          name: "Current weather in Chicago",
+        },
+        WEATHER_RESULT_TIMEOUT,
+      ),
     ).toBeVisible();
     const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
     expect(requestUrl.searchParams.get("q")).toBe("Chicago,US");
@@ -158,9 +176,13 @@ describe("App", () => {
     await user.click(await screen.findByRole("option", { name: "Chicago" }));
 
     expect(
-      await screen.findByRole("region", {
-        name: "Current weather in Chicago",
-      }),
+      await screen.findByRole(
+        "region",
+        {
+          name: "Current weather in Chicago",
+        },
+        WEATHER_RESULT_TIMEOUT,
+      ),
     ).toBeVisible();
     expect(screen.getByText("Preparing outfit recommendation")).toBeVisible();
     resolveRecommendation?.({
@@ -171,7 +193,11 @@ describe("App", () => {
         description: "Stay warm and dry with compact rain layers.",
       }),
     });
-    expect(await screen.findByText("Rain-ready warm layers")).toBeVisible();
+    expect(
+      await screen.findByText("Rain-ready warm layers", undefined, {
+        timeout: 2500,
+      }),
+    ).toBeVisible();
     expect(screen.getByText("Water-resistant coat")).toBeVisible();
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
@@ -200,15 +226,23 @@ describe("App", () => {
     await user.click(await screen.findByRole("option", { name: "Chicago" }));
 
     expect(
-      await screen.findByRole("region", {
-        name: "Current weather in Chicago",
+      await screen.findByRole(
+        "region",
+        {
+          name: "Current weather in Chicago",
+        },
+        WEATHER_RESULT_TIMEOUT,
+      ),
+    ).toBeVisible();
+    expect(
+      await screen.findByText("Light clear-weather outfit", undefined, {
+        timeout: 2500,
       }),
     ).toBeVisible();
-    expect(await screen.findByText("Light clear-weather outfit")).toBeVisible();
     expect(screen.getByText("Light jacket")).toBeVisible();
   });
 
-  it("forces a new request when Get weather and outfit today is clicked", async () => {
+  it("clears visible weather without requesting when city text changes", async () => {
     const user = userEvent.setup();
     const fetchMock = vi.fn().mockResolvedValue({
       json: vi.fn().mockResolvedValue({
@@ -223,15 +257,23 @@ describe("App", () => {
     await waitFor(() => expect(citySelect).toBeEnabled());
     await user.type(citySelect, "Chicago");
     await user.click(await screen.findByRole("option", { name: "Chicago" }));
-    await screen.findByRole("region", {
-      name: "Current weather in Chicago",
-    });
-
-    await user.click(
-      screen.getByRole("button", { name: "Get weather and outfit today" }),
+    await screen.findByRole(
+      "region",
+      {
+        name: "Current weather in Chicago",
+      },
+      WEATHER_RESULT_TIMEOUT,
     );
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    await user.type(citySelect, "x");
+
+    expect(await screen.findByText("Choose a city.")).toBeVisible();
+    expect(
+      screen.queryByRole("region", {
+        name: "Current weather in Chicago",
+      }),
+    ).not.toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("updates cities by selected country and sends the selected ISO", async () => {
@@ -252,12 +294,8 @@ describe("App", () => {
     await waitFor(() => expect(citySelect).toBeEnabled());
     await user.type(citySelect, "Київ");
     await user.click(await screen.findByRole("option", { name: "Київ" }));
-    await user.click(
-      screen.getByRole("button", {
-        name: "Показати погоду й образ на сьогодні",
-      }),
-    );
 
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
     expect(requestUrl.searchParams.get("q")).toBe("Kyiv,UA");
     expect(requestUrl.searchParams.get("lang")).toBe("uk");
@@ -298,6 +336,7 @@ describe("App", () => {
       json: vi.fn().mockResolvedValue({
         ...weatherFixture,
         name: "Rome",
+        weather: [{ main: "Clear", description: "cielo sereno" }],
       }),
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -315,10 +354,16 @@ describe("App", () => {
     await user.click(await screen.findByRole("option", { name: "Roma" }));
 
     expect(
-      await screen.findByRole("region", {
-        name: "Meteo attuale a Rome",
-      }),
+      await screen.findByRole(
+        "region",
+        {
+          name: "Meteo attuale a Roma",
+        },
+        WEATHER_RESULT_TIMEOUT,
+      ),
     ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Roma" })).toBeVisible();
+    expect(screen.getByText("cielo sereno")).toBeVisible();
     const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
     expect(requestUrl.searchParams.get("q")).toBe("Rome,IT");
     expect(requestUrl.searchParams.get("lang")).toBe("it");
@@ -349,7 +394,7 @@ describe("App", () => {
     render(<App />);
 
     expect(
-      screen.getByRole("region", { name: "Поточна погода в Kyiv" }),
+      screen.getByRole("region", { name: "Поточна погода в Київ" }),
     ).toBeVisible();
   });
 
@@ -368,6 +413,67 @@ describe("App", () => {
     const citySelect = screen.getByRole("combobox", { name: "Місто" });
     await waitFor(() => expect(citySelect).toBeEnabled());
     expect(citySelect).toHaveValue("Київ");
+  });
+
+  it("requests missing weather after a selected city field is blurred", async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn().mockResolvedValue({
+      json: vi.fn().mockResolvedValue({
+        ...weatherFixture,
+        name: "Kyiv",
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    localStorage.setItem(
+      SELECTED_LOCATION_STORAGE_KEY,
+      JSON.stringify({ city: "Kyiv", countryIso: "UA" }),
+    );
+    render(<App />);
+
+    const citySelect = await screen.findByRole("combobox", { name: "Місто" });
+    await waitFor(() => expect(citySelect).toBeEnabled());
+    await user.click(citySelect);
+    await user.tab();
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(
+      await screen.findByRole(
+        "region",
+        {
+          name: "Поточна погода в Київ",
+        },
+        WEATHER_RESULT_TIMEOUT,
+      ),
+    ).toBeVisible();
+  });
+
+  it("requests missing weather after changing outfit profile with a selected city", async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn().mockResolvedValue({
+      json: vi.fn().mockResolvedValue({
+        ...weatherFixture,
+        name: "Chicago",
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    localStorage.setItem(
+      SELECTED_LOCATION_STORAGE_KEY,
+      JSON.stringify({ city: "Chicago", countryIso: "US" }),
+    );
+    render(<App />);
+
+    await user.click(await screen.findByRole("checkbox", { name: "Man" }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(
+      await screen.findByRole(
+        "region",
+        {
+          name: "Current weather in Chicago",
+        },
+        WEATHER_RESULT_TIMEOUT,
+      ),
+    ).toBeVisible();
   });
 
   it("clears weather and the city when it is invalid for a new country", async () => {

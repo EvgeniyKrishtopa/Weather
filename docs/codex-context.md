@@ -5,14 +5,14 @@ without loading every project detail for every task.
 
 ## Context Layers
 
-| Layer                  | Location                                  | Purpose                                                                                     |
-| ---------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Root router            | `AGENTS.md`                               | Short always-loaded routing, project snapshot, and critical safety                          |
-| Task workflows         | `.agents/skills/*/SKILL.md`               | Triggered procedures for feature work, request-state changes, reviews, and release checks   |
-| Shared standards       | `docs/ai/*.md`                            | Architecture, domain, frontend, state, testing, AI, i18n, and review standards              |
-| Skill-local references | `.agents/skills/*/references/*.md`        | Narrow checklists and invariants loaded only when the selected skill asks for them          |
-| Runtime guardrails     | `.codex/hooks.json`, `.codex/hooks/*.ps1` | Session orientation, command/file safety, secret scanning, formatting, and completion gates |
-| Maintainer docs        | `docs/*.md`                               | Context maintenance, hook behavior, and skill maps                                          |
+| Layer                  | Location                                  | Purpose                                                                                                        |
+| ---------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Root router            | `AGENTS.md`                               | Short always-loaded routing, project snapshot, and critical safety                                             |
+| Task workflows         | `.agents/skills/*/SKILL.md`               | Triggered procedures for feature work, architecture checks, request-state changes, reviews, and release checks |
+| Shared standards       | `docs/ai/*.md`                            | Architecture, domain, frontend, state, testing, AI, i18n, and review standards                                 |
+| Skill-local references | `.agents/skills/*/references/*.md`        | Narrow checklists and invariants loaded only when the selected skill asks for them                             |
+| Runtime guardrails     | `.codex/hooks.json`, `.codex/hooks/*.ps1` | Session orientation, command/file safety, secret scanning, formatting, and completion gates                    |
+| Maintainer docs        | `docs/*.md`                               | Context maintenance, hook behavior, and skill maps                                                             |
 
 ## Maintenance Rules
 
@@ -43,12 +43,13 @@ without loading every project detail for every task.
 
 ## Current Skill Routing
 
-| Task                                                                                                                     | Use                        |
-| ------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
-| App features, UI behavior, API integration, persistence, accessibility, or tests                                         | `weather-feature-workflow` |
-| City/country selection, outfit profile, cancellation, stale responses, request ownership, storage, or weather visibility | `weather-request-state`    |
-| Local diff, PR, regression, deployment, Worker, API, UI, or test review                                                  | `weather-code-review`      |
-| Pre-commit, pre-push, PR readiness, dependency checks, coverage, build, or deploy readiness                              | `weather-release-checks`   |
+| Task                                                                                                                     | Use                          |
+| ------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| Serious multi-layer feature planning or implementation plan architecture checks                                          | `weather-architecture-check` |
+| App features, UI behavior, API integration, persistence, accessibility, or tests                                         | `weather-feature-workflow`   |
+| City/country selection, outfit profile, cancellation, stale responses, request ownership, storage, or weather visibility | `weather-request-state`      |
+| Local diff, PR, regression, deployment, Worker, API, UI, or test review                                                  | `weather-code-review`        |
+| Pre-commit, pre-push, PR readiness, dependency checks, coverage, build, or deploy readiness                              | `weather-release-checks`     |
 
 ## Shared Standards Routing
 

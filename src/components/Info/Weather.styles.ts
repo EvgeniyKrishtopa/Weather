@@ -143,6 +143,7 @@ export const ClothingRecommendationHeader = styled(Stack)(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing(0.75),
   minWidth: 0,
+  marginBottom: theme.spacing(1.5),
 }));
 
 export const ClothingRecommendationIcon = styled(Box)(({ theme }) => ({
@@ -166,7 +167,6 @@ export const ClothingRecommendationEyebrow = styled(Typography)({
 
 export const ClothingRecommendationTitle = styled(Typography)(({ theme }) => ({
   ...theme.typography.body2,
-  marginBottom: 20,
   color: "inherit",
   fontWeight: 700,
 }));

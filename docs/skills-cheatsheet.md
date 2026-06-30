@@ -6,12 +6,13 @@ Use this as the maintainer-facing map for the project-local skills under
 
 ## Current Skills
 
-| Skill                      | Use When                                                                                                                   | Loads Next                                                      |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `weather-feature-workflow` | Implementing or refactoring app features across components, store, API, persistence, accessibility, and tests              | `references/project-map.md`, relevant `docs/ai/*`               |
-| `weather-request-state`    | Changing selection, loading, cancellation, stale-response handling, request ownership, persistence, or weather visibility  | `docs/ai/state-management.md`, `references/state-invariants.md` |
-| `weather-code-review`      | Reviewing local diffs, PRs, UI/API/request-state changes, tests, Worker/deployment risk, or regressions                    | `docs/ai/code-review.md`, `references/review-checklist.md`      |
-| `weather-release-checks`   | Preparing commits, pushes, PRs, releases, dependency changes, CI parity checks, coverage, build, or GitHub Pages readiness | `docs/ai/testing.md`, `references/check-matrix.md`              |
+| Skill                        | Use When                                                                                                                   | Loads Next                                                                              |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `weather-architecture-check` | Reviewing serious multi-layer feature implementation plans before coding                                                   | `docs/ai/architecture.md`, `references/architecture-checklist.md`, relevant `docs/ai/*` |
+| `weather-feature-workflow`   | Implementing or refactoring app features across components, store, API, persistence, accessibility, and tests              | `references/project-map.md`, relevant `docs/ai/*`                                       |
+| `weather-request-state`      | Changing selection, loading, cancellation, stale-response handling, request ownership, persistence, or weather visibility  | `docs/ai/state-management.md`, `references/state-invariants.md`                         |
+| `weather-code-review`        | Reviewing local diffs, PRs, UI/API/request-state changes, tests, Worker/deployment risk, or regressions                    | `docs/ai/code-review.md`, `references/review-checklist.md`                              |
+| `weather-release-checks`     | Preparing commits, pushes, PRs, releases, dependency changes, CI parity checks, coverage, build, or GitHub Pages readiness | `docs/ai/testing.md`, `references/check-matrix.md`                                      |
 
 ## Routing Order
 

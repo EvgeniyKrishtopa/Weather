@@ -33,8 +33,11 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      - name: Run local quality checks
-        run: npm run validate
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
 
       - name: Enforce unit test coverage
         run: npm run test:coverage

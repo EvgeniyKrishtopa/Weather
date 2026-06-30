@@ -8,6 +8,15 @@ describe("weather type guards", () => {
     expect(isWeatherSuccess(weatherFixture)).toBe(true);
   });
 
+  it("recognizes an optional localized weather description", () => {
+    expect(
+      isWeatherResponse({
+        ...weatherFixture,
+        weather: [{ main: "Clouds", description: "хмарно" }],
+      }),
+    ).toBe(true);
+  });
+
   it("recognizes an API error response", () => {
     const error = { cod: "404", message: "city not found" };
 
@@ -23,6 +32,7 @@ describe("weather type guards", () => {
     { ...weatherFixture, main: { temp: "21", humidity: 62 } },
     { ...weatherFixture, main: { temp: 21, humidity: 62 } },
     { ...weatherFixture, weather: [] },
+    { ...weatherFixture, weather: [{ main: "Clouds", description: 123 }] },
     { ...weatherFixture, wind: { speed: "fast" } },
     { cod: 500 },
   ])("rejects malformed responses: %j", (value) => {

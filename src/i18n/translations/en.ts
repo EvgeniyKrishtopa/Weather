@@ -141,7 +141,6 @@ export const en: TranslationDictionary = {
     noCities: "No cities found",
     outfitFor: "Outfit for",
     outfitProfileAria: "Outfit profile",
-    submit: "Get weather and outfit today",
     title: "Weather Outfit Advisor",
     validationChooseCity: "Choose a city.",
   },

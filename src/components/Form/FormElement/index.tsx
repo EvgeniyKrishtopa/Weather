@@ -1,8 +1,6 @@
-import React, { type FormEvent } from "react";
+import React from "react";
 import {
-  Alert,
   Autocomplete,
-  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -13,9 +11,9 @@ import {
   Select,
   TextField,
   createFilterOptions,
+  type AutocompleteInputChangeReason,
   type SelectChangeEvent,
 } from "@mui/material";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import {
   getCountryDisplayName,
   type SupportedLanguage,
@@ -44,15 +42,18 @@ interface CityFieldProps {
 }
 
 interface FormStatusProps {
-  loading: boolean;
   showValidationError: boolean;
 }
 
 interface FormHandlers {
+  onCityBlur: () => void;
   onCityChange: (value: string | null) => void;
+  onCityInputChange: (
+    value: string,
+    reason: AutocompleteInputChangeReason,
+  ) => void;
   onCountryChange: (event: SelectChangeEvent) => void;
   onOutfitProfileChange: (outfitProfile: GenderSelection) => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
 interface WeatherFormElementProps {
@@ -92,7 +93,7 @@ export const FormElement = ({
     : null;
 
   return (
-    <StyledFormElement onSubmit={handlers.onSubmit} noValidate>
+    <StyledFormElement>
       <FormFields>
         <FormControl fullWidth>
           <InputLabel id="country-select-label">
@@ -120,6 +121,9 @@ export const FormElement = ({
           getOptionLabel={(option) => option.label}
           isOptionEqualToValue={(option, value) => option.value === value.value}
           onChange={(_, value) => handlers.onCityChange(value?.value ?? null)}
+          onInputChange={(_, value, reason) =>
+            handlers.onCityInputChange(value, reason)
+          }
           noOptionsText={translation.form.noCities}
           disabled={!country.selectedCountry}
           renderInput={(params) => (
@@ -127,6 +131,12 @@ export const FormElement = ({
               {...params}
               label={translation.form.cityLabel}
               error={status.showValidationError && !city.city}
+              helperText={
+                status.showValidationError && !city.city
+                  ? translation.form.validationChooseCity
+                  : undefined
+              }
+              onBlur={handlers.onCityBlur}
             />
           )}
         />
@@ -149,22 +159,6 @@ export const FormElement = ({
             ))}
           </FormGroup>
         </OutfitProfileOptions>
-        {status.showValidationError && (
-          <Alert severity="warning" role="alert">
-            {translation.form.validationChooseCity}
-          </Alert>
-        )}
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          loading={status.loading}
-          loadingPosition="start"
-          startIcon={<SearchRoundedIcon />}
-          disabled={!country.selectedCountry}
-        >
-          {translation.form.submit}
-        </Button>
       </FormFields>
     </StyledFormElement>
   );

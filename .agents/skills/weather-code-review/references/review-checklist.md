@@ -61,8 +61,10 @@
 - `/Weather/` base path is preserved for GitHub Pages.
 - New production env vars are passed in GitHub Actions build steps.
 - Deploy workflows fail clearly when required secrets or variables are missing.
-- `dist`, `coverage`, `node_modules`, `.env*`, and `.wrangler` content are not
-  staged.
+- `dist`, `coverage`, `node_modules`, secret-bearing `.env*` files other than
+  `.env.example`, and `.wrangler` content are not staged.
+- `.env.example` may be staged when the change is an intentional placeholder
+  config-template update.
 - Worker config, GitHub Pages config, and README/deploy instructions agree.
 
 ## Tests

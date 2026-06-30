@@ -27,13 +27,13 @@ const defaultProps: ComponentProps<typeof FormElement> = {
   outfitProfile: GenderSelection.Woman,
   language: "en",
   handlers: {
+    onCityBlur: vi.fn(),
     onCityChange: vi.fn(),
+    onCityInputChange: vi.fn(),
     onCountryChange: vi.fn(),
     onOutfitProfileChange: vi.fn(),
-    onSubmit: vi.fn((event) => event.preventDefault()),
   },
   status: {
-    loading: false,
     showValidationError: false,
   },
   translation: getTranslation("en"),
@@ -72,7 +72,7 @@ const renderFormElement = (
 };
 
 describe("FormElement", () => {
-  it("renders country, city, and submit controls", () => {
+  it("renders country, city, and outfit controls without a submit button", () => {
     renderFormElement();
 
     expect(screen.getByRole("combobox", { name: "Country" })).toHaveTextContent(
@@ -82,8 +82,8 @@ describe("FormElement", () => {
     expect(screen.getByRole("checkbox", { name: "Woman" })).toBeChecked();
     expect(screen.getByRole("checkbox", { name: "Man" })).not.toBeChecked();
     expect(
-      screen.getByRole("button", { name: "Get weather and outfit today" }),
-    ).toBeEnabled();
+      screen.queryByRole("button", { name: "Get weather and outfit today" }),
+    ).not.toBeInTheDocument();
   });
 
   it("calls the handler when changing the selected outfit profile", async () => {
@@ -104,7 +104,7 @@ describe("FormElement", () => {
     expect(screen.getByRole("checkbox", { name: "Man" })).toBeChecked();
   });
 
-  it("calls handlers for country, city, and submit interactions", async () => {
+  it("calls handlers for country and city interactions", async () => {
     const user = userEvent.setup();
     const props = renderFormElement();
 
@@ -112,13 +112,20 @@ describe("FormElement", () => {
     await user.click(screen.getByRole("option", { name: "United States" }));
     await user.type(screen.getByRole("combobox", { name: "City" }), "Kyiv");
     await user.click(await screen.findByRole("option", { name: "Kyiv" }));
-    await user.click(
-      screen.getByRole("button", { name: "Get weather and outfit today" }),
-    );
 
     expect(props.handlers.onCountryChange).toHaveBeenCalled();
+    expect(props.handlers.onCityInputChange).toHaveBeenCalled();
     expect(props.handlers.onCityChange).toHaveBeenCalledWith("Kyiv");
-    expect(props.handlers.onSubmit).toHaveBeenCalled();
+  });
+
+  it("calls the city blur handler", async () => {
+    const user = userEvent.setup();
+    const props = renderFormElement();
+
+    await user.click(screen.getByRole("combobox", { name: "City" }));
+    await user.tab();
+
+    expect(props.handlers.onCityBlur).toHaveBeenCalled();
   });
 
   it("renders localized city labels and emits canonical city values", async () => {
@@ -147,14 +154,11 @@ describe("FormElement", () => {
   it("shows validation status messages", () => {
     renderFormElement({
       status: {
-        loading: false,
         showValidationError: true,
       },
     });
 
     expect(screen.getByText("Choose a city.")).toBeVisible();
-    expect(
-      screen.getByRole("button", { name: "Get weather and outfit today" }),
-    ).toBeEnabled();
+    expect(screen.getByRole("combobox", { name: "City" })).toBeInvalid();
   });
 });

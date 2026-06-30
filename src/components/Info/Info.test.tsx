@@ -23,13 +23,17 @@ const unknownWeather: WeatherSuccess = {
   },
 };
 
-const createStore = (weather: WeatherSuccess): WeatherStore => {
+const createStore = (
+  weather: WeatherSuccess,
+  city = weather.name,
+  countryIso = "US",
+): WeatherStore => {
   const store = new WeatherStore();
 
   runInAction(() => {
-    store.countryIso = "US";
+    store.countryIso = countryIso;
     store.weather = weather;
-    store.city = "Kyiv";
+    store.city = city;
   });
 
   return store;
@@ -55,13 +59,18 @@ describe("weather information", () => {
     expect(screen.getByText("Volcanic ash")).toBeVisible();
   });
 
-  it("uses the API city and consistently formatted measurements", () => {
-    const store = createStore({
-      ...unknownWeather,
-      name: "Kyiv City",
-      main: { temp: 10, feels_like: 8, humidity: 50 },
-      wind: { speed: 2 },
-    });
+  it("uses the selected city display label and consistently formatted measurements", () => {
+    const store = createStore(
+      {
+        ...unknownWeather,
+        name: "Dnipro",
+        main: { temp: 10, feels_like: 8, humidity: 50 },
+        weather: [{ main: "Clouds", description: "хмарно" }],
+        wind: { speed: 2 },
+      },
+      "Dnipro",
+      "UA",
+    );
 
     render(
       <WeatherContext.Provider value={store}>
@@ -71,10 +80,11 @@ describe("weather information", () => {
 
     expect(
       screen.getByRole("region", {
-        name: "Current weather in Kyiv City",
+        name: "Поточна погода в Дніпро",
       }),
     ).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Kyiv City" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Дніпро" })).toBeVisible();
+    expect(screen.getByText("хмарно")).toBeVisible();
     expect(screen.getByText("10.0")).toBeVisible();
     expect(screen.getByText("2.0 m/s")).toBeVisible();
     expect(screen.getByText("50%")).toBeVisible();

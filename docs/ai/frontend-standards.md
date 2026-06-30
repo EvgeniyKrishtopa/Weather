@@ -24,7 +24,16 @@
 
 - Selecting the same country, city, or outfit profile should be a no-op.
 - Valid city selections request weather automatically.
-- Explicit form submission always refreshes weather when selections are valid.
+- Do not render a weather submit button; valid city selection owns the weather
+  request trigger.
+- Blurring a selected city or changing outfit profile may request missing
+  weather when no weather is currently shown.
+- Weather request loaders should remain visible for at least 2 seconds, and
+  provider recommendation loaders should remain visible for at least 1 second.
+- Manual city text edits should clear stale weather when they diverge from the
+  selected city.
+- City validation should appear as helper text on the city field after user
+  interaction.
 - Local validation visibility belongs in the form component.
 - Country/city option derivation and retained-city reconciliation belong in
   `src/components/Form/useLocationOptions`.
