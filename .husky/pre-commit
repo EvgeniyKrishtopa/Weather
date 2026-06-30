@@ -1,1 +1,2 @@
+codex exec review --ephemeral --title "Codex pre-commit review" "Use docs/ai/code-review.md, starting at '# Code Review', as the review instruction for this pre-commit review. Review the staged changes in this repository only. Do not modify files. Start with actionable findings ordered by severity. If there are no actionable issues, say 'No findings.' Call out test or validation gaps only when they hide a concrete regression risk."
 npm run validate
