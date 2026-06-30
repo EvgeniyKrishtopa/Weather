@@ -1,0 +1,4 @@
+interface:
+  display_name: "Weather Architecture Check"
+  short_description: "Review serious Weather feature plans for architectural fit"
+  default_prompt: "Use $weather-architecture-check to review this Weather feature implementation plan before coding."
