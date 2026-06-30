@@ -8,6 +8,20 @@ the repository or changing hook files.
 
 ## Installed hooks
 
+### Git Pre-Commit
+
+Husky runs `codex exec review` before `npm run validate`.
+
+The pre-commit review:
+
+- uses `docs/ai/code-review.md` (`# Code Review`) guidance
+- reviews staged repository changes without modifying files
+- starts with actionable findings ordered by severity
+- allows `npm run validate` to run only after the review command succeeds
+
+If the Codex review command fails, the commit is blocked. For an emergency
+local bypass, use Git's standard `--no-verify` commit option.
+
 ### SessionStart
 
 Adds project context at startup, resume, clear, and compaction:

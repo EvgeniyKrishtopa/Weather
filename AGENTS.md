@@ -24,6 +24,7 @@
 | Task                                                                                                         | Load                                                                        |
 | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
 | Project orientation or repo map                                                                              | `docs/ai/project-overview.md`, `docs/ai/architecture.md`                    |
+| Serious multi-layer feature planning or implementation plan architecture check                               | `.agents/skills/weather-architecture-check/SKILL.md`                        |
 | App feature, UI, API, persistence, accessibility, or tests                                                   | `.agents/skills/weather-feature-workflow/SKILL.md`                          |
 | City/country selection, outfit profile, weather request ownership, cancellation, stale responses, or storage | `.agents/skills/weather-request-state/SKILL.md`                             |
 | Weather API, static location options, storage semantics, or domain behavior                                  | `docs/ai/weather-domain.md`                                                 |

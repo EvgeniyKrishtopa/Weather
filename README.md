@@ -4,8 +4,8 @@ This project was created with React, the OpenWeather API, and Cloudflare
 Workers AI. Select a country and city to get current weather and outfit
 recommendations.
 
-Country names, ISO2 codes, and city options are loaded from the public
-[CountriesNow API](https://countriesnow.space/).
+Country names, ISO2 codes, and curated city options are bundled with the app so
+the location selectors are available without an extra network request.
 
 ## Link
 
@@ -44,13 +44,15 @@ Every push to `master` builds the application with that secret and deploys the
 `dist` directory to GitHub Pages. The workflow can also be started manually
 from the Actions tab.
 
-Create a local environment file and add an OpenWeather API key. Add
-`VITE_OUTFIT_RECOMMENDATION_API_URL` when a local or deployed Cloudflare Worker
-should provide LLM outfit recommendations:
+Create a local environment file and add an OpenWeather API key:
 
 ```sh
 cp .env.example .env.local
 ```
+
+`VITE_OUTFIT_RECOMMENDATION_API_URL` is optional. Leave it empty to use local
+fallback outfit recommendations, or point it at a local/deployed Cloudflare
+Worker to enable Workers AI recommendations.
 
 Start the Vite development server:
 
@@ -82,6 +84,13 @@ Run or deploy the Cloudflare Worker for outfit recommendations:
 ```sh
 npm run outfit-worker:dev
 npm run outfit-worker:deploy
+```
+
+When the local Worker is running, set this value in `.env.local` and restart the
+Vite development server:
+
+```sh
+VITE_OUTFIT_RECOMMENDATION_API_URL=http://localhost:8787/recommend-outfit
 ```
 
 Run or deploy the app with Wrangler instead of GitHub Pages:
